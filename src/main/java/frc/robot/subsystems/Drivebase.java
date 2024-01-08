@@ -5,17 +5,17 @@ import com.revrobotics.CANSparkLowLevel.MotorType;
 
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.motorcontrol.MotorControllerGroup;
-
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.constants.DrivebaseConstants;
 
 public class Drivebase extends SubsystemBase {
-    private CANSparkMax motorLeft1 = new CANSparkMax(1, MotorType.kBrushed);
-    private CANSparkMax motorLeft2 = new CANSparkMax(2, MotorType.kBrushed);
-    private CANSparkMax motorRight1 = new CANSparkMax(3, MotorType.kBrushed);
-    private CANSparkMax motorRight2 = new CANSparkMax(4, MotorType.kBrushed);
+    private CANSparkMax leftMotor1 = new CANSparkMax(DrivebaseConstants.leftMotorId1, MotorType.kBrushed);
+    private CANSparkMax leftMotor2 = new CANSparkMax(DrivebaseConstants.leftMotorId2, MotorType.kBrushed);
+    private CANSparkMax rightMotor1 = new CANSparkMax(DrivebaseConstants.rightMotorId1, MotorType.kBrushed);
+    private CANSparkMax rightMotor2 = new CANSparkMax(DrivebaseConstants.rightMotorId2, MotorType.kBrushed);
 
-    private MotorControllerGroup leftMotors = new MotorControllerGroup(motorLeft1, motorLeft2);
-    private MotorControllerGroup rightMotors = new MotorControllerGroup(motorRight1, motorRight2);
+    private MotorControllerGroup leftMotors = new MotorControllerGroup(leftMotor1, leftMotor2);
+    private MotorControllerGroup rightMotors = new MotorControllerGroup(rightMotor1, rightMotor2);
 
     private final DifferentialDrive drive = new DifferentialDrive(leftMotors, rightMotors);
 
