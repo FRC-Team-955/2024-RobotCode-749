@@ -23,8 +23,8 @@ public class Robot {
     }
 
     private void configureBindings() {
-        controller.x().onTrue(launcher.startLaunchingCommand().withTimeout(5).andThen(launcher.stopCommand()));
-        controller.b().onTrue(launcher.startIntakeCommand().withTimeout(5).andThen(launcher.stopCommand()));
+        controller.x().toggleOnTrue(launcher.launchCommand().withTimeout(5));
+        controller.b().toggleOnTrue(launcher.intakeCommand().withTimeout(5));
     }
 
     public Command getAutonomousCommand() {
