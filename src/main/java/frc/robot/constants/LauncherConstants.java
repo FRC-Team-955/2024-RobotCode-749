@@ -1,10 +1,8 @@
 package frc.robot.constants;
 
-public class LauncherConstants {
-    // top motor
-    public static final int feederId = 5;
-    // bottom motor
-    public static final int launcherId = 6;
+public final class LauncherConstants {
+    public static final int topMotorId = 5;
+    public static final int bottomMotorId = 6;
 
     public static final double launchingSpeed = 1;
 

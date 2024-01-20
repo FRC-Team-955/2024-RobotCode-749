@@ -1,8 +1,25 @@
 package frc.robot.constants;
 
-public class DrivebaseConstants {
-    public final static int leftMotorLeader = 1;
-    public final static int leftMotorFollower = 2;
-    public final static int rightMotorLeader = 3;
-    public final static int rightMotorFollower = 4;
+import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj.simulation.DifferentialDrivetrainSim.KitbotGearing;
+import edu.wpi.first.wpilibj.simulation.DifferentialDrivetrainSim.KitbotMotor;
+import edu.wpi.first.wpilibj.simulation.DifferentialDrivetrainSim.KitbotWheelSize;
+
+public final class DrivebaseConstants {
+    public final static int leftLeaderMotorId = 1;
+    public final static int leftFollowerMotorId = 2;
+    public final static int rightLeaderMotorId = 3;
+    public final static int rightFollowerMotorId = 4;
+
+    public static final KitbotWheelSize wheelSize = KitbotWheelSize.kSixInch;
+    public static final double wheelRadius = wheelSize.value / 2; // value is diameter, we need radius
+    public static final double trackWidth = Units.inchesToMeters(26);
+    public static final KitbotGearing gearRatio = KitbotGearing.k10p71;
+    public static final KitbotMotor motor = KitbotMotor.kDualCIMPerSide;
+
+    public static final double motorP = 1;
+    public static final double motorD = 0;
+
+    public static final double feedforwardS = 0;
+    public static final double feedforwardV = GeneralConstants.mode == GeneralConstants.Mode.SIM ? 0.35 : 0;
 }

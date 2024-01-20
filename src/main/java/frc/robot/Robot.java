@@ -2,12 +2,16 @@ package frc.robot;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
-import frc.robot.constants.IOConstants;
-import frc.robot.subsystems.Drivebase;
-import frc.robot.subsystems.Launcher;
+import frc.robot.constants.GeneralConstants;
+import frc.robot.constants.SimulationConstants;
+import frc.robot.subsystems.drivebase.Drivebase;
+import frc.robot.subsystems.launcher.Launcher;
+import frc.robot.util.CommandNintendoSwitchProController;
 
 public class Robot {
-    private final CommandXboxController controller = new CommandXboxController(IOConstants.controllerPort);
+    private final CommandXboxController controller = SimulationConstants.useNintendoSwitchProController ?
+            new CommandNintendoSwitchProController(GeneralConstants.controllerPort) :
+            new CommandXboxController(GeneralConstants.controllerPort);
 
     /* Subsystems */
     private final Drivebase drivebase = new Drivebase();
@@ -19,12 +23,13 @@ public class Robot {
     }
 
     private void setDefaultCommands() {
-        drivebase.setDefaultCommand(drivebase.run(() -> drivebase.arcadeDrive(controller.getLeftY(), controller.getRightX())));
+        drivebase.setDefaultCommand(drivebase.arcadeDriveCommand(controller));
     }
 
     private void configureBindings() {
         controller.x().toggleOnTrue(launcher.launchCommand().withTimeout(5));
         controller.b().toggleOnTrue(launcher.intakeCommand().withTimeout(5));
+        controller.a().toggleOnTrue(drivebase.followPathCommand("Subwoofer"));
     }
 
     public Command getAutonomousCommand() {
