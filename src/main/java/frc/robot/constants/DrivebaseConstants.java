@@ -22,4 +22,10 @@ public final class DrivebaseConstants {
 
     public static final double feedforwardS = 0;
     public static final double feedforwardV = GeneralConstants.mode == GeneralConstants.Mode.SIM ? 0.35 : 0;
+
+    public static final double preciseModeMultiplier = 0.75;
+
+    public static final double swerveModeDeadzone = 0.25;
+    public static final double swerveModeP = GeneralConstants.mode == GeneralConstants.Mode.SIM ? 0.03 : 0;
+    public static final double swerveModeD = GeneralConstants.mode == GeneralConstants.Mode.SIM ? 0.0001 : 0;
 }

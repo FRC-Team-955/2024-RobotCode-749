@@ -23,10 +23,14 @@ public class Robot {
     }
 
     private void setDefaultCommands() {
-        drivebase.setDefaultCommand(drivebase.arcadeDriveCommand(controller));
+        drivebase.setDefaultCommand(drivebase.swerveDriveCommand(controller, false));
     }
 
     private void configureBindings() {
+        controller.rightTrigger().whileTrue(drivebase.swerveDriveCommand(controller, true));
+        controller.rightBumper().whileTrue(drivebase.arcadeDriveCommand(controller, false));
+        controller.leftTrigger().whileTrue(drivebase.arcadeDriveCommand(controller, true));
+
         controller.x().toggleOnTrue(launcher.launchCommand().withTimeout(5));
         controller.b().toggleOnTrue(launcher.intakeCommand().withTimeout(5));
         controller.a().toggleOnTrue(drivebase.followPathCommand("Subwoofer"));

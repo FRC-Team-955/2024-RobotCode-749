@@ -4,7 +4,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.constants.LauncherConstants;
 
-import static frc.robot.util.IOUtil.chooseIO;
+import static frc.robot.Util.chooseIO;
 
 public class Launcher extends SubsystemBase {
     private final LauncherIO io = chooseIO(LauncherIOReal::new, LauncherIOSim::new, LauncherIO::new);

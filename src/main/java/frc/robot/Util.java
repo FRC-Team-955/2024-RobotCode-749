@@ -1,10 +1,10 @@
-package frc.robot.util;
+package frc.robot;
 
 import frc.robot.constants.GeneralConstants;
 
 import java.util.function.Supplier;
 
-public class IOUtil {
+public final class Util {
     public static <T> T chooseIO(Supplier<T> real, Supplier<T> sim, Supplier<T> replay) {
         switch (GeneralConstants.mode) {
             case REAL -> {
@@ -17,5 +17,9 @@ public class IOUtil {
                 return replay.get();
             }
         }
+    }
+
+    public static <T> T make(Supplier<T> maker) {
+        return maker.get();
     }
 }

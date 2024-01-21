@@ -3,7 +3,6 @@ package frc.robot.subsystems.drivebase;
 import com.revrobotics.*;
 import edu.wpi.first.math.util.Units;
 import frc.robot.constants.DrivebaseConstants;
-import frc.robot.sensors.Gyro;
 
 public class DrivebaseIOReal extends DrivebaseIO {
     private final CANSparkMax leftLeader = new CANSparkMax(DrivebaseConstants.leftLeaderMotorId, CANSparkLowLevel.MotorType.kBrushed);
@@ -47,7 +46,7 @@ public class DrivebaseIOReal extends DrivebaseIO {
         inputs.rightPositionRad = Units.rotationsToRadians(rightEncoder.getPosition() / DrivebaseConstants.gearRatio.value);
         inputs.rightVelocityRadPerSec = Units.rotationsPerMinuteToRadiansPerSecond(rightEncoder.getVelocity() / DrivebaseConstants.gearRatio.value);
 
-        inputs.gyroYaw = Gyro.getRotation2d();
+//        inputs.gyroYaw = Gyro.getRotation2d();
     }
 
     @Override

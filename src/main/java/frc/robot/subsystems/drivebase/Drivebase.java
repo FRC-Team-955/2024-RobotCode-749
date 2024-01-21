@@ -5,6 +5,7 @@ import com.pathplanner.lib.path.PathPlannerPath;
 import com.pathplanner.lib.pathfinding.Pathfinding;
 import com.pathplanner.lib.util.PathPlannerLogging;
 import com.pathplanner.lib.util.ReplanningConfig;
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -16,13 +17,14 @@ import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import frc.robot.Util;
 import frc.robot.constants.DrivebaseConstants;
 import frc.robot.constants.GeneralConstants;
 import frc.robot.util.LocalADStarAK;
 import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
 
-import static frc.robot.util.IOUtil.chooseIO;
+import static frc.robot.Util.chooseIO;
 
 public class Drivebase extends SubsystemBase {
     private final DrivebaseIO io = chooseIO(DrivebaseIOReal::new, DrivebaseIOSim::new, DrivebaseIO::new);
@@ -31,6 +33,12 @@ public class Drivebase extends SubsystemBase {
     private final DifferentialDriveOdometry odometry = new DifferentialDriveOdometry(new Rotation2d(), 0.0, 0.0);
     private final DifferentialDriveKinematics kinematics = new DifferentialDriveKinematics(DrivebaseConstants.trackWidth);
     private final SimpleMotorFeedforward feedforward = new SimpleMotorFeedforward(DrivebaseConstants.feedforwardS, DrivebaseConstants.feedforwardV);
+
+    private final PIDController swerveModePID = Util.make(() -> {
+        var pid = new PIDController(DrivebaseConstants.swerveModeP, 0, DrivebaseConstants.swerveModeD);
+        pid.enableContinuousInput(-180, 180);
+        return pid;
+    });
 
     public Drivebase() {
         AutoBuilder.configureRamsete(
@@ -80,8 +88,36 @@ public class Drivebase extends SubsystemBase {
         );
     }
 
-    public Command arcadeDriveCommand(CommandXboxController controller) {
-        return run(() -> arcadeDrive(controller.getLeftY(), -controller.getRightX()));
+    public Command arcadeDriveCommand(CommandXboxController controller, boolean preciseMode) {
+        if (preciseMode) {
+            return run(() -> arcadeDrive(controller.getLeftY() * DrivebaseConstants.preciseModeMultiplier, -controller.getRightX() * DrivebaseConstants.preciseModeMultiplier));
+        } else {
+            return run(() -> arcadeDrive(controller.getLeftY(), -controller.getRightX()));
+        }
+    }
+
+    public Command swerveDriveCommand(CommandXboxController controller, boolean preciseMode) {
+        return run(() -> {
+            var x = controller.getRightX();
+            var y = controller.getRightY();
+
+            if (Math.abs(x) > DrivebaseConstants.swerveModeDeadzone || Math.abs(y) > DrivebaseConstants.swerveModeDeadzone) {
+                var stickAngle = Math.toDegrees(Math.atan2(-x, y));
+                swerveModePID.setSetpoint(stickAngle);
+                Logger.recordOutput("Drivebase/SwerveMode/StickAngle", stickAngle);
+            } else {
+                arcadeDrive(controller.getLeftY(), 0);
+            }
+
+            var robotAngle = getPose().getRotation().getDegrees();
+            var rotation = swerveModePID.calculate(robotAngle);
+            Logger.recordOutput("Drivebase/SwerveMode/Rotation", rotation);
+            if (preciseMode) {
+                arcadeDrive(controller.getLeftY() * DrivebaseConstants.preciseModeMultiplier, rotation);
+            } else {
+                arcadeDrive(controller.getLeftY(), rotation);
+            }
+        });
     }
 
     public Command followPathCommand(String pathName) {
