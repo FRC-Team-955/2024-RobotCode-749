@@ -1,0 +1,157 @@
+{
+    "name": "Nintendo Switch Pro Controller",
+    "components": [
+        {
+            "_name": "Left Stick",
+            "type": "joystick",
+            "isYellow": false,
+            "centerPx": [481.5, 445.5],
+            "radiusPx": 100,
+            "xSourceIndex": 0,
+            "xSourceInverted": false,
+            "ySourceIndex": 1,
+            "ySourceInverted": true,
+            "buttonSourceIndex": 11
+        },
+        {
+            "_name": "Right Stick",
+            "type": "joystick",
+            "isYellow": false,
+            "centerPx": [1090.5, 650],
+            "radiusPx": 100,
+            "xSourceIndex": 2,
+            "xSourceInverted": false,
+            "ySourceIndex": 3,
+            "ySourceInverted": true,
+            "buttonSourceIndex": 12
+        },
+        {
+            "_name": "D-Pad Up",
+            "type": "button",
+            "isYellow": false,
+            "isEllipse": false,
+            "centerPx": [664, 581],
+            "sizePx": [68, 74],
+            "sourceIndex": 0,
+            "sourcePov": "up"
+        },
+        {
+            "_name": "D-Pad Down",
+            "type": "button",
+            "isYellow": false,
+            "isEllipse": false,
+            "centerPx": [664, 723],
+            "sizePx": [68, 74],
+            "sourceIndex": 0,
+            "sourcePov": "down"
+        },
+        {
+            "_name": "D-Pad Left",
+            "type": "button",
+            "isYellow": false,
+            "isEllipse": false,
+            "centerPx": [593, 652],
+            "sizePx": [74, 68],
+            "sourceIndex": 0,
+            "sourcePov": "left"
+        },
+        {
+            "_name": "D-Pad Right",
+            "type": "button",
+            "isYellow": false,
+            "isEllipse": false,
+            "centerPx": [735, 652],
+            "sizePx": [74, 68],
+            "sourceIndex": 0,
+            "sourcePov": "right"
+        },
+        {
+            "_name": "A",
+            "type": "button",
+            "isYellow": false,
+            "isEllipse": true,
+            "centerPx": [1406, 446],
+            "sizePx": [106, 106],
+            "sourceIndex": 2
+        },
+        {
+            "_name": "B",
+            "type": "button",
+            "isYellow": false,
+            "isEllipse": true,
+            "centerPx": [1290, 548],
+            "sizePx": [106, 106],
+            "sourceIndex": 1
+        },
+        {
+            "_name": "X",
+            "type": "button",
+            "isYellow": false,
+            "isEllipse": true,
+            "centerPx": [1290, 345],
+            "sizePx": [106, 106],
+            "sourceIndex": 4
+        },
+        {
+            "_name": "Y",
+            "type": "button",
+            "isYellow": false,
+            "isEllipse": true,
+            "centerPx": [1173, 446],
+            "sizePx": [106, 106],
+            "sourceIndex": 3
+        },
+        {
+            "_name": "Left Bumper",
+            "type": "button",
+            "isYellow": false,
+            "isEllipse": false,
+            "centerPx": [500, 150],
+            "sizePx": [360, 94],
+            "sourceIndex": 5
+        },
+        {
+            "_name": "Right Bumper",
+            "type": "button",
+            "isYellow": false,
+            "isEllipse": false,
+            "centerPx": [1290, 150],
+            "sizePx": [360, 94],
+            "sourceIndex": 6
+        },
+        {
+            "_name": "Left Trigger",
+            "type": "button",
+            "isYellow": false,
+            "centerPx": [145, 233],
+            "sizePx": [94, 260],
+            "sourceIndex": 7
+        },
+        {
+            "_name": "Right Trigger",
+            "type": "button",
+            "isYellow": false,
+            "centerPx": [1645, 233],
+            "sizePx": [94, 260],
+            "sourceIndex": 8
+        },
+        {
+            "_name": "-",
+            "type": "button",
+            "isYellow": false,
+            "isEllipse": true,
+            "centerPx": [710, 333],
+            "sizePx": [62, 62],
+            "sourceIndex": 9
+        },
+        {
+            "_name": "+",
+            "type": "button",
+            "isYellow": false,
+            "isEllipse": true,
+            "centerPx": [1079, 333],
+            "sizePx": [62, 62],
+            "sourceIndex": 10
+        }
+    ]
+}
