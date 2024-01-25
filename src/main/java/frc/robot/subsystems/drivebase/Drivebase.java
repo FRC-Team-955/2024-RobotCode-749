@@ -130,16 +130,12 @@ public class Drivebase extends SubsystemBase {
         return odometry.getPoseMeters();
     }
 
-    public void setPose(Pose2d newPose) {
-        odometry.resetPosition(inputs.gyroYaw, getLeftPositionMeters(), getRightPositionMeters(), newPose);
-    }
-
-    private void resetPose() {
-        odometry.resetPosition(new Rotation2d(), 0, 0, new Pose2d());
+    public Command setPoseCommand(Pose2d newPose) {
+        return Commands.runOnce(() -> odometry.resetPosition(inputs.gyroYaw, getLeftPositionMeters(), getRightPositionMeters(), newPose));
     }
 
     public Command resetPoseCommand() {
-        return Commands.runOnce(this::resetPose);
+        return Commands.runOnce(() -> odometry.resetPosition(new Rotation2d(), 0, 0, new Pose2d()));
     }
 
     @AutoLogOutput
