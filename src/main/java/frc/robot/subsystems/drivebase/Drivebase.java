@@ -12,6 +12,8 @@ import com.pathplanner.lib.util.PathPlannerLogging;
 import com.pathplanner.lib.util.ReplanningConfig;
 
 import edu.wpi.first.math.controller.PIDController;
+
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -197,11 +199,11 @@ public class Drivebase extends SubsystemBase {
     });
   }
 
-  public Command followPathCommand(String pathName) {
-    return AutoBuilder.followPath(PathPlannerPath.fromPathFile(pathName));
-  }
+    public Command followPathCommand(String pathName) {
+        return AutoBuilder.followPath(PathPlannerPath.fromPathFile(pathName));
+    }
 
-  private Runnable noop = new Runnable() {
+    private Runnable noop = new Runnable() {
     @Override
     public void run() {}
   };
