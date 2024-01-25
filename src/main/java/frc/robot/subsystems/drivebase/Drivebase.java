@@ -44,7 +44,7 @@ public class Drivebase extends SubsystemBase {
     public Drivebase() {
         AutoBuilder.configureRamsete(
                 this::getPose,
-                this::setPose,
+                (pose) -> odometry.resetPosition(inputs.gyroYaw, getLeftPositionMeters(), getRightPositionMeters(), pose),
                 () -> kinematics.toChassisSpeeds(new DifferentialDriveWheelSpeeds(getLeftVelocityMetersPerSec(), getRightVelocityMetersPerSec())),
                 (speeds) -> {
                     var wheelSpeeds = kinematics.toWheelSpeeds(speeds);
