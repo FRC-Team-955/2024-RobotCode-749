@@ -30,6 +30,7 @@ public class Robot {
         controller.rightTrigger().whileTrue(drivebase.swerveDriveCommand(controller, true));
         controller.rightBumper().whileTrue(drivebase.arcadeDriveCommand(controller, false));
         controller.leftTrigger().whileTrue(drivebase.arcadeDriveCommand(controller, true));
+        controller.leftBumper().onTrue(drivebase.resetPoseCommand());
 
         controller.x().toggleOnTrue(launcher.launchCommand().withTimeout(5));
         controller.b().toggleOnTrue(launcher.intakeCommand().withTimeout(5));

@@ -15,6 +15,7 @@ import edu.wpi.first.math.kinematics.DifferentialDriveWheelSpeeds;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.Util;
@@ -133,8 +134,12 @@ public class Drivebase extends SubsystemBase {
         odometry.resetPosition(inputs.gyroYaw, getLeftPositionMeters(), getRightPositionMeters(), newPose);
     }
 
-    public void resetPose() {
+    private void resetPose() {
         odometry.resetPosition(new Rotation2d(), 0, 0, new Pose2d());
+    }
+
+    public Command resetPoseCommand() {
+        return Commands.runOnce(this::resetPose);
     }
 
     @AutoLogOutput
