@@ -5,7 +5,6 @@ import com.pathplanner.lib.path.PathPlannerPath;
 import com.pathplanner.lib.pathfinding.Pathfinding;
 import com.pathplanner.lib.util.PathPlannerLogging;
 import com.pathplanner.lib.util.ReplanningConfig;
-import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -22,6 +21,7 @@ import frc.robot.Util;
 import frc.robot.constants.DrivebaseConstants;
 import frc.robot.constants.GeneralConstants;
 import frc.robot.util.LocalADStarAK;
+import frc.robot.util.TunablePIDController;
 import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
 
@@ -35,8 +35,8 @@ public class Drivebase extends SubsystemBase {
     private final DifferentialDriveKinematics kinematics = new DifferentialDriveKinematics(DrivebaseConstants.trackWidth);
     private final SimpleMotorFeedforward feedforward = new SimpleMotorFeedforward(DrivebaseConstants.feedforwardS, DrivebaseConstants.feedforwardV);
 
-    private final PIDController swerveModePID = Util.make(() -> {
-        var pid = new PIDController(DrivebaseConstants.swerveModeP, 0, DrivebaseConstants.swerveModeD);
+    private final TunablePIDController swerveModePID = Util.make(() -> {
+        var pid = new TunablePIDController("Swerve Mode", DrivebaseConstants.swerveModeP, 0, DrivebaseConstants.swerveModeD);
         pid.enableContinuousInput(-180, 180);
         return pid;
     });
