@@ -12,8 +12,6 @@ import com.pathplanner.lib.util.PathPlannerLogging;
 import com.pathplanner.lib.util.ReplanningConfig;
 
 import edu.wpi.first.math.controller.PIDController;
-
-import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -199,11 +197,11 @@ public class Drivebase extends SubsystemBase {
     });
   }
 
-    public Command followPathCommand(String pathName) {
-        return AutoBuilder.followPath(PathPlannerPath.fromPathFile(pathName));
-    }
+  public Command followPathCommand(String pathName) {
+    return AutoBuilder.followPath(PathPlannerPath.fromPathFile(pathName));
+  }
 
-    private Runnable noop = new Runnable() {
+  private Runnable noop = new Runnable() {
     @Override
     public void run() {}
   };
@@ -212,36 +210,34 @@ public class Drivebase extends SubsystemBase {
    * Goes to given target pose.
    */
   private Command pathFindCommand(Pose2d targetPose) {
-    try (
-      var pidController = new PIDController(
-        DrivebaseConstants.swerveModeP,
-        0,
-        DrivebaseConstants.swerveModeD
-      )
-    ) {
-      var pose = getPose();
-      pidController.setSetpoint(
-        Math.toDegrees(
-          Math.atan2(
-            pose.getY() - targetPose.getY(),
-            pose.getX() - targetPose.getX()
-          )
+    var pidController = new PIDController(
+      DrivebaseConstants.swerveModeP,
+      0,
+      DrivebaseConstants.swerveModeD
+    );
+    var pose = getPose();
+    pidController.setSetpoint(
+      Math.toDegrees(
+        Math.atan2(
+          pose.getY() - targetPose.getY(),
+          pose.getX() - targetPose.getX()
         )
-      );
-      pidController.setTolerance(5);
-      return new FunctionalCommand(
-        noop,
-        () -> {
-          var rotation = pidController.calculate(inputs.gyroYaw.getDegrees());
-          arcadeDrive(0, rotation);
-        },
-        bool -> {
-          moveForwardCommand(targetPose).schedule();
-        },
-        () -> pidController.atSetpoint(),
-        this
-      );
-    }
+      )
+    );
+    pidController.setTolerance(5);
+    return new FunctionalCommand(
+      noop,
+      () -> {
+        var rotation = pidController.calculate(inputs.gyroYaw.getDegrees());
+        arcadeDrive(0, rotation);
+      },
+      bool -> {
+        pidController.close();
+        moveForwardCommand(targetPose).schedule();
+      },
+      () -> pidController.atSetpoint(),
+      this
+    );
   }
 
   private Command moveForwardCommand(Pose2d targetPose) {
