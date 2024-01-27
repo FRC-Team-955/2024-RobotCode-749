@@ -52,7 +52,7 @@ public class Drivebase extends SubsystemBase {
                     driveVelocity(wheelSpeeds.leftMetersPerSecond, wheelSpeeds.rightMetersPerSecond);
                 },
                 new ReplanningConfig(),
-                () -> DriverStation.getAlliance().isPresent() && DriverStation.getAlliance().get() == DriverStation.Alliance.Red,
+                Util::shouldFlip,
                 this
         );
         Pathfinding.setPathfinder(new LocalADStarAK());
