@@ -241,6 +241,9 @@ public class Drivebase extends SubsystemBase {
       ) {
         return;
       }
+      if (!(Math.hypot(pose.getX() - targetPose.getX(), pose.getY() - targetPose.getY()) <= 2.5)) {
+        return;
+      }
       List<Translation2d> bezierPoints = PathPlannerPath.bezierFromPoses(
         getPose(),
         targetPose

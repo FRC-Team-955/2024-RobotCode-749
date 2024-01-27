@@ -13,8 +13,8 @@ public class Robot {
             new CommandNintendoSwitchProController(GeneralConstants.controllerPort) :
             new CommandXboxController(GeneralConstants.controllerPort);
     private final CommandXboxController controller2 = SimulationConstants.useNintendoSwitchProController ?
-            new CommandNintendoSwitchProController(GeneralConstants.controllerPort) :
-            new CommandXboxController(GeneralConstants.controllerPort);
+            new CommandNintendoSwitchProController(1) :
+            new CommandXboxController(1);
 
     /* Subsystems */
     private final Drivebase drivebase = new Drivebase();
@@ -40,13 +40,13 @@ public class Robot {
         controller.povDown().onTrue(drivebase.swerveAngleCommand(180));
         controller.povRight().onTrue(drivebase.swerveAngleCommand(270));
 
-        controller.x().toggleOnTrue(launcher.launchCommand().withTimeout(5));
-        controller.b().toggleOnTrue(launcher.intakeCommand().withTimeout(5));
-        controller.a().toggleOnTrue(drivebase.followPathCommand("Subwoofer"));
+        // controller.x().toggleOnTrue(launcher.launchCommand().withTimeout(5));
+        // controller.b().toggleOnTrue(launcher.intakeCommand().withTimeout(5));
+        // controller.a().toggleOnTrue(drivebase.followPathCommand("Subwoofer"));
 
-        controller2.y().toggleOnTrue(drivebase.autoAlign.intakeSubwooferCommand());
-        controller2.b().toggleOnTrue(drivebase.autoAlign.rightSubwooferCommand());
-        controller2.x().toggleOnTrue(drivebase.autoAlign.leftSubwooferCommand());
+        controller.y().toggleOnTrue(drivebase.autoAlign.intakeSubwooferCommand());
+        controller.b().toggleOnTrue(drivebase.autoAlign.rightSubwooferCommand());
+        controller.x().toggleOnTrue(drivebase.autoAlign.leftSubwooferCommand());
     }
 
     public Command getAutonomousCommand() {
