@@ -17,7 +17,7 @@ public class Robot {
             new CommandXboxController(GeneralConstants.operatorControllerPort);
 
     /* Subsystems */
-    private final Drivebase drivebase = new Drivebase(driverController);
+    private final Drivebase drivebase = new Drivebase();
     private final Launcher launcher = new Launcher();
 
     public Robot() {
@@ -40,13 +40,13 @@ public class Robot {
         driverController.povDown().onTrue(drivebase.swerveAngleCommand(180));
         driverController.povRight().onTrue(drivebase.swerveAngleCommand(270));
 
-        driverController.x().toggleOnTrue(launcher.launchCommand().withTimeout(5));
-        driverController.b().toggleOnTrue(launcher.intakeCommand().withTimeout(5));
-        driverController.a().toggleOnTrue(drivebase.followPathCommand("Subwoofer"));
+        // driverController.x().toggleOnTrue(launcher.launchCommand().withTimeout(5));
+        // driverController.b().toggleOnTrue(launcher.intakeCommand().withTimeout(5));
 
-        operatorController.y().toggleOnTrue(drivebase.autoAlign.intakeSubwooferCommand());
-        operatorController.b().toggleOnTrue(drivebase.autoAlign.rightSubwooferCommand());
-        operatorController.x().toggleOnTrue(drivebase.autoAlign.leftSubwooferCommand());
+        // driverController.a().toggleOnTrue(drivebase.autoAlign.frontSubwooferCommand(driverController));
+        driverController.b().toggleOnTrue(drivebase.autoAlign.rightSubwooferCommand(driverController));
+        driverController.x().toggleOnTrue(drivebase.autoAlign.leftSubwooferCommand(driverController));
+        driverController.y().toggleOnTrue(drivebase.autoAlign.intakeCommand(driverController));
     }
 
     public Command getAutonomousCommand() {

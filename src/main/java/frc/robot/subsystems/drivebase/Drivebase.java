@@ -49,10 +49,7 @@ public class Drivebase extends SubsystemBase {
     });
     private double swerveModeSetpoint = 0;
 
-    private CommandXboxController driverController;
-
-    public Drivebase(CommandXboxController driverController) {
-        this.driverController = driverController;
+    public Drivebase() {
         AutoBuilder.configureRamsete(
                 this::getPose,
                 (pose) -> odometry.resetPosition(inputs.gyroYaw, getLeftPositionMeters(), getRightPositionMeters(), pose),
@@ -148,7 +145,6 @@ public class Drivebase extends SubsystemBase {
         if ((Math.hypot(pose.getX() - targetPose.getX(), pose.getY() - targetPose.getY()) <= 2.5)) {
             return true;
         }
-        driverController.getHID().setRumble(RumbleType.kBothRumble, 0.2);
         return false;
     }
 
@@ -160,8 +156,6 @@ public class Drivebase extends SubsystemBase {
             if (Math.abs(pose.getX() - targetPose.getX()) <= .1 && Math.abs(pose.getY() - targetPose.getY()) <= .1) {
                 return;
             }
-
-            if (!checkDistance(targetPose)) return;
 
             List<Translation2d> bezierPoints = PathPlannerPath.bezierFromPoses(
                     getPose(),
@@ -185,16 +179,50 @@ public class Drivebase extends SubsystemBase {
     public AutoAlign autoAlign = new AutoAlign();
 
     public class AutoAlign {
-        public Command rightSubwooferCommand() {
-            return pathfindCommand(Util.flipIfNeeded(new Pose2d(1.185, 6.612, Rotation2d.fromRadians(0.696))));
+        private boolean errorCheck(Pose2d pose, Rect bounds, CommandXboxController driverController) {
+            if (bounds.contains(pose)) {
+                return true;
+            }
+            driverController.getHID().setRumble(RumbleType.kBothRumble, 0.2);
+            return false;
         }
 
-        public Command leftSubwooferCommand() {
-            return pathfindCommand(Util.flipIfNeeded(new Pose2d(1.195, 4.545, Rotation2d.fromRadians(-1.106))));
+        public Command rightSubwooferCommand(CommandXboxController driverController) {
+            return runOnce(() -> {
+                Pose2d targetPose = Util.flipIfNeeded(new Pose2d(1.185, 6.612, Rotation2d.fromRadians(0.696)));
+                if (!errorCheck(getPose(), new Rect(new Pose2d(1.203, 6.261, Rotation2d.fromDegrees(0)), new Pose2d(5.339, 7.737, Rotation2d.fromDegrees(0))), driverController)) {
+                    return;
+                }
+                pathfindCommand(targetPose).schedule();
+            });
         }
 
-        public Command intakeSubwooferCommand() {
-            return pathfindCommand(Util.flipIfNeeded(new Pose2d(1.93, 7.716, Rotation2d.fromDegrees(90))));
+        public Command leftSubwooferCommand(CommandXboxController driverController) {
+            return runOnce(() -> {
+                Pose2d pose = Util.flipIfNeeded(new Pose2d(1.195, 4.545, Rotation2d.fromRadians(-1.106)));
+                if (!errorCheck(getPose(), new Rect(new Pose2d(1.373, 5.101, Rotation2d.fromDegrees(0)), new Pose2d(2.632, 1.354, Rotation2d.fromDegrees(0))), driverController)) {
+                    return;
+                }
+                pathfindCommand(pose).schedule();
+            });
+        }
+
+        // public Command frontSubwooferCommand(CommandXboxController driverController) {
+        //     Pose2d pose = Util.flipIfNeeded(new Pose2d(1.428, 5.567, Rotation2d.fromDegrees(0)));
+        //     if (!errorCheck(pose, new Rect(), driverController)) {
+        //         return noop();
+        //     }
+        //     return pathfindCommand(pose);
+        // }
+
+        public Command intakeCommand(CommandXboxController driverController) {
+            return runOnce(() -> {
+                Pose2d pose = Util.flipIfNeeded(new Pose2d(1.93, 7.716, Rotation2d.fromDegrees(90)));
+                if (!errorCheck(getPose(), new Rect(new Pose2d(1.272, 7.681, Rotation2d.fromDegrees(0)), new Pose2d(2.798, 1.455, Rotation2d.fromDegrees(0))), driverController)) {
+                    return;
+                }
+                pathfindCommand(pose).schedule();
+            });
         }
     }
 
