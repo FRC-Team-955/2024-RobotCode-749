@@ -35,11 +35,7 @@ import static frc.robot.Util.chooseIO;
 
 public class Drivebase extends SubsystemBase {
 
-    private final DrivebaseIO io = chooseIO(
-            DrivebaseIOReal::new,
-            DrivebaseIOSim::new,
-            DrivebaseIO::new
-    );
+    private final DrivebaseIO io = chooseIO(DrivebaseIOReal::new, DrivebaseIOSim::new, DrivebaseIO::new);
     private final DrivebaseIOInputsAutoLogged inputs = new DrivebaseIOInputsAutoLogged();
 
     private final DifferentialDriveOdometry odometry = new DifferentialDriveOdometry(
@@ -213,22 +209,11 @@ public class Drivebase extends SubsystemBase {
         return AutoBuilder.followPath(PathPlannerPath.fromPathFile(pathName));
     }
 
-    private final Runnable noop = new Runnable() {
-        @Override
-        public void run() {
-        }
-    };
-
-    private Command pathFindCommand(Pose2d targetPose) {
-        return pathFindCommand(targetPose, targetPose.getRotation());
+    private Command pathfindCommand(Pose2d targetPose) {
+        return pathfindCommand(targetPose, targetPose.getRotation());
     }
 
-    // PIDController pathFindPidController;
-
-    /**
-     * Goes to given target pose.
-     */
-    private Command pathFindCommand(
+    private Command pathfindCommand(
             Pose2d targetPose,
             Rotation2d targetRotation
     ) {
@@ -345,19 +330,19 @@ public class Drivebase extends SubsystemBase {
     public class AutoAlign {
 
         public Command rightSubwooferCommand() {
-            return pathFindCommand(
+            return pathfindCommand(
                     Util.flipIfNeeded(new Pose2d(1.185, 6.612, Rotation2d.fromRadians(0.696)))
             );
         }
 
         public Command leftSubwooferCommand() {
-            return pathFindCommand(
+            return pathfindCommand(
                     Util.flipIfNeeded(new Pose2d(1.195, 4.545, Rotation2d.fromRadians(-1.106)))
             );
         }
 
         public Command intakeSubwooferCommand() {
-            return pathFindCommand(
+            return pathfindCommand(
                     Util.flipIfNeeded(new Pose2d(1.93, 7.716, Rotation2d.fromDegrees(90)))
             );
         }

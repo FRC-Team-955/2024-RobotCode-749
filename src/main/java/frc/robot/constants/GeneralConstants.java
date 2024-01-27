@@ -3,7 +3,8 @@ package frc.robot.constants;
 import edu.wpi.first.wpilibj.RobotBase;
 
 public final class GeneralConstants {
-    public static final int controllerPort = 0;
+    public static final int driverControllerPort = 0;
+    public static final int operatorControllerPort = 0;
 
     public static final boolean tuningMode = false;
 
