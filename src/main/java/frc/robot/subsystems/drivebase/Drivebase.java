@@ -95,7 +95,7 @@ public class Drivebase extends SubsystemBase {
     }
 
     public Command swerveDriveCommand(CommandXboxController controller, boolean preciseMode) {
-        return run(() -> {
+        return Commands.runOnce(() -> swerveModeSetpoint = getPose().getRotation().getDegrees()).andThen(run(() -> {
             var x = controller.getRightX();
             var y = controller.getRightY();
 
@@ -115,7 +115,7 @@ public class Drivebase extends SubsystemBase {
             } else {
                 arcadeDrive(controller.getLeftY(), rotation);
             }
-        });
+        }));
     }
 
     public Command swerveAngleCommand(double angle) {
