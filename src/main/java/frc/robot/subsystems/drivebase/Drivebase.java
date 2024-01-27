@@ -1,6 +1,8 @@
 package frc.robot.subsystems.drivebase;
 
 import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.path.GoalEndState;
+import com.pathplanner.lib.path.PathConstraints;
 import com.pathplanner.lib.path.PathPlannerPath;
 import com.pathplanner.lib.pathfinding.Pathfinding;
 import com.pathplanner.lib.util.PathPlannerLogging;
@@ -8,6 +10,7 @@ import com.pathplanner.lib.util.ReplanningConfig;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.DifferentialDriveKinematics;
 import edu.wpi.first.math.kinematics.DifferentialDriveOdometry;
 import edu.wpi.first.math.kinematics.DifferentialDriveWheelSpeeds;
@@ -23,6 +26,8 @@ import frc.robot.util.LocalADStarAK;
 import frc.robot.util.TunablePIDController;
 import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
+
+import java.util.List;
 
 import static frc.robot.Util.chooseIO;
 
@@ -68,7 +73,11 @@ public class Drivebase extends SubsystemBase {
     }
 
     private void arcadeDrive(double speed, double rotation) {
-        var speeds = DifferentialDrive.arcadeDriveIK(GeneralConstants.mode == GeneralConstants.Mode.REAL ? rotation : speed, GeneralConstants.mode == GeneralConstants.Mode.REAL ? speed : rotation, true);
+        var speeds = DifferentialDrive.arcadeDriveIK(
+                GeneralConstants.mode == GeneralConstants.Mode.REAL ? rotation : speed,
+                GeneralConstants.mode == GeneralConstants.Mode.REAL ? speed : rotation,
+                true
+        );
         io.setVoltage(speeds.left * 12, speeds.right * 12);
     }
 
@@ -94,25 +103,27 @@ public class Drivebase extends SubsystemBase {
     }
 
     public Command swerveDriveCommand(CommandXboxController controller, boolean preciseMode) {
-        return Commands.runOnce(() -> swerveModeSetpoint = getPose().getRotation().getDegrees()).andThen(run(() -> {
-            var x = controller.getRightX();
-            var y = controller.getRightY();
+        return Commands
+                .runOnce(() -> swerveModeSetpoint = getPose().getRotation().getDegrees())
+                .andThen(run(() -> {
+                    var x = controller.getRightX();
+                    var y = controller.getRightY();
 
-            if (Math.abs(x) > DrivebaseConstants.swerveModeDeadzone || Math.abs(y) > DrivebaseConstants.swerveModeDeadzone) {
-                swerveModeSetpoint = Math.toDegrees(Math.atan2(-x, y));
-            }
+                    if (Math.abs(x) > DrivebaseConstants.swerveModeDeadzone || Math.abs(y) > DrivebaseConstants.swerveModeDeadzone) {
+                        swerveModeSetpoint = Math.toDegrees(Math.atan2(-x, y));
+                    }
 
-            swerveModePID.setSetpoint(swerveModeSetpoint);
-            Logger.recordOutput("Drivebase/SwerveMode/Setpoint", swerveModeSetpoint);
-            var robotAngle = getPose().getRotation().getDegrees();
-            var rotation = swerveModePID.calculate(robotAngle);
-            Logger.recordOutput("Drivebase/SwerveMode/Rotation", rotation);
-            if (preciseMode) {
-                arcadeDrive(controller.getLeftY() * DrivebaseConstants.preciseModeMultiplier, rotation);
-            } else {
-                arcadeDrive(controller.getLeftY(), rotation);
-            }
-        }));
+                    swerveModePID.setSetpoint(swerveModeSetpoint);
+                    Logger.recordOutput("Drivebase/SwerveMode/Setpoint", swerveModeSetpoint);
+                    var robotAngle = getPose().getRotation().getDegrees();
+                    var rotation = swerveModePID.calculate(robotAngle);
+                    Logger.recordOutput("Drivebase/SwerveMode/Rotation", rotation);
+                    if (preciseMode) {
+                        arcadeDrive(controller.getLeftY() * DrivebaseConstants.preciseModeMultiplier, rotation);
+                    } else {
+                        arcadeDrive(controller.getLeftY(), rotation);
+                    }
+                }));
     }
 
     public Command swerveAngleCommand(double angle) {
@@ -121,6 +132,53 @@ public class Drivebase extends SubsystemBase {
 
     public Command followPathCommand(String pathName) {
         return AutoBuilder.followPath(PathPlannerPath.fromPathFile(pathName));
+    }
+
+    private Command pathfindCommand(Pose2d targetPose) {
+        return Commands.runOnce(() -> {
+            var pose = getPose();
+
+            if (Math.abs(pose.getX() - targetPose.getX()) <= .1 && Math.abs(pose.getY() - targetPose.getY()) <= .1) {
+                return;
+            }
+
+            if (!(Math.hypot(pose.getX() - targetPose.getX(), pose.getY() - targetPose.getY()) <= 2.5)) {
+                return;
+            }
+
+            List<Translation2d> bezierPoints = PathPlannerPath.bezierFromPoses(
+                    getPose(),
+                    targetPose
+            );
+
+            PathPlannerPath path = new PathPlannerPath(
+                    bezierPoints,
+                    new PathConstraints(3.0, 3.0, 2 * Math.PI, 4 * Math.PI), // The constraints for this path. If using a differential drivetrain, the angular constraints have no effect.
+                    new GoalEndState(0.0, targetPose.getRotation()) // Goal end state. You can set a holonomic rotation here. If using a differential drivetrain, the rotation will have no effect.
+            );
+
+            path.preventFlipping = true;
+            AutoBuilder
+                    .followPath(path)
+                    .andThen(swerveAngleCommand(targetPose.getRotation().getDegrees()))
+                    .schedule();
+        });
+    }
+
+    public AutoAlign autoAlign = new AutoAlign();
+
+    public class AutoAlign {
+        public Command rightSubwooferCommand() {
+            return pathfindCommand(Util.flipIfNeeded(new Pose2d(1.185, 6.612, Rotation2d.fromRadians(0.696))));
+        }
+
+        public Command leftSubwooferCommand() {
+            return pathfindCommand(Util.flipIfNeeded(new Pose2d(1.195, 4.545, Rotation2d.fromRadians(-1.106))));
+        }
+
+        public Command intakeSubwooferCommand() {
+            return pathfindCommand(Util.flipIfNeeded(new Pose2d(1.93, 7.716, Rotation2d.fromDegrees(90))));
+        }
     }
 
     @AutoLogOutput
