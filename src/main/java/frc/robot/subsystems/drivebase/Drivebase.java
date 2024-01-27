@@ -34,30 +34,15 @@ import java.util.List;
 import static frc.robot.Util.chooseIO;
 
 public class Drivebase extends SubsystemBase {
-
     private final DrivebaseIO io = chooseIO(DrivebaseIOReal::new, DrivebaseIOSim::new, DrivebaseIO::new);
     private final DrivebaseIOInputsAutoLogged inputs = new DrivebaseIOInputsAutoLogged();
 
-    private final DifferentialDriveOdometry odometry = new DifferentialDriveOdometry(
-            new Rotation2d(),
-            0.0,
-            0.0
-    );
-    private final DifferentialDriveKinematics kinematics = new DifferentialDriveKinematics(
-            DrivebaseConstants.trackWidth
-    );
-    private final SimpleMotorFeedforward feedforward = new SimpleMotorFeedforward(
-            DrivebaseConstants.feedforwardS,
-            DrivebaseConstants.feedforwardV
-    );
+    private final DifferentialDriveOdometry odometry = new DifferentialDriveOdometry(new Rotation2d(), 0.0, 0.0);
+    private final DifferentialDriveKinematics kinematics = new DifferentialDriveKinematics(DrivebaseConstants.trackWidth);
+    private final SimpleMotorFeedforward feedforward = new SimpleMotorFeedforward(DrivebaseConstants.feedforwardS, DrivebaseConstants.feedforwardV);
 
     private final TunablePIDController swerveModePID = Util.make(() -> {
-        var pid = new TunablePIDController(
-                "Swerve Mode",
-                DrivebaseConstants.swerveModeP,
-                0,
-                DrivebaseConstants.swerveModeD
-        );
+        var pid = new TunablePIDController("Swerve Mode", DrivebaseConstants.swerveModeP, 0, DrivebaseConstants.swerveModeD);
         pid.enableContinuousInput(-180, 180);
         return pid;
     });
@@ -66,41 +51,19 @@ public class Drivebase extends SubsystemBase {
     public Drivebase() {
         AutoBuilder.configureRamsete(
                 this::getPose,
-                pose ->
-                        odometry.resetPosition(
-                                inputs.gyroYaw,
-                                getLeftPositionMeters(),
-                                getRightPositionMeters(),
-                                pose
-                        ),
-                () ->
-                        kinematics.toChassisSpeeds(
-                                new DifferentialDriveWheelSpeeds(
-                                        getLeftVelocityMetersPerSec(),
-                                        getRightVelocityMetersPerSec()
-                                )
-                        ),
-                speeds -> {
+                (pose) -> odometry.resetPosition(inputs.gyroYaw, getLeftPositionMeters(), getRightPositionMeters(), pose),
+                () -> kinematics.toChassisSpeeds(new DifferentialDriveWheelSpeeds(getLeftVelocityMetersPerSec(), getRightVelocityMetersPerSec())),
+                (speeds) -> {
                     var wheelSpeeds = kinematics.toWheelSpeeds(speeds);
-                    driveVelocity(
-                            wheelSpeeds.leftMetersPerSecond,
-                            wheelSpeeds.rightMetersPerSecond
-                    );
+                    driveVelocity(wheelSpeeds.leftMetersPerSecond, wheelSpeeds.rightMetersPerSecond);
                 },
                 new ReplanningConfig(),
                 Util::shouldFlip,
                 this
         );
         Pathfinding.setPathfinder(new LocalADStarAK());
-        PathPlannerLogging.setLogActivePathCallback(activePath ->
-                Logger.recordOutput(
-                        "Drivebase/Trajectory",
-                        activePath.toArray(new Pose2d[activePath.size()])
-                )
-        );
-        PathPlannerLogging.setLogTargetPoseCallback(targetPose ->
-                Logger.recordOutput("Drivebase/TrajectorySetpoint", targetPose)
-        );
+        PathPlannerLogging.setLogActivePathCallback((activePath) -> Logger.recordOutput("Drivebase/Trajectory", activePath.toArray(new Pose2d[activePath.size()])));
+        PathPlannerLogging.setLogTargetPoseCallback((targetPose) -> Logger.recordOutput("Drivebase/TrajectorySetpoint", targetPose));
     }
 
     @Override
@@ -108,11 +71,7 @@ public class Drivebase extends SubsystemBase {
         io.updateInputs(inputs);
         Logger.processInputs("Inputs/Drivebase", inputs);
 
-        odometry.update(
-                inputs.gyroYaw,
-                getLeftPositionMeters(),
-                getRightPositionMeters()
-        );
+        odometry.update(inputs.gyroYaw, getLeftPositionMeters(), getRightPositionMeters());
     }
 
     private void arcadeDrive(double speed, double rotation) {
@@ -125,14 +84,8 @@ public class Drivebase extends SubsystemBase {
     }
 
     public void driveVelocity(double leftMetersPerSec, double rightMetersPerSec) {
-        Logger.recordOutput(
-                "Drivebase/LeftVelocitySetpointMetersPerSec",
-                leftMetersPerSec
-        );
-        Logger.recordOutput(
-                "Drivebase/RightVelocitySetpointMetersPerSec",
-                rightMetersPerSec
-        );
+        Logger.recordOutput("Drivebase/LeftVelocitySetpointMetersPerSec", leftMetersPerSec);
+        Logger.recordOutput("Drivebase/RightVelocitySetpointMetersPerSec", rightMetersPerSec);
         double leftRadPerSec = leftMetersPerSec / DrivebaseConstants.wheelRadius;
         double rightRadPerSec = rightMetersPerSec / DrivebaseConstants.wheelRadius;
         io.setVelocity(
@@ -143,62 +96,34 @@ public class Drivebase extends SubsystemBase {
         );
     }
 
-    public Command arcadeDriveCommand(
-            CommandXboxController controller,
-            boolean preciseMode
-    ) {
+    public Command arcadeDriveCommand(CommandXboxController controller, boolean preciseMode) {
         if (preciseMode) {
-            return run(() ->
-                    arcadeDrive(
-                            controller.getLeftY() * DrivebaseConstants.preciseModeMultiplier,
-                            -controller.getRightX() * DrivebaseConstants.preciseModeMultiplier
-                    )
-            );
+            return run(() -> arcadeDrive(controller.getLeftY() * DrivebaseConstants.preciseModeMultiplier, -controller.getRightX() * DrivebaseConstants.preciseModeMultiplier));
         } else {
-            return run(() ->
-                    arcadeDrive(controller.getLeftY(), -controller.getRightX())
-            );
+            return run(() -> arcadeDrive(controller.getLeftY(), -controller.getRightX()));
         }
     }
 
-    public Command swerveDriveCommand(
-            CommandXboxController controller,
-            boolean preciseMode
-    ) {
-        return Commands
-                .runOnce(() -> swerveModeSetpoint = getPose().getRotation().getDegrees())
-                .andThen(
-                        run(() -> {
-                            var x = controller.getRightX();
-                            var y = controller.getRightY();
+    public Command swerveDriveCommand(CommandXboxController controller, boolean preciseMode) {
+        return Commands.runOnce(() -> swerveModeSetpoint = getPose().getRotation().getDegrees()).andThen(run(() -> {
+            var x = controller.getRightX();
+            var y = controller.getRightY();
 
-                            if (
-                                    Math.abs(x) > DrivebaseConstants.swerveModeDeadzone ||
-                                            Math.abs(y) > DrivebaseConstants.swerveModeDeadzone
-                            ) {
-                                swerveModeSetpoint = Math.toDegrees(Math.atan2(-x, y));
-                            } else {
-                                arcadeDrive(controller.getLeftY(), 0);
-                            }
+            if (Math.abs(x) > DrivebaseConstants.swerveModeDeadzone || Math.abs(y) > DrivebaseConstants.swerveModeDeadzone) {
+                swerveModeSetpoint = Math.toDegrees(Math.atan2(-x, y));
+            }
 
-                            swerveModePID.setSetpoint(swerveModeSetpoint);
-                            Logger.recordOutput(
-                                    "Drivebase/SwerveMode/Setpoint",
-                                    swerveModeSetpoint
-                            );
-                            var robotAngle = getPose().getRotation().getDegrees();
-                            var rotation = swerveModePID.calculate(robotAngle);
-                            Logger.recordOutput("Drivebase/SwerveMode/Rotation", rotation);
-                            if (preciseMode) {
-                                arcadeDrive(
-                                        controller.getLeftY() * DrivebaseConstants.preciseModeMultiplier,
-                                        rotation
-                                );
-                            } else {
-                                arcadeDrive(controller.getLeftY(), rotation);
-                            }
-                        })
-                );
+            swerveModePID.setSetpoint(swerveModeSetpoint);
+            Logger.recordOutput("Drivebase/SwerveMode/Setpoint", swerveModeSetpoint);
+            var robotAngle = getPose().getRotation().getDegrees();
+            var rotation = swerveModePID.calculate(robotAngle);
+            Logger.recordOutput("Drivebase/SwerveMode/Rotation", rotation);
+            if (preciseMode) {
+                arcadeDrive(controller.getLeftY() * DrivebaseConstants.preciseModeMultiplier, rotation);
+            } else {
+                arcadeDrive(controller.getLeftY(), rotation);
+            }
+        }));
     }
 
     public Command swerveAngleCommand(double angle) {
@@ -356,20 +281,11 @@ public class Drivebase extends SubsystemBase {
     }
 
     public Command setPoseCommand(Pose2d newPose) {
-        return Commands.runOnce(() ->
-                odometry.resetPosition(
-                        inputs.gyroYaw,
-                        getLeftPositionMeters(),
-                        getRightPositionMeters(),
-                        newPose
-                )
-        );
+        return Commands.runOnce(() -> odometry.resetPosition(inputs.gyroYaw, getLeftPositionMeters(), getRightPositionMeters(), newPose));
     }
 
     public Command resetPoseCommand() {
-        return Commands.runOnce(() ->
-                odometry.resetPosition(new Rotation2d(), 0, 0, new Pose2d())
-        );
+        return Commands.runOnce(() -> odometry.resetPosition(new Rotation2d(), 0, 0, new Pose2d()));
     }
 
     @AutoLogOutput
