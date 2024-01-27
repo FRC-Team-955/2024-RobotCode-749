@@ -1,5 +1,12 @@
 package frc.robot.subsystems.drivebase;
 
+import static frc.robot.Util.chooseIO;
+
+import java.util.List;
+
+import org.littletonrobotics.junction.AutoLogOutput;
+import org.littletonrobotics.junction.Logger;
+
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.path.GoalEndState;
 import com.pathplanner.lib.path.PathConstraints;
@@ -7,6 +14,7 @@ import com.pathplanner.lib.path.PathPlannerPath;
 import com.pathplanner.lib.pathfinding.Pathfinding;
 import com.pathplanner.lib.util.PathPlannerLogging;
 import com.pathplanner.lib.util.ReplanningConfig;
+
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -14,6 +22,7 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.DifferentialDriveKinematics;
 import edu.wpi.first.math.kinematics.DifferentialDriveOdometry;
 import edu.wpi.first.math.kinematics.DifferentialDriveWheelSpeeds;
+import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
@@ -24,12 +33,6 @@ import frc.robot.constants.DrivebaseConstants;
 import frc.robot.constants.GeneralConstants;
 import frc.robot.util.LocalADStarAK;
 import frc.robot.util.TunablePIDController;
-import org.littletonrobotics.junction.AutoLogOutput;
-import org.littletonrobotics.junction.Logger;
-
-import java.util.List;
-
-import static frc.robot.Util.chooseIO;
 
 public class Drivebase extends SubsystemBase {
     private final DrivebaseIO io = chooseIO(DrivebaseIOReal::new, DrivebaseIOSim::new, DrivebaseIO::new);
@@ -46,7 +49,10 @@ public class Drivebase extends SubsystemBase {
     });
     private double swerveModeSetpoint = 0;
 
-    public Drivebase() {
+    private CommandXboxController driverController;
+
+    public Drivebase(CommandXboxController driverController) {
+        this.driverController = driverController;
         AutoBuilder.configureRamsete(
                 this::getPose,
                 (pose) -> odometry.resetPosition(inputs.gyroYaw, getLeftPositionMeters(), getRightPositionMeters(), pose),
@@ -134,17 +140,28 @@ public class Drivebase extends SubsystemBase {
         return AutoBuilder.followPath(PathPlannerPath.fromPathFile(pathName));
     }
 
+    /**
+     * Checks if the robot is close enough to the target pose.
+     */
+    private boolean checkDistance(Pose2d targetPose) {
+        var pose = getPose();
+        if ((Math.hypot(pose.getX() - targetPose.getX(), pose.getY() - targetPose.getY()) <= 2.5)) {
+            return true;
+        }
+        driverController.getHID().setRumble(RumbleType.kBothRumble, 0.2);
+        return false;
+    }
+
     private Command pathfindCommand(Pose2d targetPose) {
         return Commands.runOnce(() -> {
             var pose = getPose();
 
+            // Check if the robot is already at the target pose.
             if (Math.abs(pose.getX() - targetPose.getX()) <= .1 && Math.abs(pose.getY() - targetPose.getY()) <= .1) {
                 return;
             }
 
-            if (!(Math.hypot(pose.getX() - targetPose.getX(), pose.getY() - targetPose.getY()) <= 2.5)) {
-                return;
-            }
+            if (!checkDistance(targetPose)) return;
 
             List<Translation2d> bezierPoints = PathPlannerPath.bezierFromPoses(
                     getPose(),

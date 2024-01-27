@@ -17,7 +17,7 @@ public class Robot {
             new CommandXboxController(GeneralConstants.operatorControllerPort);
 
     /* Subsystems */
-    private final Drivebase drivebase = new Drivebase();
+    private final Drivebase drivebase = new Drivebase(driverController);
     private final Launcher launcher = new Launcher();
 
     public Robot() {
