@@ -40,6 +40,7 @@ public class Drivebase extends SubsystemBase {
         pid.enableContinuousInput(-180, 180);
         return pid;
     });
+    private double swerveModeSetpoint = 0;
 
     public Drivebase() {
         AutoBuilder.configureRamsete(
@@ -55,12 +56,8 @@ public class Drivebase extends SubsystemBase {
                 this
         );
         Pathfinding.setPathfinder(new LocalADStarAK());
-        PathPlannerLogging.setLogActivePathCallback((activePath) -> {
-            Logger.recordOutput("Drivebase/Trajectory", activePath.toArray(new Pose2d[activePath.size()]));
-        });
-        PathPlannerLogging.setLogTargetPoseCallback((targetPose) -> {
-            Logger.recordOutput("Drivebase/TrajectorySetpoint", targetPose);
-        });
+        PathPlannerLogging.setLogActivePathCallback((activePath) -> Logger.recordOutput("Drivebase/Trajectory", activePath.toArray(new Pose2d[activePath.size()])));
+        PathPlannerLogging.setLogTargetPoseCallback((targetPose) -> Logger.recordOutput("Drivebase/TrajectorySetpoint", targetPose));
     }
 
     @Override
@@ -103,13 +100,13 @@ public class Drivebase extends SubsystemBase {
             var y = controller.getRightY();
 
             if (Math.abs(x) > DrivebaseConstants.swerveModeDeadzone || Math.abs(y) > DrivebaseConstants.swerveModeDeadzone) {
-                var stickAngle = Math.toDegrees(Math.atan2(-x, y));
-                swerveModePID.setSetpoint(stickAngle);
-                Logger.recordOutput("Drivebase/SwerveMode/StickAngle", stickAngle);
+                swerveModeSetpoint = Math.toDegrees(Math.atan2(-x, y));
             } else {
                 arcadeDrive(controller.getLeftY(), 0);
             }
 
+            swerveModePID.setSetpoint(swerveModeSetpoint);
+            Logger.recordOutput("Drivebase/SwerveMode/Setpoint", swerveModeSetpoint);
             var robotAngle = getPose().getRotation().getDegrees();
             var rotation = swerveModePID.calculate(robotAngle);
             Logger.recordOutput("Drivebase/SwerveMode/Rotation", rotation);
@@ -119,6 +116,10 @@ public class Drivebase extends SubsystemBase {
                 arcadeDrive(controller.getLeftY(), rotation);
             }
         });
+    }
+
+    public Command swerveAngleCommand(double angle) {
+        return Commands.runOnce(() -> swerveModeSetpoint = angle);
     }
 
     public Command followPathCommand(String pathName) {

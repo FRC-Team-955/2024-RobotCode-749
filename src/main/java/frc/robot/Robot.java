@@ -32,6 +32,11 @@ public class Robot {
         controller.leftTrigger().whileTrue(drivebase.arcadeDriveCommand(controller, true));
         controller.leftBumper().onTrue(drivebase.resetPoseCommand());
 
+        controller.povUp().onTrue(drivebase.swerveAngleCommand(0));
+        controller.povLeft().onTrue(drivebase.swerveAngleCommand(90));
+        controller.povDown().onTrue(drivebase.swerveAngleCommand(180));
+        controller.povRight().onTrue(drivebase.swerveAngleCommand(270));
+
         controller.x().toggleOnTrue(launcher.launchCommand().withTimeout(5));
         controller.b().toggleOnTrue(launcher.intakeCommand().withTimeout(5));
         controller.a().toggleOnTrue(drivebase.followPathCommand("Subwoofer"));
