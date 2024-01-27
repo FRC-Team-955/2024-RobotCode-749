@@ -35,7 +35,7 @@ public class Robot {
         controller.x().toggleOnTrue(launcher.launchCommand().withTimeout(5));
         controller.b().toggleOnTrue(launcher.intakeCommand().withTimeout(5));
         controller.a().toggleOnTrue(drivebase.followPathCommand("Subwoofer"));
-        controller.y().toggleOnTrue(drivebase.redSubwooferCommand());
+        controller.y().toggleOnTrue(drivebase.autoAlign.redIntakeSubwooferCommand());
     }
 
     public Command getAutonomousCommand() {

@@ -211,28 +211,40 @@ public class Drivebase extends SubsystemBase {
     public void run() {}
   };
 
+  private Command pathFindCommand(Pose2d targetPose) {
+    return pathFindCommand(targetPose, targetPose.getRotation());
+  }
+
   // PIDController pathFindPidController;
   /**
    * Goes to given target pose.
    */
-  private Command pathFindCommand(Pose2d targetPose) {
-    return runOnce(
-      () -> {
-        List<Translation2d> bezierPoints = PathPlannerPath.bezierFromPoses(
-          getPose(),
-          targetPose
-        );
-
-        PathPlannerPath path = new PathPlannerPath(
-          bezierPoints,
-          new PathConstraints(3.0, 3.0, 2 * Math.PI, 4 * Math.PI), // The constraints for this path. If using a differential drivetrain, the angular constraints have no effect.
-          new GoalEndState(0.0, targetPose.getRotation()) // Goal end state. You can set a holonomic rotation here. If using a differential drivetrain, the rotation will have no effect.
-        );
-
-        path.preventFlipping = true;
-        AutoBuilder.followPath(path).andThen(turnToTargetCommand(targetPose)).schedule();
+  private Command pathFindCommand(
+    Pose2d targetPose,
+    Rotation2d targetRotation
+  ) {
+    return runOnce(() -> {
+      var pose = getPose();
+      if (Math.abs(pose.getX() - targetPose.getX()) <= .1 && Math.abs(pose.getY() - targetPose.getY()) <=.1) {
+        return;
       }
-    );
+      List<Translation2d> bezierPoints = PathPlannerPath.bezierFromPoses(
+        getPose(),
+        targetPose
+      );
+
+      PathPlannerPath path = new PathPlannerPath(
+        bezierPoints,
+        new PathConstraints(3.0, 3.0, 2 * Math.PI, 4 * Math.PI), // The constraints for this path. If using a differential drivetrain, the angular constraints have no effect.
+        new GoalEndState(0.0, targetPose.getRotation()) // Goal end state. You can set a holonomic rotation here. If using a differential drivetrain, the rotation will have no effect.
+      );
+
+      path.preventFlipping = true;
+      AutoBuilder
+        .followPath(path)
+        .andThen(turnToTargetCommand(targetRotation))
+        .schedule();
+    });
     // return new FunctionalCommand(
     //   () -> {
     //     pathFindPidController = new PIDController(
@@ -291,7 +303,7 @@ public class Drivebase extends SubsystemBase {
   //   }
   // }
 
-  private Command turnToTargetCommand(Pose2d targetPose) {
+  private Command turnToTargetCommand(Rotation2d targetPose) {
     try (
       var pidController = new PIDController(
         DrivebaseConstants.swerveModeP,
@@ -299,7 +311,7 @@ public class Drivebase extends SubsystemBase {
         DrivebaseConstants.swerveModeD
       )
     ) {
-      pidController.setSetpoint(targetPose.getRotation().getDegrees());
+      pidController.setSetpoint(targetPose.getDegrees());
       pidController.setTolerance(5);
       return new FunctionalCommand(
         noop,
@@ -314,9 +326,28 @@ public class Drivebase extends SubsystemBase {
     }
   }
 
-  public Command redSubwooferCommand() {
-    return pathFindCommand(new Pose2d(3.056, 5.355, Rotation2d.fromDegrees(90)));
+  public class AutoAlign {
+
+    public Command rightRedSubwooferCommand() {
+      return pathFindCommand(
+        new Pose2d(15.207, 4.594, Rotation2d.fromRadians(0.695))
+      );
+    }
+
+    public Command leftRedSubwooferCommand() {
+      return pathFindCommand(
+        new Pose2d(15.139, 6.447, Rotation2d.fromRadians(-0.588))
+      );
+    }
+
+    public Command redIntakeSubwooferCommand() {
+      return pathFindCommand(
+        new Pose2d(14.65, 7.716, Rotation2d.fromDegrees(90))
+      );
+    }
   }
+
+  public AutoAlign autoAlign = new AutoAlign();
 
   @AutoLogOutput
   public Pose2d getPose() {
