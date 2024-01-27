@@ -12,6 +12,9 @@ public class Robot {
     private final CommandXboxController controller = SimulationConstants.useNintendoSwitchProController ?
             new CommandNintendoSwitchProController(GeneralConstants.controllerPort) :
             new CommandXboxController(GeneralConstants.controllerPort);
+    private final CommandXboxController controller2 = SimulationConstants.useNintendoSwitchProController ?
+            new CommandNintendoSwitchProController(GeneralConstants.controllerPort) :
+            new CommandXboxController(GeneralConstants.controllerPort);
 
     /* Subsystems */
     private final Drivebase drivebase = new Drivebase();
@@ -40,7 +43,10 @@ public class Robot {
         controller.x().toggleOnTrue(launcher.launchCommand().withTimeout(5));
         controller.b().toggleOnTrue(launcher.intakeCommand().withTimeout(5));
         controller.a().toggleOnTrue(drivebase.followPathCommand("Subwoofer"));
-        controller.y().toggleOnTrue(drivebase.autoAlign.redIntakeSubwooferCommand());
+
+        controller2.y().toggleOnTrue(drivebase.autoAlign.intakeSubwooferCommand());
+        controller2.b().toggleOnTrue(drivebase.autoAlign.rightSubwooferCommand());
+        controller2.x().toggleOnTrue(drivebase.autoAlign.leftSubwooferCommand());
     }
 
     public Command getAutonomousCommand() {
