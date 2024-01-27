@@ -2,10 +2,14 @@ package frc.robot.subsystems.drivebase;
 
 import static frc.robot.Util.chooseIO;
 
+import java.util.List;
+
 import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
 
 import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.path.GoalEndState;
+import com.pathplanner.lib.path.PathConstraints;
 import com.pathplanner.lib.path.PathPlannerPath;
 import com.pathplanner.lib.pathfinding.Pathfinding;
 import com.pathplanner.lib.util.PathPlannerLogging;
@@ -15,6 +19,7 @@ import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.DifferentialDriveKinematics;
 import edu.wpi.first.math.kinematics.DifferentialDriveOdometry;
 import edu.wpi.first.math.kinematics.DifferentialDriveWheelSpeeds;
@@ -206,64 +211,85 @@ public class Drivebase extends SubsystemBase {
     public void run() {}
   };
 
+  // PIDController pathFindPidController;
   /**
    * Goes to given target pose.
    */
   private Command pathFindCommand(Pose2d targetPose) {
-    var pidController = new PIDController(
-      DrivebaseConstants.swerveModeP,
-      0,
-      DrivebaseConstants.swerveModeD
-    );
-    var pose = getPose();
-    pidController.setSetpoint(
-      Math.toDegrees(
-        Math.atan2(
-          pose.getY() - targetPose.getY(),
-          pose.getX() - targetPose.getX()
-        )
-      )
-    );
-    pidController.setTolerance(5);
-    return new FunctionalCommand(
-      noop,
+    return runOnce(
       () -> {
-        var rotation = pidController.calculate(inputs.gyroYaw.getDegrees());
-        arcadeDrive(0, rotation);
-      },
-      bool -> {
-        pidController.close();
-        moveForwardCommand(targetPose).schedule();
-      },
-      () -> pidController.atSetpoint(),
-      this
+        List<Translation2d> bezierPoints = PathPlannerPath.bezierFromPoses(
+          getPose(),
+          targetPose
+        );
+
+        PathPlannerPath path = new PathPlannerPath(
+          bezierPoints,
+          new PathConstraints(3.0, 3.0, 2 * Math.PI, 4 * Math.PI), // The constraints for this path. If using a differential drivetrain, the angular constraints have no effect.
+          new GoalEndState(0.0, targetPose.getRotation()) // Goal end state. You can set a holonomic rotation here. If using a differential drivetrain, the rotation will have no effect.
+        );
+
+        path.preventFlipping = true;
+        AutoBuilder.followPath(path).andThen(turnToTargetCommand(targetPose)).schedule();
+      }
     );
+    // return new FunctionalCommand(
+    //   () -> {
+    //     pathFindPidController = new PIDController(
+    //       DrivebaseConstants.swerveModeP,
+    //       0,
+    //       DrivebaseConstants.swerveModeD
+    //     );
+    //     var pose = getPose();
+    //     System.out.println(pose);
+    //     pathFindPidController.setSetpoint(
+    //       Math.toDegrees(
+    //         Math.atan2(
+    //           pose.getY() - targetPose.getY(),
+    //           pose.getX() - targetPose.getX()
+    //         )
+    //       )
+    //     );
+    //     pathFindPidController.setTolerance(5);
+    //   },
+    //   () -> {
+    //     var rotation = pidController.calculate(inputs.gyroYaw.getDegrees());
+    //     arcadeDrive(0, rotation);
+    //   },
+    //   bool -> {
+    //     pidController.close();
+    //     moveForwardCommand(targetPose).schedule();
+    //   },
+    //   () -> pidController.atSetpoint(),
+    //   this
+    // );
   }
 
-  private Command moveForwardCommand(Pose2d targetPose) {
-    try (var pidController = new PIDController(1, 0, 0)) {
-      pidController.setSetpoint(0);
-      pidController.setTolerance(0.1);
-      return new FunctionalCommand(
-        noop,
-        () -> {
-          var pose = getPose();
-          var speed = pidController.calculate(
-            Math.hypot(
-              pose.getX() - targetPose.getX(),
-              pose.getY() - targetPose.getY()
-            )
-          );
-          arcadeDrive(speed, 0);
-        },
-        interrupted -> {
-          turnToTargetCommand(targetPose).schedule();
-        },
-        () -> pidController.atSetpoint(),
-        this
-      );
-    }
-  }
+  // private Command moveForwardCommand(Pose2d targetPose) {
+  //   return new FunctionalCommand(
+  //     () -> {
+  //       pathFindPidController = new PIDController(1, 0, 0);
+  //       pathFindPidController.setSetpoint(0);
+  //       pathFindPidController.setTolerance(0.1);
+  //       },
+  //       () -> {
+  //         var pose = getPose();
+  //         var speed = pathFindPidController.calculate(
+  //           Math.hypot(
+  //             pose.getX() - targetPose.getX(),
+  //             pose.getY() - targetPose.getY()
+  //           )
+  //         );
+  //         arcadeDrive(speed, 0);
+  //       },
+  //       interrupted -> {
+  //         turnToTargetCommand(targetPose).schedule();
+  //       },
+  //       () -> pathFindPidController.atSetpoint(),
+  //       this
+  //     );
+  //   }
+  // }
 
   private Command turnToTargetCommand(Pose2d targetPose) {
     try (
@@ -289,7 +315,7 @@ public class Drivebase extends SubsystemBase {
   }
 
   public Command redSubwooferCommand() {
-    return pathFindCommand(new Pose2d(3.056, 5.355, Rotation2d.fromDegrees(0)));
+    return pathFindCommand(new Pose2d(3.056, 5.355, Rotation2d.fromDegrees(90)));
   }
 
   @AutoLogOutput
