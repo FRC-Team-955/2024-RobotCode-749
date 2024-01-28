@@ -40,13 +40,12 @@ public class Robot {
         driverController.povDown().onTrue(drivebase.swerveMode.swerveAngleCommand(180));
         driverController.povRight().onTrue(drivebase.swerveMode.swerveAngleCommand(270));
 
-        // driverController.x().toggleOnTrue(launcher.launchCommand().withTimeout(5));
-        // driverController.b().toggleOnTrue(launcher.intakeCommand().withTimeout(5));
+        driverController.x().toggleOnTrue(launcher.launchCommand().withTimeout(5));
+        driverController.b().toggleOnTrue(launcher.intakeCommand().withTimeout(5));
 
-        // driverController.a().toggleOnTrue(drivebase.autoAlign.frontSubwooferCommand(driverController));
-        driverController.b().toggleOnTrue(drivebase.autoAlign.rightSubwooferCommand(driverController));
-        driverController.x().toggleOnTrue(drivebase.autoAlign.leftSubwooferCommand(driverController));
-        driverController.y().toggleOnTrue(drivebase.autoAlign.intakeCommand(driverController));
+        operatorController.b().toggleOnTrue(drivebase.autoAlign.rightSubwooferCommand(driverController));
+        operatorController.x().toggleOnTrue(drivebase.autoAlign.leftSubwooferCommand(driverController));
+        operatorController.y().toggleOnTrue(drivebase.autoAlign.sourceCommand(driverController));
     }
 
     public Command getAutonomousCommand() {

@@ -30,7 +30,11 @@ public final class Util {
         return DriverStation.getAlliance().isPresent() && DriverStation.getAlliance().get() == DriverStation.Alliance.Red;
     }
 
-    public static Pose2d flipIfNeeded(Pose2d pose) {
+    public static Supplier<Pose2d> flipIfNeeded(Pose2d pose) {
+        return () -> flipIfNeededNow(pose);
+    }
+
+    public static Pose2d flipIfNeededNow(Pose2d pose) {
         if (shouldFlip()) {
             return GeometryUtil.flipFieldPose(pose);
         } else {
