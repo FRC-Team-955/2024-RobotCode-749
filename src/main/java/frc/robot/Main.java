@@ -2,6 +2,7 @@ package frc.robot;
 
 import edu.wpi.first.wpilibj.PowerDistribution;
 import edu.wpi.first.wpilibj.RobotBase;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.constants.BuildConstants;
@@ -64,6 +65,10 @@ public final class Main {
             Logger.start();
 
             container = new Robot();
+
+            if (GeneralConstants.tuningMode) {
+                Shuffleboard.getTab("Debug").add("Command Scheduler", CommandScheduler.getInstance());
+            }
         }
 
         @Override
