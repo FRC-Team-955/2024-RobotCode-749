@@ -26,19 +26,19 @@ public class Robot {
     }
 
     private void setDefaultCommands() {
-        drivebase.setDefaultCommand(drivebase.swerveDriveCommand(driverController, false));
+        drivebase.setDefaultCommand(drivebase.swerveMode.swerveDriveCommand(driverController, false));
     }
 
     private void configureBindings() {
-        driverController.rightTrigger().whileTrue(drivebase.swerveDriveCommand(driverController, true));
+        driverController.rightTrigger().whileTrue(drivebase.swerveMode.swerveDriveCommand(driverController, true));
         driverController.rightBumper().whileTrue(drivebase.arcadeDriveCommand(driverController, false));
         driverController.leftTrigger().whileTrue(drivebase.arcadeDriveCommand(driverController, true));
         driverController.leftBumper().onTrue(drivebase.resetPoseCommand());
 
-        driverController.povUp().onTrue(drivebase.swerveAngleCommand(0));
-        driverController.povLeft().onTrue(drivebase.swerveAngleCommand(90));
-        driverController.povDown().onTrue(drivebase.swerveAngleCommand(180));
-        driverController.povRight().onTrue(drivebase.swerveAngleCommand(270));
+        driverController.povUp().onTrue(drivebase.swerveMode.swerveAngleCommand(0));
+        driverController.povLeft().onTrue(drivebase.swerveMode.swerveAngleCommand(90));
+        driverController.povDown().onTrue(drivebase.swerveMode.swerveAngleCommand(180));
+        driverController.povRight().onTrue(drivebase.swerveMode.swerveAngleCommand(270));
 
         // driverController.x().toggleOnTrue(launcher.launchCommand().withTimeout(5));
         // driverController.b().toggleOnTrue(launcher.intakeCommand().withTimeout(5));

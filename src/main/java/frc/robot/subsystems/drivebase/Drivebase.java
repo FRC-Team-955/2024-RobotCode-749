@@ -1,12 +1,5 @@
 package frc.robot.subsystems.drivebase;
 
-import static frc.robot.Util.chooseIO;
-
-import java.util.List;
-
-import org.littletonrobotics.junction.AutoLogOutput;
-import org.littletonrobotics.junction.Logger;
-
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.path.GoalEndState;
 import com.pathplanner.lib.path.PathConstraints;
@@ -14,7 +7,6 @@ import com.pathplanner.lib.path.PathPlannerPath;
 import com.pathplanner.lib.pathfinding.Pathfinding;
 import com.pathplanner.lib.util.PathPlannerLogging;
 import com.pathplanner.lib.util.ReplanningConfig;
-
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -22,7 +14,6 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.DifferentialDriveKinematics;
 import edu.wpi.first.math.kinematics.DifferentialDriveOdometry;
 import edu.wpi.first.math.kinematics.DifferentialDriveWheelSpeeds;
-import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
@@ -31,8 +22,15 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.Util;
 import frc.robot.constants.DrivebaseConstants;
 import frc.robot.constants.GeneralConstants;
+import frc.robot.subsystems.drivebase.commands.AutoAlign;
+import frc.robot.subsystems.drivebase.commands.SwerveMode;
 import frc.robot.util.LocalADStarAK;
-import frc.robot.util.TunablePIDController;
+import org.littletonrobotics.junction.AutoLogOutput;
+import org.littletonrobotics.junction.Logger;
+
+import java.util.List;
+
+import static frc.robot.Util.chooseIO;
 
 public class Drivebase extends SubsystemBase {
     private final DrivebaseIO io = chooseIO(DrivebaseIOReal::new, DrivebaseIOSim::new, DrivebaseIO::new);
@@ -42,12 +40,9 @@ public class Drivebase extends SubsystemBase {
     private final DifferentialDriveKinematics kinematics = new DifferentialDriveKinematics(DrivebaseConstants.trackWidth);
     private final SimpleMotorFeedforward feedforward = new SimpleMotorFeedforward(DrivebaseConstants.feedforwardS, DrivebaseConstants.feedforwardV);
 
-    private final TunablePIDController swerveModePID = Util.make(() -> {
-        var pid = new TunablePIDController("Swerve Mode", DrivebaseConstants.swerveModeP, 0, DrivebaseConstants.swerveModeD);
-        pid.enableContinuousInput(-180, 180);
-        return pid;
-    });
-    private double swerveModeSetpoint = 0;
+    /* Command Groups */
+    public AutoAlign autoAlign = new AutoAlign(this);
+    public SwerveMode swerveMode = new SwerveMode(this);
 
     public Drivebase() {
         AutoBuilder.configureRamsete(
@@ -75,7 +70,7 @@ public class Drivebase extends SubsystemBase {
         odometry.update(inputs.gyroYaw, getLeftPositionMeters(), getRightPositionMeters());
     }
 
-    private void arcadeDrive(double speed, double rotation) {
+    public void arcadeDrive(double speed, double rotation) {
         var speeds = DifferentialDrive.arcadeDriveIK(
                 GeneralConstants.mode == GeneralConstants.Mode.REAL ? rotation : speed,
                 GeneralConstants.mode == GeneralConstants.Mode.REAL ? speed : rotation,
@@ -105,38 +100,11 @@ public class Drivebase extends SubsystemBase {
         }
     }
 
-    public Command swerveDriveCommand(CommandXboxController controller, boolean preciseMode) {
-        return Commands
-                .runOnce(() -> swerveModeSetpoint = getPose().getRotation().getDegrees())
-                .andThen(run(() -> {
-                    var x = controller.getRightX();
-                    var y = controller.getRightY();
-
-                    if (Math.abs(x) > DrivebaseConstants.swerveModeDeadzone || Math.abs(y) > DrivebaseConstants.swerveModeDeadzone) {
-                        swerveModeSetpoint = Math.toDegrees(Math.atan2(-x, y));
-                    }
-
-                    swerveModePID.setSetpoint(swerveModeSetpoint);
-                    Logger.recordOutput("Drivebase/SwerveMode/Setpoint", swerveModeSetpoint);
-                    var robotAngle = getPose().getRotation().getDegrees();
-                    var rotation = swerveModePID.calculate(robotAngle);
-                    Logger.recordOutput("Drivebase/SwerveMode/Rotation", rotation);
-                    if (preciseMode) {
-                        arcadeDrive(controller.getLeftY() * DrivebaseConstants.preciseModeMultiplier, rotation);
-                    } else {
-                        arcadeDrive(controller.getLeftY(), rotation);
-                    }
-                }));
-    }
-
-    public Command swerveAngleCommand(double angle) {
-        return Commands.runOnce(() -> swerveModeSetpoint = angle);
-    }
-
     public Command followPathCommand(String pathName) {
         return AutoBuilder.followPath(PathPlannerPath.fromPathFile(pathName));
     }
 
+    public Command pathfindCommand(Pose2d targetPose) {
     /**
      * Checks if the robot is close enough to the target pose.
      */
@@ -158,7 +126,7 @@ public class Drivebase extends SubsystemBase {
             }
 
             List<Translation2d> bezierPoints = PathPlannerPath.bezierFromPoses(
-                    getPose(),
+                    pose,
                     targetPose
             );
 
@@ -171,7 +139,7 @@ public class Drivebase extends SubsystemBase {
             path.preventFlipping = true;
             AutoBuilder
                     .followPath(path)
-                    .andThen(swerveAngleCommand(targetPose.getRotation().getDegrees()))
+                    .andThen(swerveMode.swerveAngleCommand(targetPose.getRotation().getDegrees()))
                     .schedule();
         });
     }
