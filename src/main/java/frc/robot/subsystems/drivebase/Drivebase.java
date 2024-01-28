@@ -29,6 +29,7 @@ import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
 
 import java.util.List;
+import java.util.function.Supplier;
 
 import static frc.robot.Util.chooseIO;
 
@@ -100,19 +101,13 @@ public class Drivebase extends SubsystemBase {
         }
     }
 
-    public Command followPathCommand(String pathName) {
-        return AutoBuilder.followPath(PathPlannerPath.fromPathFile(pathName));
-    }
-
-    public Command pathfindCommand(Pose2d targetPose) {
+    public Command pathfindCommand(Supplier<Pose2d> targetPoseSupplier) {
         return Commands.runOnce(() -> {
             var pose = getPose();
+            var targetPose = targetPoseSupplier.get();
 
+            // Check if the robot is already at the target pose.
             if (Math.abs(pose.getX() - targetPose.getX()) <= .1 && Math.abs(pose.getY() - targetPose.getY()) <= .1) {
-                return;
-            }
-
-            if (!(Math.hypot(pose.getX() - targetPose.getX(), pose.getY() - targetPose.getY()) <= 2.5)) {
                 return;
             }
 

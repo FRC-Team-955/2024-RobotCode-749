@@ -42,11 +42,10 @@ public class Robot {
 
         driverController.x().toggleOnTrue(launcher.launchCommand().withTimeout(5));
         driverController.b().toggleOnTrue(launcher.intakeCommand().withTimeout(5));
-        driverController.a().toggleOnTrue(drivebase.followPathCommand("Subwoofer"));
 
-        operatorController.y().toggleOnTrue(drivebase.autoAlign.intakeSubwooferCommand());
-        operatorController.b().toggleOnTrue(drivebase.autoAlign.rightSubwooferCommand());
-        operatorController.x().toggleOnTrue(drivebase.autoAlign.leftSubwooferCommand());
+        operatorController.b().toggleOnTrue(drivebase.autoAlign.rightSubwooferCommand(driverController));
+        operatorController.x().toggleOnTrue(drivebase.autoAlign.leftSubwooferCommand(driverController));
+        operatorController.y().toggleOnTrue(drivebase.autoAlign.sourceCommand(driverController));
     }
 
     public Command getAutonomousCommand() {
