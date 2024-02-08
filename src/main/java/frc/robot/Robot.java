@@ -4,6 +4,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.constants.GeneralConstants;
 import frc.robot.constants.SimulationConstants;
+import frc.robot.subsystems.climber.Climber;
 import frc.robot.subsystems.drivebase.Drivebase;
 import frc.robot.subsystems.launcher.Launcher;
 import frc.robot.util.CommandNintendoSwitchProController;
@@ -19,6 +20,7 @@ public class Robot {
     /* Subsystems */
     private final Drivebase drivebase = new Drivebase();
     private final Launcher launcher = new Launcher();
+    private final Climber climber = new Climber();
 
     public Robot() {
         setDefaultCommands();
@@ -46,6 +48,17 @@ public class Robot {
         operatorController.b().toggleOnTrue(drivebase.autoAlign.rightSubwooferCommand(driverController));
         operatorController.x().toggleOnTrue(drivebase.autoAlign.leftSubwooferCommand(driverController));
         operatorController.y().toggleOnTrue(drivebase.autoAlign.sourceCommand(driverController));
+
+        operatorController.povUp().whileTrue(climber.setRightCommand(1));
+        operatorController.povDown().whileTrue(climber.setRightCommand(-1));
+        operatorController.povLeft().whileTrue(climber.setLeftCommand(1));
+        operatorController.povRight().whileTrue(climber.setLeftCommand(-1));
+
+        // This was for my keyboard.
+        // operatorController.y().whileTrue(climber.setRightCommand(1));
+        // operatorController.a().whileTrue(climber.setRightCommand(-1));
+        // operatorController.x().whileTrue(climber.setLeftCommand(1));
+        // operatorController.b().whileTrue(climber.setLeftCommand(-1));
     }
 
     public Command getAutonomousCommand() {

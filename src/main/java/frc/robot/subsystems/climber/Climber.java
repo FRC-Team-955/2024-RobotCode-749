@@ -1,0 +1,37 @@
+package frc.robot.subsystems.climber;
+
+import static frc.robot.Util.chooseIO;
+
+import org.littletonrobotics.junction.Logger;
+
+import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.SubsystemBase;
+
+public class Climber extends SubsystemBase {
+  private final ClimberIO io = chooseIO(ClimberIOReal::new, ClimberIOSim::new, ClimberIO::new);
+  private final ClimberIOInputsAutoLogged inputs = new ClimberIOInputsAutoLogged();
+
+  @Override
+  public void periodic() {
+    io.updateInputs(inputs);
+    Logger.processInputs("Inputs/Climber", inputs);
+  }
+
+  /**
+   * Sets the speed of the right motor and on interrupt, stops the motor.
+   * 
+   * @param speed A positive value is up and a negative value is down.
+   */
+  public Command setRightCommand(double speed) {
+    return run(() -> io.setRight(speed)).finallyDo(() -> io.stop());
+  }
+
+  /**
+   * Sets the speed of the left motor and on interrupt, stops the motor.
+   * 
+   * @param speed A positive value is up and a negative value is down.
+   */
+  public Command setLeftCommand(double speed) {
+    return run(() -> io.setLeft(speed)).finallyDo(() -> io.stop());
+  }
+}
