@@ -1,11 +1,12 @@
 package frc.robot.subsystems.launcher;
 
-import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
+import com.revrobotics.CANSparkLowLevel;
+import com.revrobotics.CANSparkMax;
 import frc.robot.constants.LauncherConstants;
 
 public class LauncherIOReal extends LauncherIO {
-    private final WPI_TalonSRX top = new WPI_TalonSRX(LauncherConstants.topMotorId);
-    private final WPI_TalonSRX bottom = new WPI_TalonSRX(LauncherConstants.bottomMotorId);
+    private final CANSparkMax top = new CANSparkMax(LauncherConstants.topMotorId, CANSparkLowLevel.MotorType.kBrushed);
+    private final CANSparkMax bottom = new CANSparkMax(LauncherConstants.bottomMotorId, CANSparkLowLevel.MotorType.kBrushed);
 
     @Override
     public void setTopVoltage(double volts) {
