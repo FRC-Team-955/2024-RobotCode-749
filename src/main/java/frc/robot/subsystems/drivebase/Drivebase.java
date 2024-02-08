@@ -73,7 +73,7 @@ public class Drivebase extends SubsystemBase {
 
     public void arcadeDrive(double speed, double rotation) {
         var speeds = DifferentialDrive.arcadeDriveIK(
-                GeneralConstants.mode == GeneralConstants.Mode.REAL ? rotation : speed,
+                GeneralConstants.mode == GeneralConstants.Mode.REAL ? -rotation : speed,
                 GeneralConstants.mode == GeneralConstants.Mode.REAL ? speed : rotation,
                 true
         );

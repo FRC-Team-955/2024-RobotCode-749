@@ -9,6 +9,12 @@ import static frc.robot.Util.chooseIO;
 
 public class Launcher extends SubsystemBase {
     private final LauncherIO io = chooseIO(LauncherIOReal::new, LauncherIOSim::new, LauncherIO::new);
+    private final LauncherIOInputsAutoLogged inputs = new LauncherIOInputsAutoLogged();
+
+    @Override
+    public void periodic() {
+        io.updateInputs(inputs);
+    }
 
     public Command launchCommand() {
         return Commands.sequence(
