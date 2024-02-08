@@ -19,6 +19,15 @@ public class LauncherIOReal extends LauncherIO {
     }
 
     @Override
+    public void updateInputs(LauncherIOInputs inputs) {
+        inputs.topAppliedVolts = top.getMotorOutputVoltage();
+        inputs.topCurrentAmps = new double[]{top.getStatorCurrent()};
+
+        inputs.bottomAppliedVolts = bottom.getMotorOutputVoltage();
+        inputs.bottomCurrentAmps = new double[]{bottom.getStatorCurrent()};
+    }
+
+    @Override
     public void setTopVoltage(double volts) {
         top.set(volts);
     }
