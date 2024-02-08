@@ -23,7 +23,7 @@ public class Climber extends SubsystemBase {
    * @param speed A positive value is up and a negative value is down.
    */
   public Command setRightCommand(double speed) {
-    return run(() -> io.setRight(speed)).finallyDo(() -> io.stop());
+    return startEnd(() -> io.setRight(speed), io::stop);
   }
 
   /**
@@ -32,6 +32,6 @@ public class Climber extends SubsystemBase {
    * @param speed A positive value is up and a negative value is down.
    */
   public Command setLeftCommand(double speed) {
-    return run(() -> io.setLeft(speed)).finallyDo(() -> io.stop());
+    return startEnd(() -> io.setLeft(speed), io::stop);
   }
 }
