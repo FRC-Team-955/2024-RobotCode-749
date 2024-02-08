@@ -16,10 +16,10 @@ public class LauncherIOSim extends LauncherIO {
         bottom.update(0.02);
 
         inputs.topAppliedVolts = topAppliedVolts;
-        inputs.topCurrentAmps = new double[]{top.getCurrentDrawAmps()};
+        inputs.topCurrentAmps = top.getCurrentDrawAmps();
 
         inputs.bottomAppliedVolts = bottomAppliedVolts;
-        inputs.bottomCurrentAmps = new double[]{bottom.getCurrentDrawAmps()};
+        inputs.bottomCurrentAmps = bottom.getCurrentDrawAmps();
     }
 
     @Override

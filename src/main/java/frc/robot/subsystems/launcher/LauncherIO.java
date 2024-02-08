@@ -6,10 +6,10 @@ public class LauncherIO {
     @AutoLog
     public static class LauncherIOInputs {
         public double topAppliedVolts = 0.0;
-        public double[] topCurrentAmps = new double[]{};
+        public double topCurrentAmps = 0.0;
 
         public double bottomAppliedVolts = 0.0;
-        public double[] bottomCurrentAmps = new double[]{};
+        public double bottomCurrentAmps = 0.0;
     }
 
     public void updateInputs(LauncherIOInputs inputs) {
