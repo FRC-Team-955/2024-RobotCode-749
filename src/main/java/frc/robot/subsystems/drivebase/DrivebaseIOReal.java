@@ -17,6 +17,16 @@ public class DrivebaseIOReal extends DrivebaseIO {
     private final SparkPIDController rightPID = rightLeader.getPIDController();
 
     public DrivebaseIOReal() {
+        leftLeader.restoreFactoryDefaults();
+        rightLeader.restoreFactoryDefaults();
+        leftFollower.restoreFactoryDefaults();
+        rightFollower.restoreFactoryDefaults();
+
+        leftLeader.setCANTimeout(250);
+        rightLeader.setCANTimeout(250);
+        leftFollower.setCANTimeout(250);
+        rightFollower.setCANTimeout(250);
+
         leftLeader.setInverted(false);
         rightLeader.setInverted(true);
         leftFollower.follow(leftLeader, false);
