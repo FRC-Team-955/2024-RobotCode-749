@@ -41,6 +41,9 @@ public class Drivebase extends SubsystemBase {
     private final DifferentialDriveKinematics kinematics = new DifferentialDriveKinematics(DrivebaseConstants.trackWidth);
     private final SimpleMotorFeedforward feedforward = new SimpleMotorFeedforward(DrivebaseConstants.feedforwardS, DrivebaseConstants.feedforwardV);
 
+    private boolean reverseMode = false;
+    private boolean preciseMode = false;
+
     /* Command Groups */
     public AutoAlign autoAlign = new AutoAlign(this);
     public SwerveMode swerveMode = new SwerveMode(this);
@@ -73,8 +76,8 @@ public class Drivebase extends SubsystemBase {
 
     public void arcadeDrive(double speed, double rotation) {
         var speeds = DifferentialDrive.arcadeDriveIK(
-                GeneralConstants.mode == GeneralConstants.Mode.REAL ? -rotation : speed,
-                GeneralConstants.mode == GeneralConstants.Mode.REAL ? speed : rotation,
+                (preciseMode ? DrivebaseConstants.preciseModeMultiplier : 1) * (reverseMode ? -1 : 1) * (GeneralConstants.mode == GeneralConstants.Mode.REAL ? -rotation : speed),
+                (preciseMode ? DrivebaseConstants.preciseModeMultiplier : 1) * (GeneralConstants.mode == GeneralConstants.Mode.REAL ? speed : rotation),
                 true
         );
         io.setVoltage(speeds.left * 12, speeds.right * 12);
@@ -93,12 +96,8 @@ public class Drivebase extends SubsystemBase {
         );
     }
 
-    public Command arcadeDriveCommand(CommandXboxController controller, boolean preciseMode) {
-        if (preciseMode) {
-            return run(() -> arcadeDrive(controller.getLeftY() * DrivebaseConstants.preciseModeMultiplier, -controller.getRightX() * DrivebaseConstants.preciseModeMultiplier));
-        } else {
-            return run(() -> arcadeDrive(controller.getLeftY(), -controller.getRightX()));
-        }
+    public Command arcadeDriveCommand(CommandXboxController controller) {
+        return run(() -> arcadeDrive(controller.getLeftY(), -controller.getRightX()));
     }
 
     public Command pathfindCommand(Supplier<Pose2d> targetPoseSupplier) {
@@ -128,6 +127,22 @@ public class Drivebase extends SubsystemBase {
                     .andThen(swerveMode.swerveAngleCommand(targetPose.getRotation().getDegrees()))
                     .schedule();
         });
+    }
+
+    public boolean getReverseMode() {
+        return reverseMode;
+    }
+
+    public Command setReverseModeCommand(boolean reverseMode) {
+        return Commands.runOnce(() -> this.reverseMode = reverseMode);
+    }
+
+    public boolean getPreciseMode() {
+        return preciseMode;
+    }
+
+    public Command setPreciseModeCommand(boolean preciseMode) {
+        return Commands.runOnce(() -> this.preciseMode = preciseMode);
     }
 
     @AutoLogOutput

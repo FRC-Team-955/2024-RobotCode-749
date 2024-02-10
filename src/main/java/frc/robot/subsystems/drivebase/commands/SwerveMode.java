@@ -23,12 +23,12 @@ public class SwerveMode {
     });
     private static double swerveModeSetpoint = 0;
 
-    public Command swerveDriveCommand(CommandXboxController controller, boolean preciseMode) {
+    public Command swerveDriveCommand(CommandXboxController controller) {
         return Commands
                 .runOnce(() -> swerveModeSetpoint = drivebase.getPose().getRotation().getDegrees())
                 .andThen(drivebase.run(() -> {
-                    var x = controller.getRightX();
-                    var y = controller.getRightY();
+                    var x = (drivebase.getReverseMode() ? -1 : 1) * controller.getRightX();
+                    var y = (drivebase.getReverseMode() ? -1 : 1) * controller.getRightY();
 
                     if (Math.abs(x) > DrivebaseConstants.swerveModeDeadzone || Math.abs(y) > DrivebaseConstants.swerveModeDeadzone) {
                         swerveModeSetpoint = Math.toDegrees(Math.atan2(-x, y));
@@ -39,7 +39,7 @@ public class SwerveMode {
                     var robotAngle = drivebase.getPose().getRotation().getDegrees();
                     var rotation = swerveModePID.calculate(robotAngle);
                     Logger.recordOutput("Drivebase/SwerveMode/Rotation", rotation);
-                    if (preciseMode) {
+                    if (drivebase.getPreciseMode()) {
                         drivebase.arcadeDrive(controller.getLeftY() * DrivebaseConstants.preciseModeMultiplier, rotation);
                     } else {
                         drivebase.arcadeDrive(controller.getLeftY(), rotation);

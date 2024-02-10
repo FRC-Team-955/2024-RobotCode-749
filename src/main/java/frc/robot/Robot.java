@@ -28,14 +28,17 @@ public class Robot {
     }
 
     private void setDefaultCommands() {
-        drivebase.setDefaultCommand(drivebase.swerveMode.swerveDriveCommand(driverController, false));
+        drivebase.setDefaultCommand(drivebase.swerveMode.swerveDriveCommand(driverController));
     }
 
     private void configureBindings() {
-        driverController.rightTrigger().whileTrue(drivebase.swerveMode.swerveDriveCommand(driverController, true));
-        driverController.rightBumper().whileTrue(drivebase.arcadeDriveCommand(driverController, false));
-        driverController.leftTrigger().whileTrue(drivebase.arcadeDriveCommand(driverController, true));
-        driverController.leftBumper().onTrue(drivebase.resetPoseCommand());
+        driverController.rightBumper().toggleOnTrue(drivebase.arcadeDriveCommand(driverController));
+        driverController.rightTrigger()
+                .onTrue(drivebase.setReverseModeCommand(true))
+                .onFalse(drivebase.setReverseModeCommand(false));
+        driverController.leftTrigger()
+                .onTrue(drivebase.setPreciseModeCommand(true))
+                .onFalse(drivebase.setPreciseModeCommand(false));
 
         driverController.povUp().onTrue(drivebase.swerveMode.swerveAngleCommand(0));
         driverController.povLeft().onTrue(drivebase.swerveMode.swerveAngleCommand(90));
