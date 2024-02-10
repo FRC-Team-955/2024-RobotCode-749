@@ -2,8 +2,7 @@ package frc.robot;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
-import frc.robot.constants.GeneralConstants;
-import frc.robot.constants.SimulationConstants;
+import frc.robot.constants.*;
 import frc.robot.subsystems.climber.Climber;
 import frc.robot.subsystems.drivebase.Drivebase;
 import frc.robot.subsystems.launcher.Launcher;
@@ -16,6 +15,15 @@ public class Robot {
     private final CommandXboxController operatorController = SimulationConstants.useNintendoSwitchProController ?
             new CommandNintendoSwitchProController(GeneralConstants.operatorControllerPort) :
             new CommandXboxController(GeneralConstants.operatorControllerPort);
+
+    protected static final Class<?>[] constantClasses = new Class[]{
+            ClimberConstants.class,
+            DrivebaseConstants.class,
+            GeneralConstants.class,
+            LauncherConstants.class,
+            LimelightConstants.class,
+            SimulationConstants.class
+    };
 
     /* Subsystems */
     private final Drivebase drivebase = new Drivebase();
