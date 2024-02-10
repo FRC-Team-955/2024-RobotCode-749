@@ -17,7 +17,6 @@ import edu.wpi.first.math.kinematics.DifferentialDriveWheelSpeeds;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
-import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.Util;
@@ -44,21 +43,6 @@ public class Drivebase extends SubsystemBase {
 
     private boolean reverseMode = false;
     private boolean preciseMode = false;
-    private boolean tankMode = false;
-    public boolean getReverseMode() { return reverseMode; }
-    public boolean getPreciseMode() { return preciseMode; }
-
-    public Command setReverseModeCommand(boolean reverseMode) {
-        return runOnce(() -> this.reverseMode = reverseMode);
-    }
-
-    public Command setPreciseModeCommand(boolean preciseMode) {
-        return runOnce(() -> this.preciseMode = preciseMode);
-    }
-
-    public Command setTankModeCommand(boolean tankMode) {
-        return runOnce(() -> this.tankMode = tankMode);
-    }
 
     /* Command Groups */
     public AutoAlign autoAlign = new AutoAlign(this);
@@ -116,13 +100,6 @@ public class Drivebase extends SubsystemBase {
         return run(() -> arcadeDrive(controller.getLeftY(), -controller.getRightX()));
     }
 
-    public Command driveCommand(CommandXboxController controller) {
-        return new ConditionalCommand(
-            arcadeDriveCommand(controller),
-            swerveMode.swerveDriveCommand(controller),
-            () -> tankMode);
-    }
-
     public Command pathfindCommand(Supplier<Pose2d> targetPoseSupplier) {
         return Commands.runOnce(() -> {
             var pose = getPose();
@@ -150,6 +127,22 @@ public class Drivebase extends SubsystemBase {
                     .andThen(swerveMode.swerveAngleCommand(targetPose.getRotation().getDegrees()))
                     .schedule();
         });
+    }
+
+    public boolean getReverseMode() {
+        return reverseMode;
+    }
+
+    public Command setReverseModeCommand(boolean reverseMode) {
+        return Commands.runOnce(() -> this.reverseMode = reverseMode);
+    }
+
+    public boolean getPreciseMode() {
+        return preciseMode;
+    }
+
+    public Command setPreciseModeCommand(boolean preciseMode) {
+        return Commands.runOnce(() -> this.preciseMode = preciseMode);
     }
 
     @AutoLogOutput
