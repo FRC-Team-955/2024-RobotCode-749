@@ -45,7 +45,7 @@ public final class Util {
     }
 
     public static boolean fileConstant(String fileName, boolean fallback) {
-        if (!GeneralConstants.useFileConfigs) return fallback;
+        if (!GeneralConstants.useFileConstants) return fallback;
         return new File(Filesystem.getDeployDirectory(), "config/" + fileName).exists();
     }
 }
