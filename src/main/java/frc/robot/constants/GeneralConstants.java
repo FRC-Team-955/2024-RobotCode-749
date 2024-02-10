@@ -5,7 +5,7 @@ import frc.robot.Util;
 
 public final class GeneralConstants {
     public static final int driverControllerPort = 0;
-    public static final int operatorControllerPort = 0;
+    public static final int operatorControllerPort = 1;
 
     public static final double errorRumbleAmount = 0.75;
     public static final double errorRumbleDuration = 0.25;
