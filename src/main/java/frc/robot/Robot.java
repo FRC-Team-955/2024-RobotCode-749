@@ -40,6 +40,9 @@ public class Robot {
         driverController.povDown().onTrue(drivebase.swerveMode.swerveAngleCommand(180));
         driverController.povRight().onTrue(drivebase.swerveMode.swerveAngleCommand(270));
 
+        // Toggle reverse mode
+        // driverController.a().onTrue(drivebase.toggleReverseModeCommand());
+
         driverController.x().toggleOnTrue(launcher.launchCommand().withTimeout(5));
         driverController.b().toggleOnTrue(launcher.intakeCommand().withTimeout(5));
 

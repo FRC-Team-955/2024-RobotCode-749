@@ -27,8 +27,8 @@ public class SwerveMode {
         return Commands
                 .runOnce(() -> swerveModeSetpoint = drivebase.getPose().getRotation().getDegrees())
                 .andThen(drivebase.run(() -> {
-                    var x = controller.getRightX();
-                    var y = controller.getRightY();
+                    var x = (drivebase.reverseMode ? -1 : 1) * controller.getRightX();
+                    var y = (drivebase.reverseMode ? -1 : 1) * controller.getRightY();
 
                     if (Math.abs(x) > DrivebaseConstants.swerveModeDeadzone || Math.abs(y) > DrivebaseConstants.swerveModeDeadzone) {
                         swerveModeSetpoint = Math.toDegrees(Math.atan2(-x, y));

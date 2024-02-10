@@ -41,6 +41,12 @@ public class Drivebase extends SubsystemBase {
     private final DifferentialDriveKinematics kinematics = new DifferentialDriveKinematics(DrivebaseConstants.trackWidth);
     private final SimpleMotorFeedforward feedforward = new SimpleMotorFeedforward(DrivebaseConstants.feedforwardS, DrivebaseConstants.feedforwardV);
 
+    public boolean reverseMode = false;
+
+    public Command toggleReverseModeCommand() {
+        return runOnce(() -> reverseMode = !reverseMode);
+    }
+
     /* Command Groups */
     public AutoAlign autoAlign = new AutoAlign(this);
     public SwerveMode swerveMode = new SwerveMode(this);
@@ -73,8 +79,8 @@ public class Drivebase extends SubsystemBase {
 
     public void arcadeDrive(double speed, double rotation) {
         var speeds = DifferentialDrive.arcadeDriveIK(
-                GeneralConstants.mode == GeneralConstants.Mode.REAL ? -rotation : speed,
-                GeneralConstants.mode == GeneralConstants.Mode.REAL ? speed : rotation,
+                (reverseMode ? -1 : 1) * (GeneralConstants.mode == GeneralConstants.Mode.REAL ? -rotation : speed),
+                (GeneralConstants.mode == GeneralConstants.Mode.REAL ? speed : rotation),
                 true
         );
         io.setVoltage(speeds.left * 12, speeds.right * 12);
