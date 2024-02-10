@@ -15,6 +15,8 @@ import edu.wpi.first.math.kinematics.DifferentialDriveKinematics;
 import edu.wpi.first.math.kinematics.DifferentialDriveOdometry;
 import edu.wpi.first.math.kinematics.DifferentialDriveWheelSpeeds;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
+import edu.wpi.first.wpilibj.smartdashboard.Field2d;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -40,6 +42,7 @@ public class Drivebase extends SubsystemBase {
     private final DifferentialDriveOdometry odometry = new DifferentialDriveOdometry(new Rotation2d(), 0.0, 0.0);
     private final DifferentialDriveKinematics kinematics = new DifferentialDriveKinematics(DrivebaseConstants.trackWidth);
     private final SimpleMotorFeedforward feedforward = new SimpleMotorFeedforward(DrivebaseConstants.feedforwardS, DrivebaseConstants.feedforwardV);
+    private final Field2d field = new Field2d();
 
     private boolean reverseMode = false;
     private boolean preciseMode = false;
@@ -49,6 +52,8 @@ public class Drivebase extends SubsystemBase {
     public SwerveMode swerveMode = new SwerveMode(this);
 
     public Drivebase() {
+        SmartDashboard.putData("Field", field);
+
         AutoBuilder.configureRamsete(
                 this::getPose,
                 (pose) -> odometry.resetPosition(inputs.gyroYaw, getLeftPositionMeters(), getRightPositionMeters(), pose),
@@ -71,7 +76,7 @@ public class Drivebase extends SubsystemBase {
         io.updateInputs(inputs);
         Logger.processInputs("Inputs/Drivebase", inputs);
 
-        odometry.update(inputs.gyroYaw, getLeftPositionMeters(), getRightPositionMeters());
+        field.setRobotPose(odometry.update(inputs.gyroYaw, getLeftPositionMeters(), getRightPositionMeters()));
     }
 
     public void arcadeDrive(double speed, double rotation) {
