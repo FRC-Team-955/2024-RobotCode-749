@@ -5,8 +5,7 @@ import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
-import frc.robot.constants.BuildConstants;
-import frc.robot.constants.GeneralConstants;
+import frc.robot.constants.*;
 import org.littletonrobotics.junction.LogFileUtil;
 import org.littletonrobotics.junction.LoggedRobot;
 import org.littletonrobotics.junction.Logger;
@@ -26,24 +25,46 @@ public final class Main {
         public CommandRobot() {
         }
 
+        private void recordConstants(Class<?>... classes) {
+            for (var clazz : classes) {
+                for (var field : clazz.getFields()) {
+                    var key = clazz.getSimpleName() + "." + field.getName();
+                    try {
+                        Logger.recordMetadata(key, field.get(null).toString());
+                    } catch (IllegalAccessException | IllegalArgumentException e) {
+                        Logger.recordMetadata(key, "Unknown");
+                    }
+                }
+            }
+        }
+
         @Override
         public void robotInit() {
-            Logger.recordMetadata("ProjectName", BuildConstants.MAVEN_NAME);
-            Logger.recordMetadata("BuildDate", BuildConstants.BUILD_DATE);
-            Logger.recordMetadata("GitSHA", BuildConstants.GIT_SHA);
-            Logger.recordMetadata("GitDate", BuildConstants.GIT_DATE);
-            Logger.recordMetadata("GitBranch", BuildConstants.GIT_BRANCH);
+            Logger.recordMetadata("! ProjectName", BuildConstants.MAVEN_NAME);
+            Logger.recordMetadata("! BuildDate", BuildConstants.BUILD_DATE);
+            Logger.recordMetadata("! GitSHA", BuildConstants.GIT_SHA);
+            Logger.recordMetadata("! GitDate", BuildConstants.GIT_DATE);
+            Logger.recordMetadata("! GitBranch", BuildConstants.GIT_BRANCH);
             switch (BuildConstants.DIRTY) {
                 case 0:
-                    Logger.recordMetadata("GitDirty", "All changes committed");
+                    Logger.recordMetadata("! GitDirty", "All changes committed");
                     break;
                 case 1:
-                    Logger.recordMetadata("GitDirty", "Uncommitted changes");
+                    Logger.recordMetadata("! GitDirty", "Uncommitted changes");
                     break;
                 default:
-                    Logger.recordMetadata("GitDirty", "Unknown");
+                    Logger.recordMetadata("! GitDirty", "Unknown");
                     break;
             }
+
+            recordConstants(
+                    ClimberConstants.class,
+                    DrivebaseConstants.class,
+                    GeneralConstants.class,
+                    LauncherConstants.class,
+                    LimelightConstants.class,
+                    SimulationConstants.class
+            );
 
             switch (GeneralConstants.mode) {
                 case REAL -> {

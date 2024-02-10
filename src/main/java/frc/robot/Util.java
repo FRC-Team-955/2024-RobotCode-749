@@ -3,8 +3,10 @@ package frc.robot;
 import com.pathplanner.lib.util.GeometryUtil;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.Filesystem;
 import frc.robot.constants.GeneralConstants;
 
+import java.io.File;
 import java.util.function.Supplier;
 
 public final class Util {
@@ -40,5 +42,10 @@ public final class Util {
         } else {
             return pose;
         }
+    }
+
+    public static boolean fileConstant(String fileName, boolean fallback) {
+        if (!GeneralConstants.useFileConfigs) return fallback;
+        return new File(Filesystem.getDeployDirectory(), "config/" + fileName).exists();
     }
 }
