@@ -17,6 +17,7 @@ import edu.wpi.first.math.kinematics.DifferentialDriveWheelSpeeds;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.Util;
@@ -116,11 +117,10 @@ public class Drivebase extends SubsystemBase {
     }
 
     public Command driveCommand(CommandXboxController controller) {
-        if (tankMode) {
-            return arcadeDriveCommand(controller);
-        } else {
-            return swerveMode.swerveDriveCommand(controller);
-        }
+        return new ConditionalCommand(
+            arcadeDriveCommand(controller),
+            swerveMode.swerveDriveCommand(controller),
+            () -> tankMode);
     }
 
     public Command pathfindCommand(Supplier<Pose2d> targetPoseSupplier) {
