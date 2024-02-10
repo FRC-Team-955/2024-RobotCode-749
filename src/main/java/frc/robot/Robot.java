@@ -56,7 +56,6 @@ public class Robot {
         operatorController.povDown().whileTrue(climber.setRightCommand(-1));
         operatorController.povLeft().whileTrue(climber.setLeftCommand(1));
         operatorController.povRight().whileTrue(climber.setLeftCommand(-1));
-
     }
 
     public Command getAutonomousCommand() {
