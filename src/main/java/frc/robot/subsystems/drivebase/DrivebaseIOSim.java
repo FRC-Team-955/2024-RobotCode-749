@@ -43,9 +43,15 @@ public class DrivebaseIOSim extends DrivebaseIO {
         sim.update(0.02);
         inputs.leftPositionRad = sim.getLeftPositionMeters() / DrivebaseConstants.wheelRadius;
         inputs.leftVelocityRadPerSec = sim.getLeftVelocityMetersPerSecond() / DrivebaseConstants.wheelRadius;
+        inputs.leftAppliedVolts = leftAppliedVolts;
+        inputs.leftLeaderCurrentAmps = sim.getLeftCurrentDrawAmps();
+        inputs.leftFollowerCurrentAmps = sim.getLeftCurrentDrawAmps();
 
         inputs.rightPositionRad = sim.getRightPositionMeters() / DrivebaseConstants.wheelRadius;
         inputs.rightVelocityRadPerSec = sim.getRightVelocityMetersPerSecond() / DrivebaseConstants.wheelRadius;
+        inputs.rightAppliedVolts = rightAppliedVolts;
+        inputs.rightLeaderCurrentAmps = sim.getRightCurrentDrawAmps();
+        inputs.rightFollowerCurrentAmps = sim.getRightCurrentDrawAmps();
 
         inputs.gyroYaw = sim.getHeading();
     }
