@@ -52,9 +52,15 @@ public class DrivebaseIOReal extends DrivebaseIO {
     public void updateInputs(DrivebaseIOInputs inputs) {
         inputs.leftPositionRad = Units.rotationsToRadians(leftEncoder.getPosition() / DrivebaseConstants.gearRatio.value);
         inputs.leftVelocityRadPerSec = Units.rotationsPerMinuteToRadiansPerSecond(leftEncoder.getVelocity() / DrivebaseConstants.gearRatio.value);
+        inputs.leftAppliedVolts = leftLeader.getAppliedOutput() * leftLeader.getBusVoltage();
+        inputs.leftLeaderCurrentAmps = leftLeader.getOutputCurrent();
+        inputs.leftFollowerCurrentAmps = leftFollower.getOutputCurrent();
 
         inputs.rightPositionRad = Units.rotationsToRadians(rightEncoder.getPosition() / DrivebaseConstants.gearRatio.value);
         inputs.rightVelocityRadPerSec = Units.rotationsPerMinuteToRadiansPerSecond(rightEncoder.getVelocity() / DrivebaseConstants.gearRatio.value);
+        inputs.rightAppliedVolts = rightLeader.getAppliedOutput() * rightLeader.getBusVoltage();
+        inputs.rightLeaderCurrentAmps = rightLeader.getOutputCurrent();
+        inputs.rightFollowerCurrentAmps = rightFollower.getOutputCurrent();
 
 //        inputs.gyroYaw = Gyro.getRotation2d();
     }
