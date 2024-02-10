@@ -1,0 +1,43 @@
+{
+  "version": 1.0,
+  "startingPose": null,
+  "command": {
+    "type": "sequential",
+    "data": {
+      "commands": [
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Starting middle to subwoofer"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Subwoofer to middle note"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Middle note to subwoofer"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Subwoofer to midfield(2) note"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Midfield(2) to subwoofer"
+          }
+        }
+      ]
+    }
+  },
+  "folder": "Starting middle",
+  "choreoAuto": false
+}

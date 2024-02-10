@@ -1,0 +1,37 @@
+{
+  "version": 1.0,
+  "startingPose": {
+    "position": {
+      "x": 0.87,
+      "y": 4.15
+    },
+    "rotation": 0
+  },
+  "command": {
+    "type": "sequential",
+    "data": {
+      "commands": [
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Starting middle to subwoofer"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Subwoofer to top note"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Top note to subwoofer"
+          }
+        }
+      ]
+    }
+  },
+  "folder": "Starting middle",
+  "choreoAuto": false
+}

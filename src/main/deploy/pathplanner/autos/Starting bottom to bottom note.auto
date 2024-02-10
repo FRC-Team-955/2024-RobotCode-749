@@ -1,0 +1,37 @@
+{
+  "version": 1.0,
+  "startingPose": {
+    "position": {
+      "x": 0.95,
+      "y": 2.0
+    },
+    "rotation": 0
+  },
+  "command": {
+    "type": "sequential",
+    "data": {
+      "commands": [
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Starting bottom to subwoofer"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Subwoofer to bottom note"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Bottom note to subwoofer"
+          }
+        }
+      ]
+    }
+  },
+  "folder": "Starting bottom",
+  "choreoAuto": false
+}

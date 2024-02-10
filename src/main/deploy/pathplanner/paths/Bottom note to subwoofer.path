@@ -1,0 +1,65 @@
+{
+  "version": 1.0,
+  "waypoints": [
+    {
+      "anchor": {
+        "x": 2.41,
+        "y": 4.1
+      },
+      "prevControl": null,
+      "nextControl": {
+        "x": 2.0442156268927936,
+        "y": 4.084914323674802
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 1.8356416665100634,
+        "y": 4.775743012106549
+      },
+      "prevControl": {
+        "x": 1.8539390624857621,
+        "y": 4.40064639460474
+      },
+      "nextControl": {
+        "x": 1.796165501638878,
+        "y": 5.585004391965826
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 1.45,
+        "y": 5.55
+      },
+      "prevControl": {
+        "x": 1.6499975901814778,
+        "y": 5.54901820490852
+      },
+      "nextControl": null,
+      "isLocked": false,
+      "linkedName": null
+    }
+  ],
+  "rotationTargets": [],
+  "constraintZones": [],
+  "eventMarkers": [],
+  "globalConstraints": {
+    "maxVelocity": 3.0,
+    "maxAcceleration": 3.0,
+    "maxAngularVelocity": 540.0,
+    "maxAngularAcceleration": 720.0
+  },
+  "goalEndState": {
+    "velocity": 0,
+    "rotation": -150.66002913184357,
+    "rotateFast": false
+  },
+  "reversed": false,
+  "folder": "Bottom note interactions",
+  "previewStartingState": null,
+  "useDefaultConstraints": false
+}

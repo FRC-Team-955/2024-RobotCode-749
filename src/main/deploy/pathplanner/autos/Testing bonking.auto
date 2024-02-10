@@ -1,0 +1,49 @@
+{
+  "version": 1.0,
+  "startingPose": {
+    "position": {
+      "x": 1.46,
+      "y": 5.54
+    },
+    "rotation": 0
+  },
+  "command": {
+    "type": "sequential",
+    "data": {
+      "commands": [
+        {
+          "type": "path",
+          "data": {
+            "pathName": "SKIP Mess with Midfield(1) note"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "SKIP Mess with Midfield(2) note"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "SKIP Mess with Midfield(3) note"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "SKIP Mess with Midfield(4) note"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "SKIP Mess with Midfield(5) note"
+          }
+        }
+      ]
+    }
+  },
+  "folder": "Screwing stuff up",
+  "choreoAuto": false
+}

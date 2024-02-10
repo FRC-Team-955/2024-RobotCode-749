@@ -1,0 +1,49 @@
+{
+  "version": 1.0,
+  "startingPose": {
+    "position": {
+      "x": 0.95,
+      "y": 7.08
+    },
+    "rotation": 0.0
+  },
+  "command": {
+    "type": "sequential",
+    "data": {
+      "commands": [
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Starting top to subwoofer"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Subwoofer to top note"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Top note to subwoofer"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Subwoofer to midfield(4) note"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Midfield(4) to subwoofer"
+          }
+        }
+      ]
+    }
+  },
+  "folder": "Starting top",
+  "choreoAuto": false
+}

@@ -1,0 +1,65 @@
+{
+  "version": 1.0,
+  "waypoints": [
+    {
+      "anchor": {
+        "x": 7.9,
+        "y": 4.4
+      },
+      "prevControl": null,
+      "nextControl": {
+        "x": 7.382042830911438,
+        "y": 4.6573145174929955
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 5.0832340126218725,
+        "y": 6.21617397080948
+      },
+      "prevControl": {
+        "x": 7.096090346026848,
+        "y": 6.304976456106759
+      },
+      "nextControl": {
+        "x": 4.612448579851761,
+        "y": 6.195404025246093
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 1.45,
+        "y": 5.55
+      },
+      "prevControl": {
+        "x": 2.2827519978116895,
+        "y": 5.515621031242063
+      },
+      "nextControl": null,
+      "isLocked": false,
+      "linkedName": null
+    }
+  ],
+  "rotationTargets": [],
+  "constraintZones": [],
+  "eventMarkers": [],
+  "globalConstraints": {
+    "maxVelocity": 3.0,
+    "maxAcceleration": 3.0,
+    "maxAngularVelocity": 540.0,
+    "maxAngularAcceleration": 720.0
+  },
+  "goalEndState": {
+    "velocity": 0,
+    "rotation": -150.66002913184357,
+    "rotateFast": false
+  },
+  "reversed": false,
+  "folder": "Midfield notes",
+  "previewStartingState": null,
+  "useDefaultConstraints": false
+}

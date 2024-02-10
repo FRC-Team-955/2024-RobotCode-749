@@ -1,12 +1,20 @@
 package frc.robot;
 
+import java.util.List;
+
+import com.pathplanner.lib.auto.AutoBuilder;
+
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import frc.robot.auto.AutoGenerator;
+import frc.robot.auto.Note;
+import frc.robot.auto.StartingPoint;
 import frc.robot.constants.GeneralConstants;
 import frc.robot.constants.SimulationConstants;
 import frc.robot.subsystems.drivebase.Drivebase;
 import frc.robot.subsystems.launcher.Launcher;
 import frc.robot.util.CommandNintendoSwitchProController;
+
 
 public class Robot {
     private final CommandXboxController controller = SimulationConstants.useNintendoSwitchProController ?
@@ -20,6 +28,7 @@ public class Robot {
     public Robot() {
         setDefaultCommands();
         configureBindings();
+        AutoGenerator.initializeShuffleboard();
     }
 
     private void setDefaultCommands() {
@@ -38,7 +47,9 @@ public class Robot {
     }
 
     public Command getAutonomousCommand() {
+
+        // return AutoBuilder.buildAuto("Mess with all");
         // Return null to do nothing during autonomous.
-        return null;
+        return AutoGenerator.generateAuto(drivebase);
     }
 }

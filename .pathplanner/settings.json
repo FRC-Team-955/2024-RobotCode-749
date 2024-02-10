@@ -1,11 +1,21 @@
 {
-  "robotWidth": 0.69,
-  "robotLength": 0.82,
+  "robotWidth": 0.87,
+  "robotLength": 0.99,
   "holonomicMode": false,
   "pathFolders": [
-    "Auto Align"
+    "Auto Align",
+    "Bottom note interactions",
+    "Middle note interactions",
+    "Midfield notes",
+    "Starting positions",
+    "Top note interactions"
   ],
-  "autoFolders": [],
+  "autoFolders": [
+    "Screwing stuff up",
+    "Starting bottom",
+    "Starting middle",
+    "Starting top"
+  ],
   "defaultMaxVel": 3.0,
   "defaultMaxAccel": 3.0,
   "defaultMaxAngVel": 540.0,
