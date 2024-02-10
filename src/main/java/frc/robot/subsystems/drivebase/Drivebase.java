@@ -41,10 +41,22 @@ public class Drivebase extends SubsystemBase {
     private final DifferentialDriveKinematics kinematics = new DifferentialDriveKinematics(DrivebaseConstants.trackWidth);
     private final SimpleMotorFeedforward feedforward = new SimpleMotorFeedforward(DrivebaseConstants.feedforwardS, DrivebaseConstants.feedforwardV);
 
-    public boolean reverseMode = false;
+    private boolean reverseMode = false;
+    private boolean preciseMode = false;
+    private boolean tankMode = false;
+    public boolean getReverseMode() { return reverseMode; }
+    public boolean getPreciseMode() { return preciseMode; }
 
-    public Command toggleReverseModeCommand() {
-        return runOnce(() -> reverseMode = !reverseMode);
+    public Command setReverseModeCommand(boolean reverseMode) {
+        return runOnce(() -> this.reverseMode = reverseMode);
+    }
+
+    public Command setPreciseModeCommand(boolean preciseMode) {
+        return runOnce(() -> this.preciseMode = preciseMode);
+    }
+
+    public Command setTankModeCommand(boolean tankMode) {
+        return runOnce(() -> this.tankMode = tankMode);
     }
 
     /* Command Groups */
@@ -79,8 +91,8 @@ public class Drivebase extends SubsystemBase {
 
     public void arcadeDrive(double speed, double rotation) {
         var speeds = DifferentialDrive.arcadeDriveIK(
-                (reverseMode ? -1 : 1) * (GeneralConstants.mode == GeneralConstants.Mode.REAL ? -rotation : speed),
-                (GeneralConstants.mode == GeneralConstants.Mode.REAL ? speed : rotation),
+                (preciseMode ? DrivebaseConstants.preciseModeMultiplier : 1) * (reverseMode ? -1 : 1) * (GeneralConstants.mode == GeneralConstants.Mode.REAL ? -rotation : speed),
+                (preciseMode ? DrivebaseConstants.preciseModeMultiplier : 1) * (GeneralConstants.mode == GeneralConstants.Mode.REAL ? speed : rotation),
                 true
         );
         io.setVoltage(speeds.left * 12, speeds.right * 12);
@@ -99,11 +111,15 @@ public class Drivebase extends SubsystemBase {
         );
     }
 
-    public Command arcadeDriveCommand(CommandXboxController controller, boolean preciseMode) {
-        if (preciseMode) {
-            return run(() -> arcadeDrive(controller.getLeftY() * DrivebaseConstants.preciseModeMultiplier, -controller.getRightX() * DrivebaseConstants.preciseModeMultiplier));
+    public Command arcadeDriveCommand(CommandXboxController controller) {
+        return run(() -> arcadeDrive(controller.getLeftY(), -controller.getRightX()));
+    }
+
+    public Command driveCommand(CommandXboxController controller) {
+        if (tankMode) {
+            return arcadeDriveCommand(controller);
         } else {
-            return run(() -> arcadeDrive(controller.getLeftY(), -controller.getRightX()));
+            return swerveMode.swerveDriveCommand(controller);
         }
     }
 

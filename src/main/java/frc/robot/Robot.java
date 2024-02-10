@@ -28,22 +28,19 @@ public class Robot {
     }
 
     private void setDefaultCommands() {
-        drivebase.setDefaultCommand(drivebase.swerveMode.swerveDriveCommand(driverController, false));
+        drivebase.setDefaultCommand(drivebase.driveCommand(driverController));
     }
 
     private void configureBindings() {
-        driverController.rightTrigger().whileTrue(drivebase.swerveMode.swerveDriveCommand(driverController, true));
-        driverController.rightBumper().whileTrue(drivebase.arcadeDriveCommand(driverController, false));
-        driverController.leftTrigger().whileTrue(drivebase.arcadeDriveCommand(driverController, true));
-        driverController.leftBumper().onTrue(drivebase.resetPoseCommand());
+        // driverController.rightTrigger().whileTrue(drivebase.swerveMode.swerveDriveCommand(driverController, true));
+        // driverController.rightBumper().whileTrue(drivebase.arcadeDriveCommand(driverController, false));
+        // driverController.leftTrigger().whileTrue(drivebase.arcadeDriveCommand(driverController, true));
+        // driverController.leftBumper().onTrue(drivebase.resetPoseCommand());
 
         driverController.povUp().onTrue(drivebase.swerveMode.swerveAngleCommand(0));
         driverController.povLeft().onTrue(drivebase.swerveMode.swerveAngleCommand(90));
         driverController.povDown().onTrue(drivebase.swerveMode.swerveAngleCommand(180));
         driverController.povRight().onTrue(drivebase.swerveMode.swerveAngleCommand(270));
-
-        // Toggle reverse mode
-        // driverController.a().onTrue(drivebase.toggleReverseModeCommand());
 
         driverController.x().toggleOnTrue(launcher.launchCommand().withTimeout(5));
         driverController.b().toggleOnTrue(launcher.intakeCommand().withTimeout(5));
@@ -56,6 +53,18 @@ public class Robot {
         operatorController.povDown().whileTrue(climber.setRightCommand(-1));
         operatorController.povLeft().whileTrue(climber.setLeftCommand(1));
         operatorController.povRight().whileTrue(climber.setLeftCommand(-1));
+
+        driverController.rightTrigger()
+            .onTrue(drivebase.setReverseModeCommand(true))
+            .onFalse(drivebase.setReverseModeCommand(false));
+
+        driverController.leftTrigger()
+            .onTrue(drivebase.setPreciseModeCommand(true))
+            .onFalse(drivebase.setPreciseModeCommand(false));
+
+        driverController.rightBumper()
+            .onTrue(drivebase.setTankModeCommand(true))
+            .onFalse(drivebase.setTankModeCommand(false));
     }
 
     public Command getAutonomousCommand() {
