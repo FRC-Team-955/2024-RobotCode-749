@@ -53,12 +53,6 @@ public class Robot {
         operatorController.povDown().whileTrue(climber.setRightCommand(-1));
         operatorController.povLeft().whileTrue(climber.setLeftCommand(1));
         operatorController.povRight().whileTrue(climber.setLeftCommand(-1));
-
-        // This was for my keyboard.
-        // operatorController.y().whileTrue(climber.setRightCommand(1));
-        // operatorController.a().whileTrue(climber.setRightCommand(-1));
-        // operatorController.x().whileTrue(climber.setLeftCommand(1));
-        // operatorController.b().whileTrue(climber.setLeftCommand(-1));
     }
 
     public Command getAutonomousCommand() {

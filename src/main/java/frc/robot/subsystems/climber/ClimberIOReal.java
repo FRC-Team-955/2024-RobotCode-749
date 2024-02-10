@@ -21,10 +21,10 @@ public class ClimberIOReal extends ClimberIO {
     @Override
     public void updateInputs(ClimberIOInputs inputs) {
         inputs.leftAppliedVolts = left.getMotorOutputVoltage();
-        inputs.leftCurrentAmps = new double[]{left.getStatorCurrent()};
+        inputs.leftCurrentAmps = left.getStatorCurrent();
 
         inputs.rightAppliedVolts = right.getMotorOutputVoltage();
-        inputs.rightCurrentAmps = new double[]{right.getStatorCurrent()};
+        inputs.rightCurrentAmps = right.getStatorCurrent();
     }
 
     @Override

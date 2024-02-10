@@ -6,10 +6,10 @@ public class ClimberIO {
     @AutoLog
     public static class ClimberIOInputs {
         public double leftAppliedVolts = 0.0;
-        public double[] leftCurrentAmps = new double[]{};
+        public double leftCurrentAmps = 0.0;
 
         public double rightAppliedVolts = 0.0;
-        public double[] rightCurrentAmps = new double[]{};
+        public double rightCurrentAmps = 0.0;
     }
 
     public void updateInputs(ClimberIOInputs inputs) {

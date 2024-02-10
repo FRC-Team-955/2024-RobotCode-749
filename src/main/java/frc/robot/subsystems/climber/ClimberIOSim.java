@@ -10,10 +10,10 @@ public class ClimberIOSim extends ClimberIO {
     @Override
     public void updateInputs(ClimberIOInputs inputs) {
         inputs.leftAppliedVolts = left.getOutput(0);
-        inputs.leftCurrentAmps = new double[]{left.getCurrentDrawAmps()};
+        inputs.leftCurrentAmps = left.getCurrentDrawAmps();
 
         inputs.rightAppliedVolts = right.getOutput(0);
-        inputs.rightCurrentAmps = new double[]{right.getCurrentDrawAmps()};
+        inputs.rightCurrentAmps = right.getCurrentDrawAmps();
     }
 
     @Override
