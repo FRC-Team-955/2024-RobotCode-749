@@ -29,12 +29,12 @@ public class LauncherIOReal extends LauncherIO {
 
     @Override
     public void setTopVoltage(double volts) {
-        top.set(volts);
+        top.setVoltage(volts);
     }
 
     @Override
     public void setBottomVoltage(double volts) {
-        bottom.set(volts);
+        bottom.setVoltage(volts);
     }
 
     @Override
