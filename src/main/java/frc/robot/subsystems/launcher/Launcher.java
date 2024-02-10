@@ -1,39 +1,40 @@
 package frc.robot.subsystems.launcher;
 
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.constants.LauncherConstants;
+import org.littletonrobotics.junction.Logger;
 
 import static frc.robot.Util.chooseIO;
 
 public class Launcher extends SubsystemBase {
     private final LauncherIO io = chooseIO(LauncherIOReal::new, LauncherIOSim::new, LauncherIO::new);
+    private final LauncherIOInputsAutoLogged inputs = new LauncherIOInputsAutoLogged();
 
-    private void startLaunching() {
-        io.setTopVoltage(LauncherConstants.launchingSpeed * 12);
-        io.setBottomVoltage(LauncherConstants.launchingSpeed * 12);
-    }
-
-    private void startIntake() {
-        io.setTopVoltage(LauncherConstants.feederIntakeSpeed * 12);
-        io.setBottomVoltage(LauncherConstants.launcherIntakeSpeed * 12);
-    }
-
-    private void stopMotors() {
-        io.stop();
+    @Override
+    public void periodic() {
+        io.updateInputs(inputs);
+        Logger.processInputs("Inputs/Launcher", inputs);
     }
 
     public Command launchCommand() {
-        return this.startEnd(
-                this::startLaunching,
-                this::stopMotors
-        );
+        return Commands.sequence(
+                        this.runOnce(() -> io.setTopVoltage(LauncherConstants.launchingSpeed * 12)),
+                        Commands.waitSeconds(0.5),
+                        this.runOnce(() -> io.setBottomVoltage(LauncherConstants.launchingSpeed * 12)),
+                        Commands.idle(this)
+                )
+                .finallyDo(io::stop);
     }
 
     public Command intakeCommand() {
         return this.startEnd(
-                this::startIntake,
-                this::stopMotors
+                () -> {
+                    io.setTopVoltage(LauncherConstants.topIntakeSpeed * 12);
+                    io.setBottomVoltage(LauncherConstants.bottomIntakeSpeed * 12);
+                },
+                io::stop
         );
     }
 }

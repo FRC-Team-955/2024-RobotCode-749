@@ -1,29 +1,41 @@
 package frc.robot;
 
-import java.util.List;
-
-import com.pathplanner.lib.auto.AutoBuilder;
-
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.auto.AutoGenerator;
-import frc.robot.auto.Note;
-import frc.robot.auto.StartingPoint;
+import frc.robot.constants.ClimberConstants;
+import frc.robot.constants.DrivebaseConstants;
 import frc.robot.constants.GeneralConstants;
+import frc.robot.constants.LauncherConstants;
+import frc.robot.constants.LimelightConstants;
 import frc.robot.constants.SimulationConstants;
+import frc.robot.subsystems.climber.Climber;
 import frc.robot.subsystems.drivebase.Drivebase;
 import frc.robot.subsystems.launcher.Launcher;
 import frc.robot.util.CommandNintendoSwitchProController;
 
 
 public class Robot {
-    private final CommandXboxController controller = SimulationConstants.useNintendoSwitchProController ?
-            new CommandNintendoSwitchProController(GeneralConstants.controllerPort) :
-            new CommandXboxController(GeneralConstants.controllerPort);
+    private final CommandXboxController driverController = SimulationConstants.useNintendoSwitchProController ?
+            new CommandNintendoSwitchProController(GeneralConstants.driverControllerPort) :
+            new CommandXboxController(GeneralConstants.driverControllerPort);
+    private final CommandXboxController operatorController = SimulationConstants.useNintendoSwitchProController ?
+            new CommandNintendoSwitchProController(GeneralConstants.operatorControllerPort) :
+            new CommandXboxController(GeneralConstants.operatorControllerPort);
+
+    protected static final Class<?>[] constantClasses = new Class[]{
+            ClimberConstants.class,
+            DrivebaseConstants.class,
+            GeneralConstants.class,
+            LauncherConstants.class,
+            LimelightConstants.class,
+            SimulationConstants.class
+    };
 
     /* Subsystems */
     private final Drivebase drivebase = new Drivebase();
     private final Launcher launcher = new Launcher();
+    private final Climber climber = new Climber();
 
     public Robot() {
         setDefaultCommands();
@@ -32,18 +44,34 @@ public class Robot {
     }
 
     private void setDefaultCommands() {
-        drivebase.setDefaultCommand(drivebase.swerveDriveCommand(controller, false));
+        drivebase.setDefaultCommand(drivebase.swerveMode.swerveDriveCommand(driverController));
     }
 
     private void configureBindings() {
-        controller.rightTrigger().whileTrue(drivebase.swerveDriveCommand(controller, true));
-        controller.rightBumper().whileTrue(drivebase.arcadeDriveCommand(controller, false));
-        controller.leftTrigger().whileTrue(drivebase.arcadeDriveCommand(controller, true));
-        controller.leftBumper().onTrue(drivebase.resetPoseCommand());
+        driverController.rightBumper().toggleOnTrue(drivebase.arcadeDriveCommand(driverController));
+        driverController.rightTrigger()
+                .onTrue(drivebase.setReverseModeCommand(true))
+                .onFalse(drivebase.setReverseModeCommand(false));
+        driverController.leftTrigger()
+                .onTrue(drivebase.setPreciseModeCommand(true))
+                .onFalse(drivebase.setPreciseModeCommand(false));
 
-        controller.x().toggleOnTrue(launcher.launchCommand().withTimeout(5));
-        controller.b().toggleOnTrue(launcher.intakeCommand().withTimeout(5));
-        controller.a().toggleOnTrue(drivebase.followPathCommand("Subwoofer"));
+        driverController.povUp().onTrue(drivebase.swerveMode.swerveAngleCommand(0));
+        driverController.povLeft().onTrue(drivebase.swerveMode.swerveAngleCommand(90));
+        driverController.povDown().onTrue(drivebase.swerveMode.swerveAngleCommand(180));
+        driverController.povRight().onTrue(drivebase.swerveMode.swerveAngleCommand(270));
+
+        driverController.x().toggleOnTrue(launcher.launchCommand().withTimeout(5));
+        driverController.b().toggleOnTrue(launcher.intakeCommand().withTimeout(5));
+
+        operatorController.b().toggleOnTrue(drivebase.autoAlign.rightSubwooferCommand(driverController));
+        operatorController.x().toggleOnTrue(drivebase.autoAlign.leftSubwooferCommand(driverController));
+        operatorController.y().toggleOnTrue(drivebase.autoAlign.sourceCommand(driverController));
+
+        operatorController.povUp().whileTrue(climber.setRightCommand(1));
+        operatorController.povDown().whileTrue(climber.setRightCommand(-1));
+        operatorController.povLeft().whileTrue(climber.setLeftCommand(1));
+        operatorController.povRight().whileTrue(climber.setLeftCommand(-1));
     }
 
     public Command getAutonomousCommand() {

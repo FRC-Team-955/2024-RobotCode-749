@@ -6,6 +6,6 @@ public final class LauncherConstants {
 
     public static final double launchingSpeed = 1;
 
-    public static final double feederIntakeSpeed = -0.2;
-    public static final double launcherIntakeSpeed = -1;
+    public static final double topIntakeSpeed = -1;
+    public static final double bottomIntakeSpeed = -0.2;
 }

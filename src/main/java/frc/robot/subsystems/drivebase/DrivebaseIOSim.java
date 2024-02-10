@@ -1,9 +1,9 @@
 package frc.robot.subsystems.drivebase;
 
 import edu.wpi.first.math.MathUtil;
-import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj.simulation.DifferentialDrivetrainSim;
 import frc.robot.constants.DrivebaseConstants;
+import frc.robot.util.TunablePIDController;
 
 public class DrivebaseIOSim extends DrivebaseIO {
     private static final double P = 0.05;
@@ -19,8 +19,8 @@ public class DrivebaseIOSim extends DrivebaseIO {
     private double leftAppliedVolts = 0;
     private double rightAppliedVolts = 0;
     private boolean closedLoop = false;
-    private final PIDController leftPID = new PIDController(P, 0, D);
-    private final PIDController rightPID = new PIDController(P, 0, D);
+    private final TunablePIDController leftPID = new TunablePIDController("Drivebase Left (Sim)", P, 0, D);
+    private final TunablePIDController rightPID = new TunablePIDController("Drivebase Right (Sim)", P, 0, D);
     private double leftFFVolts = 0;
     private double rightFFVolts = 0;
 
@@ -43,9 +43,15 @@ public class DrivebaseIOSim extends DrivebaseIO {
         sim.update(0.02);
         inputs.leftPositionRad = sim.getLeftPositionMeters() / DrivebaseConstants.wheelRadius;
         inputs.leftVelocityRadPerSec = sim.getLeftVelocityMetersPerSecond() / DrivebaseConstants.wheelRadius;
+        inputs.leftAppliedVolts = leftAppliedVolts;
+        inputs.leftLeaderCurrentAmps = sim.getLeftCurrentDrawAmps();
+        inputs.leftFollowerCurrentAmps = sim.getLeftCurrentDrawAmps();
 
         inputs.rightPositionRad = sim.getRightPositionMeters() / DrivebaseConstants.wheelRadius;
         inputs.rightVelocityRadPerSec = sim.getRightVelocityMetersPerSecond() / DrivebaseConstants.wheelRadius;
+        inputs.rightAppliedVolts = rightAppliedVolts;
+        inputs.rightLeaderCurrentAmps = sim.getRightCurrentDrawAmps();
+        inputs.rightFollowerCurrentAmps = sim.getRightCurrentDrawAmps();
 
         inputs.gyroYaw = sim.getHeading();
     }
