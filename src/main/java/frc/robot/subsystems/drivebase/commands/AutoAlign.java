@@ -1,5 +1,7 @@
 package frc.robot.subsystems.drivebase.commands;
 
+import java.util.function.Supplier;
+
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -9,8 +11,6 @@ import frc.robot.Util;
 import frc.robot.commands.Controller;
 import frc.robot.subsystems.drivebase.Drivebase;
 import frc.robot.util.Rect2d;
-
-import java.util.function.Supplier;
 
 public class AutoAlign {
     private final Drivebase drivebase;

@@ -1,5 +1,6 @@
 package frc.robot.auto;
 
+
 import java.util.List;
 
 import com.pathplanner.lib.auto.AutoBuilder;
@@ -77,87 +78,46 @@ public class AutoGenerator {
             }
         }
 
-        // public void rickroll() {
-            // We're no strangers to love
-            // You know the rules and so do I (do I)
-            // A full commitment's what I'm thinking of
-            // You wouldn't get this from any other guy
-            // I just wanna tell you how I'm feeling
-            // Gotta make you understand
-            // Never gonna give you up
-            // Never gonna let you down
-            // Never gonna run around and desert you
-            // Never gonna make you cry
-            // Never gonna say goodbye
-            // Never gonna tell a lie and hurt you
-            // We've known each other for so long
-            // Your heart's been aching, but you're too shy to say it (say it)
-            // Inside, we both know what's been going on (going on)
-            // We know the game and we're gonna play it
-            // And if you ask me how I'm feeling
-            // Don't tell me you're too blind to see
-            // Never gonna give you up
-            // Never gonna let you down
-            // Never gonna run around and desert you
-            // Never gonna make you cry
-            // Never gonna say goodbye
-            // Never gonna tell a lie and hurt you
-            // Never gonna give you up
-            // Never gonna let you down
-            // Never gonna run around and desert you
-            // Never gonna make you cry
-            // Never gonna say goodbye
-            // Never gonna tell a lie and hurt you
-            // We've known each other for so long
-            // Your heart's been aching, but you're too shy to say it (to say it)
-            // Inside, we both know what's been going on (going on)
-            // We know the game and we're gonna play it
-            // I just wanna tell you how I'm feeling
-            // Gotta make you understand
-            // Never gonna give you up
-            // Never gonna let you down
-            // Never gonna run around and desert you
-            // Never gonna make you cry
-            // Never gonna say goodbye
-            // Never gonna tell a lie and hurt you
-            // Never gonna give you up
-            // Never gonna let you down
-            // Never gonna run around and desert you
-            // Never gonna make you cry
-            // Never gonna say goodbye
-            // Never gonna tell a lie and hurt you
-            // Never gonna give you up
-            // Never gonna let you down
-            // Never gonna run around and desert you
-            // Never gonna make you cry
-            // Never gonna say goodbye
-            // Never gonna tell a lie and hurt you
-        // }
-
-        Rotation2d rotation = null;
-
-        switch (startingPoint) {
-            case Top: rotation = new Rotation2d(90); break;
-            case Middle: rotation = new Rotation2d(90); break;
-            case Bottom: rotation = new Rotation2d(-90); break;
-            default: rotation = new Rotation2d(90); break;
+        if (messUpMidfieldTopNote.getBoolean(true)) {
+            var path = PathPlannerPath.fromPathFile("Mess with Midfield(1) note");
+            commands.addCommands(drivebase.setPoseCommand(GeometryUtil.flipFieldPose(path.getStartingDifferentialPose())));
+            commands.addCommands(AutoBuilder.followPath(path));
+        } else {
+            var path = PathPlannerPath.fromPathFile("Go near midfield (1)");
+            commands.addCommands(drivebase.setPoseCommand(GeometryUtil.flipFieldPose(path.getStartingDifferentialPose())));
+            commands.addCommands(AutoBuilder.followPath(path));
         }
 
+        Rotation2d rotation = new Rotation2d(-90);
+        
+        // switch (startingPoint) {
+        //     case Top -> rotation = new Rotation2d(-90);
+        //     case Middle -> rotation = new Rotation2d(-90);
+        //     case Bottom -> rotation = new Rotation2d(90);
+        // }
+
+        // commands.addCommands(drivebase.pathfindCommand(Util.flipIfNeeded(messUpMidfieldTopNote.getBoolean(true)         ? new Pose2d(7.80, 7.40, rotation) : new Pose2d(7.30, 7.40, rotation)),
+        //                      drivebase.pathfindCommand(Util.flipIfNeeded(messUpMidfieldUpperMiddleNote.getBoolean(true) ? new Pose2d(7.80, 5.75, rotation) : new Pose2d(7.30, 5.75, rotation)),
+        //                      drivebase.pathfindCommand(Util.flipIfNeeded(messUpMidfieldMiddleNote.getBoolean(true)      ? new Pose2d(7.80, 4.10, rotation) : new Pose2d(7.30, 4.10, rotation)),
+        //                      drivebase.pathfindCommand(Util.flipIfNeeded(messUpMidfieldLowerMiddleNote.getBoolean(true) ? new Pose2d(7.80, 2.50, rotation) : new Pose2d(7.30, 2.50, rotation)),
+        //                      drivebase.pathfindCommand(Util.flipIfNeeded(messUpMidfieldBottomNote.getBoolean(true)      ? new Pose2d(7.80, 0.80, rotation) : new Pose2d(7.30, 0.80, rotation))))))));
+
         List<Translation2d> bezierPoints = PathPlannerPath.bezierFromPoses(
-            drivebase.getPose(),
-            Util.flipIfNeeded(messUpMidfieldTopNote.getBoolean(true)         ? new Pose2d(7.80, 7.40, rotation) : new Pose2d(7.30, 7.40, rotation)),
-            Util.flipIfNeeded(messUpMidfieldUpperMiddleNote.getBoolean(true) ? new Pose2d(7.80, 5.75, rotation) : new Pose2d(7.30, 5.75, rotation))
-            // Util.flipIfNeeded(messUpMidfieldMiddleNote.getBoolean(true)      ? new Pose2d(7.80, 4.10, rotation) : new Pose2d(7.30, 4.10, rotation))
-            // messUpMidfieldLowerMiddleNote.getBoolean(true) ? Util.flipIfNeeded(new Pose2d(7.80, 2.50, rotation)) : Util.flipIfNeeded(new Pose2d(7.30, 2.50, rotation)),
-            // messUpMidfieldBottomNote.getBoolean(true)      ? Util.flipIfNeeded(new Pose2d(7.80, 0.80, rotation)) : Util.flipIfNeeded(new Pose2d(7.30, 0.80, rotation))
+            Util.flipIfNeededNow(messUpMidfieldTopNote.getBoolean(true)         ? new Pose2d(7.80, 7.40, rotation) : new Pose2d(7.30, 7.40, rotation)),
+            Util.flipIfNeededNow(messUpMidfieldUpperMiddleNote.getBoolean(true) ? new Pose2d(7.80, 5.75, rotation) : new Pose2d(7.30, 5.75, rotation)),
+            Util.flipIfNeededNow(messUpMidfieldMiddleNote.getBoolean(true)      ? new Pose2d(7.80, 4.10, rotation) : new Pose2d(7.30, 4.10, rotation)),
+            Util.flipIfNeededNow(messUpMidfieldLowerMiddleNote.getBoolean(true) ? new Pose2d(7.80, 2.50, rotation) : new Pose2d(7.30, 2.50, rotation)),
+            Util.flipIfNeededNow(messUpMidfieldBottomNote.getBoolean(true)      ? new Pose2d(7.80, 0.80, rotation) : new Pose2d(7.30, 0.80, rotation))
         );
 
         PathPlannerPath path = new PathPlannerPath(
             bezierPoints,
             new PathConstraints(3.0, 3.0, 2 * Math.PI, 4 * Math.PI),
-            new GoalEndState(0.0, Rotation2d.fromDegrees(90)));
-        
+            new GoalEndState(0.0, Rotation2d.fromDegrees(90))
+        );
+
         path.preventFlipping = true;
+        // commands.addCommands(drivebase.setPoseCommand(GeometryUtil.flipFieldPose(path.getStartingDifferentialPose())));
         commands.addCommands(AutoBuilder.followPath(path));
 
         //     switch (note) {
