@@ -6,10 +6,11 @@ import edu.wpi.first.wpilibj.simulation.DifferentialDrivetrainSim.KitbotMotor;
 import edu.wpi.first.wpilibj.simulation.DifferentialDrivetrainSim.KitbotWheelSize;
 
 public final class DrivebaseConstants {
-    public final static int leftLeaderMotorId = 1;
-    public final static int leftFollowerMotorId = 2;
-    public final static int rightLeaderMotorId = 3;
-    public final static int rightFollowerMotorId = 4;
+    public static final int leftLeaderMotorId = 1;
+    public static final int leftFollowerMotorId = 2;
+    public static final int rightLeaderMotorId = 3;
+    public static final int rightFollowerMotorId = 4;
+    public static final int pigeonId = 9;
 
     public static final KitbotWheelSize wheelSize = KitbotWheelSize.kSixInch;
     public static final double wheelRadius = wheelSize.value / 2; // value is diameter, we need radius
