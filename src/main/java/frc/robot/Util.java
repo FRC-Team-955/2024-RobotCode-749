@@ -1,13 +1,15 @@
 package frc.robot;
 
+import java.io.File;
+import java.util.function.Supplier;
+
 import com.pathplanner.lib.util.GeometryUtil;
+
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Filesystem;
 import frc.robot.constants.GeneralConstants;
-
-import java.io.File;
-import java.util.function.Supplier;
+import frc.robot.util.Rect2d;
 
 public final class Util {
     public static <T> T chooseIO(Supplier<T> real, Supplier<T> sim, Supplier<T> replay) {
@@ -36,11 +38,23 @@ public final class Util {
         return () -> flipIfNeededNow(pose);
     }
 
+    public static Supplier<Rect2d> flipIfNeeded(Rect2d pose) {
+        return () -> flipIfNeededNow(pose);
+    }
+
     public static Pose2d flipIfNeededNow(Pose2d pose) {
         if (shouldFlip()) {
             return GeometryUtil.flipFieldPose(pose);
         } else {
             return pose;
+        }
+    }
+
+    public static Rect2d flipIfNeededNow(Rect2d rect) {
+        if (shouldFlip()) {
+            return new Rect2d(flipIfNeededNow(rect.getBottomLeftCorner()), flipIfNeededNow(rect.getTopRightCorner()));
+        } else {
+            return rect.clone();
         }
     }
 

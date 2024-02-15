@@ -1,5 +1,7 @@
 package frc.robot.subsystems.drivebase.commands;
 
+import java.util.function.Supplier;
+
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -9,8 +11,6 @@ import frc.robot.Util;
 import frc.robot.commands.Controller;
 import frc.robot.subsystems.drivebase.Drivebase;
 import frc.robot.util.Rect2d;
-
-import java.util.function.Supplier;
 
 public class AutoAlign {
     private final Drivebase drivebase;
@@ -23,7 +23,7 @@ public class AutoAlign {
         return Commands.either(
                 drivebase.pathfindCommand(targetPose),
                 Controller.setRumbleError(errorController),
-                () -> bounds.contains(drivebase.getPose())
+                () -> Util.flipIfNeededNow(bounds).contains(drivebase.getPose())
         );
     }
 
@@ -41,6 +41,15 @@ public class AutoAlign {
         var bounds = new Rect2d(
                 new Pose2d(1.373, 5.101, new Rotation2d()),
                 new Pose2d(2.632, 1.354, new Rotation2d())
+        );
+        return autoAlignCommand(targetPose, bounds, errorController);
+    }
+
+    public Command frontSubwooferCommand(CommandXboxController errorController) {
+        var targetPose = Util.flipIfNeeded(new Pose2d(1.391, 5.55, Rotation2d.fromRadians(Math.PI)));
+        var bounds = new Rect2d(
+            new Pose2d(1.469, 1.6, new Rotation2d()),
+            new Pose2d(2.626, 7.783, new Rotation2d())
         );
         return autoAlignCommand(targetPose, bounds, errorController);
     }
