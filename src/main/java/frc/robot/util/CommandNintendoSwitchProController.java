@@ -10,10 +10,14 @@ public class CommandNintendoSwitchProController extends CommandXboxController {
         RightBumper(6),
         LeftStick(11),
         RightStick(12),
-        A(2),
-        B(1),
-        X(4),
-        Y(3),
+        // note: A is really 2, but having it as 1 matches the button position with an xbox controller
+        A(1),
+        // note: B is really 1, but having it as 2 matches the button position with an xbox controller
+        B(2),
+        // note: X is really 4, but having it as 1 matches the button position with an xbox controller
+        X(3),
+        // note: Y is really 3, but having it as 1 matches the button position with an xbox controller
+        Y(4),
         Plus(10),
         Minus(9),
         LeftTrigger(7),
