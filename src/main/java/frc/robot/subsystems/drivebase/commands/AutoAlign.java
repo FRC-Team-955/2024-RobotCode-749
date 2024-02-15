@@ -1,16 +1,16 @@
 package frc.robot.subsystems.drivebase.commands;
 
+import java.util.function.Supplier;
+
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.ConditionalCommand;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.Util;
 import frc.robot.commands.Controller;
 import frc.robot.subsystems.drivebase.Drivebase;
 import frc.robot.util.Rect2d;
-
-import java.util.function.Supplier;
 
 public class AutoAlign {
     private final Drivebase drivebase;
@@ -20,7 +20,7 @@ public class AutoAlign {
     }
 
     private Command autoAlignCommand(Supplier<Pose2d> targetPose, Rect2d bounds, CommandXboxController errorController) {
-        return new ConditionalCommand(
+        return Commands.either(
                 drivebase.pathfindCommand(targetPose),
                 Controller.setRumbleError(errorController),
                 () -> bounds.contains(drivebase.getPose())
