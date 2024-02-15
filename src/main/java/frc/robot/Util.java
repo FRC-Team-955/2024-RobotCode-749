@@ -6,6 +6,7 @@ import java.util.function.Supplier;
 import com.pathplanner.lib.util.GeometryUtil;
 
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Filesystem;
 import frc.robot.constants.GeneralConstants;
@@ -52,7 +53,12 @@ public final class Util {
 
     public static Rect2d flipIfNeededNow(Rect2d rect) {
         if (shouldFlip()) {
-            return new Rect2d(GeometryUtil.flipFieldPose(rect.bottomLeftCorner), GeometryUtil.flipFieldPose(rect.topRightCorner));
+            var blX = rect.bottomLeftCorner.getX();
+            var blY = rect.bottomLeftCorner.getY();
+            var trX = rect.topRightCorner.getX();
+            var trY = rect.topRightCorner.getY();
+            // when flipping a Rect2d, we need to swap the X positions otherwise it will be an inside out rectangle and therefore .contains will always return false
+            return new Rect2d(GeometryUtil.flipFieldPose(new Pose2d(trX, blY, new Rotation2d())), GeometryUtil.flipFieldPose(new Pose2d(blX, trY, new Rotation2d())));
         } else {
             return rect;
         }
