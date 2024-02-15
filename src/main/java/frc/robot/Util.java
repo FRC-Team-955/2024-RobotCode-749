@@ -52,9 +52,9 @@ public final class Util {
 
     public static Rect2d flipIfNeededNow(Rect2d rect) {
         if (shouldFlip()) {
-            return new Rect2d(flipIfNeededNow(rect.getBottomLeftCorner()), flipIfNeededNow(rect.getTopRightCorner()));
+            return new Rect2d(GeometryUtil.flipFieldPose(rect.bottomLeftCorner), GeometryUtil.flipFieldPose(rect.topRightCorner));
         } else {
-            return rect.clone();
+            return rect;
         }
     }
 

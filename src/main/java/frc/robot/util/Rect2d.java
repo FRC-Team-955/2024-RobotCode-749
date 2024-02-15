@@ -2,16 +2,9 @@ package frc.robot.util;
 
 import edu.wpi.first.math.geometry.Pose2d;
 
-public class Rect2d implements Cloneable {
-    private final Pose2d bottomLeftCorner;
-    private final Pose2d topRightCorner;
-
-    public Pose2d getBottomLeftCorner() {
-        return bottomLeftCorner;
-    }
-    public Pose2d getTopRightCorner() {
-        return topRightCorner;
-    }
+public class Rect2d {
+    public Pose2d bottomLeftCorner;
+    public Pose2d topRightCorner;
 
     public Rect2d(Pose2d bottomLeftCorner, Pose2d topRightCorner) {
         this.bottomLeftCorner = bottomLeftCorner;
@@ -25,10 +18,5 @@ public class Rect2d implements Cloneable {
                         p.getX() < topRightCorner.getX() &&
                         p.getY() < topRightCorner.getY()
         );
-    }
-
-    @Override
-    public Rect2d clone() {
-        return new Rect2d(bottomLeftCorner, topRightCorner);
     }
 }
