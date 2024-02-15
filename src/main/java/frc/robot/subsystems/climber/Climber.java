@@ -16,21 +16,22 @@ public class Climber extends SubsystemBase {
         Logger.processInputs("Inputs/Climber", inputs);
     }
 
-    /**
-     * Sets the speed of the right motor and on interrupt, stops the motor.
-     *
-     * @param speed A positive value is up and a negative value is down.
-     */
-    public Command setRightCommand(double speed) {
-        return startEnd(() -> io.setRight(speed), io::stop);
+    public Command setRightCommand(Direction direction) {
+        return startEnd(() -> io.setRight(direction.speed), io::stop);
     }
 
-    /**
-     * Sets the speed of the left motor and on interrupt, stops the motor.
-     *
-     * @param speed A positive value is up and a negative value is down.
-     */
-    public Command setLeftCommand(double speed) {
-        return startEnd(() -> io.setLeft(speed), io::stop);
+    public Command setLeftCommand(Direction direction) {
+        return startEnd(() -> io.setLeft(direction.speed), io::stop);
+    }
+
+    public enum Direction {
+        Up(1),
+        Down(-1);
+
+        private final double speed;
+
+        Direction(double speed) {
+            this.speed = speed;
+        }
     }
 }

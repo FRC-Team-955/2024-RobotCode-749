@@ -53,17 +53,18 @@ public class Robot {
         driverController.povDown().onTrue(drivebase.swerveMode.swerveAngleCommand(180));
         driverController.povRight().onTrue(drivebase.swerveMode.swerveAngleCommand(270));
 
-        driverController.x().toggleOnTrue(launcher.launchCommand().withTimeout(5));
-        driverController.b().toggleOnTrue(launcher.intakeCommand().withTimeout(5));
+        operatorController.x().toggleOnTrue(launcher.launchCommand().withTimeout(5));
+        operatorController.b().toggleOnTrue(launcher.intakeCommand().withTimeout(5));
 
-        operatorController.b().toggleOnTrue(drivebase.autoAlign.rightSubwooferCommand(driverController));
-        operatorController.x().toggleOnTrue(drivebase.autoAlign.leftSubwooferCommand(driverController));
-        operatorController.y().toggleOnTrue(drivebase.autoAlign.sourceCommand(driverController));
+        operatorController.povUp().toggleOnTrue(drivebase.autoAlign.sourceCommand(driverController));
+        operatorController.povDown().toggleOnTrue(drivebase.autoAlign.frontSubwooferCommand(driverController));
+        operatorController.povRight().toggleOnTrue(drivebase.autoAlign.rightSubwooferCommand(driverController));
+        operatorController.povLeft().toggleOnTrue(drivebase.autoAlign.leftSubwooferCommand(driverController));
 
-        operatorController.povUp().whileTrue(climber.setRightCommand(1));
-        operatorController.povDown().whileTrue(climber.setRightCommand(-1));
-        operatorController.povLeft().whileTrue(climber.setLeftCommand(1));
-        operatorController.povRight().whileTrue(climber.setLeftCommand(-1));
+        operatorController.rightBumper().whileTrue(climber.setRightCommand(Climber.Direction.Up));
+        operatorController.rightTrigger().whileTrue(climber.setRightCommand(Climber.Direction.Down));
+        operatorController.leftBumper().whileTrue(climber.setLeftCommand(Climber.Direction.Up));
+        operatorController.leftTrigger().whileTrue(climber.setLeftCommand(Climber.Direction.Down));
     }
 
     public Command getAutonomousCommand() {
