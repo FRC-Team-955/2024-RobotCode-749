@@ -8,8 +8,8 @@ import edu.wpi.first.wpilibj.simulation.DifferentialDrivetrainSim.KitbotWheelSiz
 public final class DrivebaseConstants {
     public static final int leftLeaderMotorId = 1;
     public static final int leftFollowerMotorId = 2;
-    public static final int rightLeaderMotorId = 3;
-    public static final int rightFollowerMotorId = 4;
+    public static final int rightLeaderMotorId = 4;
+    public static final int rightFollowerMotorId = 3;
     public static final int pigeonId = 9;
 
     public static final KitbotWheelSize wheelSize = KitbotWheelSize.kSixInch;
