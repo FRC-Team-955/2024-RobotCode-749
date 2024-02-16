@@ -6,6 +6,8 @@ import java.util.function.Supplier;
 import com.pathplanner.lib.util.GeometryUtil;
 
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Filesystem;
 import frc.robot.constants.GeneralConstants;
@@ -40,6 +42,14 @@ public final class Util {
     public static Pose2d flipIfNeededNow(Pose2d pose) {
         if (shouldFlip()) {
             return GeometryUtil.flipFieldPose(pose);
+        } else {
+            return pose;
+        }
+    }
+
+    public static Translation2d flipIfNeededNow(Translation2d pose) {
+        if (shouldFlip()) {
+            return GeometryUtil.flipFieldPose(new Pose2d(pose, new Rotation2d())).getTranslation();
         } else {
             return pose;
         }

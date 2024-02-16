@@ -1,6 +1,5 @@
 package frc.robot.auto;
 
-
 import java.util.List;
 
 import com.pathplanner.lib.auto.AutoBuilder;
@@ -88,8 +87,8 @@ public class AutoGenerator {
             commands.addCommands(AutoBuilder.followPath(path));
         }
 
-        Rotation2d rotation = new Rotation2d(-90);
-        
+        Rotation2d rotation = Rotation2d.fromDegrees(-90);
+
         // switch (startingPoint) {
         //     case Top -> rotation = new Rotation2d(-90);
         //     case Middle -> rotation = new Rotation2d(-90);
@@ -103,11 +102,11 @@ public class AutoGenerator {
         //                      drivebase.pathfindCommand(Util.flipIfNeeded(messUpMidfieldBottomNote.getBoolean(true)      ? new Pose2d(7.80, 0.80, rotation) : new Pose2d(7.30, 0.80, rotation))))))));
 
         List<Translation2d> bezierPoints = PathPlannerPath.bezierFromPoses(
-            Util.flipIfNeededNow(messUpMidfieldTopNote.getBoolean(true)         ? new Pose2d(7.80, 7.40, rotation) : new Pose2d(7.30, 7.40, rotation)),
-            Util.flipIfNeededNow(messUpMidfieldUpperMiddleNote.getBoolean(true) ? new Pose2d(7.80, 5.75, rotation) : new Pose2d(7.30, 5.75, rotation)),
-            Util.flipIfNeededNow(messUpMidfieldMiddleNote.getBoolean(true)      ? new Pose2d(7.80, 4.10, rotation) : new Pose2d(7.30, 4.10, rotation)),
-            Util.flipIfNeededNow(messUpMidfieldLowerMiddleNote.getBoolean(true) ? new Pose2d(7.80, 2.50, rotation) : new Pose2d(7.30, 2.50, rotation)),
-            Util.flipIfNeededNow(messUpMidfieldBottomNote.getBoolean(true)      ? new Pose2d(7.80, 0.80, rotation) : new Pose2d(7.30, 0.80, rotation))
+            Util.flipIfNeededNow(messUpMidfieldTopNote.getBoolean(true)          ? new Pose2d(7.70, 7.40, rotation) : new Pose2d(7.30, 7.40, rotation)),
+            Util.flipIfNeededNow(messUpMidfieldUpperMiddleNote.getBoolean(true)  ? new Pose2d(7.70, 5.75, rotation) : new Pose2d(7.30, 5.75, rotation)),
+            Util.flipIfNeededNow(messUpMidfieldMiddleNote.getBoolean(true)       ? new Pose2d(7.70, 4.10, rotation) : new Pose2d(7.30, 4.10, rotation)),
+            Util.flipIfNeededNow(messUpMidfieldLowerMiddleNote.getBoolean(true)  ? new Pose2d(7.70, 2.50, rotation) : new Pose2d(7.30, 2.50, rotation)),
+            Util.flipIfNeededNow(messUpMidfieldBottomNote.getBoolean(true)       ? new Pose2d(7.70, 0.80, rotation) : new Pose2d(7.30, 0.80, rotation))
         );
 
         PathPlannerPath path = new PathPlannerPath(
