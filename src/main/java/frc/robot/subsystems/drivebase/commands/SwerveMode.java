@@ -7,6 +7,9 @@ import frc.robot.Util;
 import frc.robot.constants.DrivebaseConstants;
 import frc.robot.subsystems.drivebase.Drivebase;
 import frc.robot.util.TunablePIDController;
+
+import java.util.function.Supplier;
+
 import org.littletonrobotics.junction.Logger;
 
 public class SwerveMode {
@@ -21,6 +24,10 @@ public class SwerveMode {
         pid.enableContinuousInput(-180, 180);
         return pid;
     });
+    
+    /**
+     * Degrees
+     */
     private static double swerveModeSetpoint = 0;
 
     public Command swerveDriveCommand(CommandXboxController controller) {
@@ -47,7 +54,17 @@ public class SwerveMode {
                 }));
     }
 
+    /**
+     * @param angle Degrees
+     */
     public Command swerveAngleCommand(double angle) {
         return Commands.runOnce(() -> swerveModeSetpoint = angle);
+    }
+
+    /**
+     * @param angle Degrees
+     */
+    public Command swerveAngleCommand(Supplier<Double> angle) {
+        return Commands.runOnce(() -> swerveModeSetpoint = angle.get());
     }
 }
