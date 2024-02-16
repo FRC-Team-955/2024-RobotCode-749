@@ -3,25 +3,41 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 7.8,
-        "y": 4.1
+        "x": 1.45,
+        "y": 5.55
       },
       "prevControl": null,
       "nextControl": {
-        "x": 7.8,
-        "y": 4.1
+        "x": 1.837009827865811,
+        "y": 5.564955745296107
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 7.8,
-        "y": 2.5
+        "x": 1.8356416665100634,
+        "y": 4.775743012106549
       },
       "prevControl": {
-        "x": 7.8,
-        "y": 2.5
+        "x": 1.807408999433385,
+        "y": 5.180144975674567
+      },
+      "nextControl": {
+        "x": 1.8634992126048966,
+        "y": 4.376714244815799
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 2.4080460571422337,
+        "y": 4.1046482092964185
+      },
+      "prevControl": {
+        "x": 2.103417283757646,
+        "y": 4.09478126648561
       },
       "nextControl": null,
       "isLocked": false,
@@ -43,7 +59,7 @@
     "rotateFast": false
   },
   "reversed": true,
-  "folder": "Midfield notes",
+  "folder": "Right note interactions",
   "previewStartingState": null,
   "useDefaultConstraints": false
 }

@@ -14,31 +14,31 @@
         {
           "type": "path",
           "data": {
-            "pathName": "SKIP Mess with Midfield(1) note"
+            "pathName": "SKIP Mess with far left midfield note"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "SKIP Mess with Midfield(2) note"
+            "pathName": null
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "SKIP Mess with Midfield(3) note"
+            "pathName": "SKIP Mess with middle midfield note"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "SKIP Mess with Midfield(4) note"
+            "pathName": "SKIP Mess with right midfield note"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "SKIP Mess with Midfield(5) note"
+            "pathName": "SKIP Mess with far right midfield note"
           }
         }
       ]
