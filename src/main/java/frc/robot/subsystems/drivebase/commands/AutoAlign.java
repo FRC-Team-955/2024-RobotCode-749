@@ -54,32 +54,12 @@ public class AutoAlign {
         return autoAlignCommand(targetPose, bounds, errorController);
     }
 
-    // public Command ampCommand(CommandXboxController errorController) {
-    //     var targetPose = Util.flipIfNeeded(new Pose2d(1.93, 7.716, Rotation2d.fromDegrees(90)));
-    //     var bounds = new Rect2d(
-    //             new Pose2d(1.272, 1.455, new Rotation2d()),
-    //             new Pose2d(2.798, 7.681, new Rotation2d())
-    //     );
-    //     return autoAlignCommand(targetPose, bounds, errorController);
-    // }
-
-    // public Command sourceCommand(CommandXboxController errorController) {
-    //     var targetPose = Util.flipIfNeeded(new Pose2d(15.373, 0.925, Rotation2d.fromRadians(2 - Math.PI)));
-    //     var bounds = new Rect2d(
-    //             new Pose2d(16.029, 4.044, new Rotation2d()),
-    //             new Pose2d(13.634, 1.569, new Rotation2d())
-    //     );
-    //     return autoAlignCommand(targetPose, bounds, errorController)
-    //         .andThen(drivebase.swerveMode.swerveAngleCommand(drivebase.getPose().getRotation().getDegrees() - 180));
-    // }
-
     public Command sourceCommand(CommandXboxController errorController) {
-        var targetPose = Util.flipIfNeeded(new Pose2d(1.16, 0.958, Rotation2d.fromRadians(2 - Math.PI)));
+        var targetPose = Util.flipIfNeeded(new Pose2d(1.93, 7.716, Rotation2d.fromDegrees(90)));
         var bounds = new Rect2d(
-                new Pose2d(2.22, 4.361, new Rotation2d()),
-                new Pose2d(0.444, 0.4, new Rotation2d())
+                new Pose2d(1.272, 1.455, new Rotation2d()),
+                new Pose2d(2.798, 7.681, new Rotation2d())
         );
-        return autoAlignCommand(targetPose, bounds, errorController)
-            .andThen(drivebase.swerveMode.swerveAngleCommand(() -> drivebase.getPose().getRotation().getDegrees() - 180));
+        return autoAlignCommand(targetPose, bounds, errorController);
     }
 }
