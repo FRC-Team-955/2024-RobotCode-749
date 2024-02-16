@@ -8,12 +8,15 @@ import com.pathplanner.lib.pathfinding.Pathfinding;
 import com.pathplanner.lib.util.PathPlannerLogging;
 import com.pathplanner.lib.util.ReplanningConfig;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
+import edu.wpi.first.math.estimator.DifferentialDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.DifferentialDriveKinematics;
-import edu.wpi.first.math.kinematics.DifferentialDriveOdometry;
 import edu.wpi.first.math.kinematics.DifferentialDriveWheelSpeeds;
+import edu.wpi.first.networktables.NetworkTable;
+import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -24,6 +27,7 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.Util;
 import frc.robot.constants.DrivebaseConstants;
 import frc.robot.constants.GeneralConstants;
+import frc.robot.constants.GeneralConstants.Mode;
 import frc.robot.subsystems.drivebase.commands.AutoAlign;
 import frc.robot.subsystems.drivebase.commands.SwerveMode;
 import frc.robot.util.LocalADStarAK;
@@ -40,8 +44,8 @@ public class Drivebase extends SubsystemBase {
     private final DrivebaseIO io = chooseIO(DrivebaseIOReal::new, DrivebaseIOSim::new, DrivebaseIO::new);
     private final DrivebaseIOInputsAutoLogged inputs = new DrivebaseIOInputsAutoLogged();
 
-    private final DifferentialDriveOdometry odometry = new DifferentialDriveOdometry(new Rotation2d(), 0.0, 0.0);
     private final DifferentialDriveKinematics kinematics = new DifferentialDriveKinematics(DrivebaseConstants.trackWidth);
+    private final DifferentialDrivePoseEstimator odometry = new DifferentialDrivePoseEstimator(kinematics, new Rotation2d(), 0.0, 0.0, new Pose2d());
     private final SimpleMotorFeedforward feedforward = new SimpleMotorFeedforward(DrivebaseConstants.feedforwardS, DrivebaseConstants.feedforwardV);
     private final Field2d field = new Field2d();
 
@@ -82,6 +86,22 @@ public class Drivebase extends SubsystemBase {
         Logger.processInputs("Inputs/Drivebase", inputs);
 
         field.setRobotPose(odometry.update(inputs.gyroYaw, getLeftPositionMeters(), getRightPositionMeters()));
+
+        if (GeneralConstants.mode != Mode.SIM) {
+            addVisionMeasurement("limelight_left");
+            addVisionMeasurement("limelight_right");
+        }
+    }
+
+    private void addVisionMeasurement(String limeLightName) {
+        NetworkTable table = NetworkTableInstance.getDefault().getTable(limeLightName);
+        double[] botpose = table.getEntry("botpose").getDoubleArray((double[]) null);
+        if (botpose == null)
+            return;
+        double tl = table.getEntry("tl").getDouble(0.0);
+        double cl = table.getEntry("cl").getDouble(0.0);
+        odometry.addVisionMeasurement(new Pose2d(botpose[0], botpose[1], Rotation2d.fromDegrees(botpose[5])),
+                Timer.getFPGATimestamp() - (tl / 1000.0) - (cl / 1000.0));
     }
 
     public void arcadeDrive(double speed, double rotation) {
@@ -168,7 +188,7 @@ public class Drivebase extends SubsystemBase {
 
     @AutoLogOutput
     public Pose2d getPose() {
-        return odometry.getPoseMeters();
+        return odometry.getEstimatedPosition();
     }
 
     public Command setPoseCommand(Pose2d newPose) {
