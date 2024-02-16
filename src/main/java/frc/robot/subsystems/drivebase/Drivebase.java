@@ -88,20 +88,20 @@ public class Drivebase extends SubsystemBase {
         field.setRobotPose(odometry.update(inputs.gyroYaw, getLeftPositionMeters(), getRightPositionMeters()));
 
         if (GeneralConstants.mode != Mode.SIM) {
-            addVisionMeasurement("limelight_left");
-            addVisionMeasurement("limelight_right");
+            addPoseEstimation("limelight_left");
+            addPoseEstimation("limelight_right");
         }
     }
 
-    private void addVisionMeasurement(String limeLightName) {
+    private void addPoseEstimation(String limeLightName) {
         NetworkTable table = NetworkTableInstance.getDefault().getTable(limeLightName);
         double[] botpose = table.getEntry("botpose").getDoubleArray((double[]) null);
         if (botpose == null)
             return;
-        double tl = table.getEntry("tl").getDouble(0.0);
-        double cl = table.getEntry("cl").getDouble(0.0);
-        odometry.addVisionMeasurement(new Pose2d(botpose[0], botpose[1], Rotation2d.fromDegrees(botpose[5])),
-                Timer.getFPGATimestamp() - (tl / 1000.0) - (cl / 1000.0));
+        odometry.addVisionMeasurement(
+                new Pose2d(botpose[0], botpose[1], Rotation2d.fromDegrees(botpose[5])),
+                Timer.getFPGATimestamp() - (botpose[6] / 1000.0)
+        );
     }
 
     public void arcadeDrive(double speed, double rotation) {
