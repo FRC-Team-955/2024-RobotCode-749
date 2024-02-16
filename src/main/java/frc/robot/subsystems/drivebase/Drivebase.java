@@ -45,7 +45,11 @@ public class Drivebase extends SubsystemBase {
     private final SimpleMotorFeedforward feedforward = new SimpleMotorFeedforward(DrivebaseConstants.feedforwardS, DrivebaseConstants.feedforwardV);
     private final Field2d field = new Field2d();
 
+    @AutoLogOutput
+    private boolean arcadeDrive = false;
+    @AutoLogOutput
     private boolean reverseMode = false;
+    @AutoLogOutput
     private boolean preciseMode = false;
 
     /* Command Groups */
@@ -89,7 +93,7 @@ public class Drivebase extends SubsystemBase {
         io.setVoltage(speeds.left * 12, speeds.right * 12);
     }
 
-    public void driveVelocity(double leftMetersPerSec, double rightMetersPerSec) {
+    private void driveVelocity(double leftMetersPerSec, double rightMetersPerSec) {
         Logger.recordOutput("Drivebase/LeftVelocitySetpointMetersPerSec", leftMetersPerSec);
         Logger.recordOutput("Drivebase/RightVelocitySetpointMetersPerSec", rightMetersPerSec);
         double leftRadPerSec = leftMetersPerSec / DrivebaseConstants.wheelRadius;
@@ -102,7 +106,7 @@ public class Drivebase extends SubsystemBase {
         );
     }
 
-    public Command arcadeDriveCommand(CommandXboxController controller) {
+    private Command arcadeDriveCommand(CommandXboxController controller) {
         return run(() -> arcadeDrive(controller.getLeftY(), -controller.getRightX()));
     }
 
@@ -148,6 +152,18 @@ public class Drivebase extends SubsystemBase {
 
     public Command setPreciseModeCommand(boolean preciseMode) {
         return Commands.runOnce(() -> this.preciseMode = preciseMode);
+    }
+
+    public Command toggleArcadeDrive(CommandXboxController controller) {
+        return Commands.runOnce(() -> {
+            this.getCurrentCommand().cancel();
+            if (arcadeDrive) {
+                this.setDefaultCommand(swerveMode.swerveDriveCommand(controller));
+            } else {
+                this.setDefaultCommand(arcadeDriveCommand(controller));
+            }
+            arcadeDrive = !arcadeDrive;
+        });
     }
 
     @AutoLogOutput
