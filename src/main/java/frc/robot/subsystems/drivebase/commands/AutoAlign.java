@@ -20,7 +20,7 @@ public class AutoAlign {
     private static final Pose2d frontSubwoofer = new Pose2d(1.391, 5.55, Rotation2d.fromRadians(/* 180 degrees */ Math.PI));
     private static final Pose2d source = new Pose2d(15.38, 0.958, Rotation2d.fromRadians(-1));
 
-    private static final Rect2d[] subwooferBounds = new Rect2d[] {
+    private static final Rect2d[] subwooferBounds = new Rect2d[]{
             new Rect2d(
                     new Pose2d(1.4, 4.6, new Rotation2d()),
                     new Pose2d(4.7, 7.3, new Rotation2d())
