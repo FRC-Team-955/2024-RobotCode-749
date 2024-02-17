@@ -8,5 +8,5 @@ public enum Note {
     MidfieldUpperMiddleNote,
     MidfieldMiddleNote,
     MidfieldLowerMiddleNote,
-    MidfieldBottomNote;
+    MidfieldBottomNote
 }
