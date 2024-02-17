@@ -17,16 +17,17 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.Util;
 import frc.robot.subsystems.drivebase.Drivebase;
+import frc.robot.subsystems.launcher.Launcher;
 
 import java.util.List;
 
 public class AutoGenerator {
     private static final ShuffleboardTab tab = Shuffleboard.getTab("Auto Generator");
-    private static final GenericEntry messUpMidfieldTopNote = tab.add("Mess Top", true).withWidget(BuiltInWidgets.kToggleSwitch).getEntry();
-    private static final GenericEntry messUpMidfieldUpperMiddleNote = tab.add("Mess UpperMiddle", true).withWidget(BuiltInWidgets.kToggleSwitch).getEntry();
-    private static final GenericEntry messUpMidfieldMiddleNote = tab.add("Mess Middle", true).withWidget(BuiltInWidgets.kToggleSwitch).getEntry();
-    private static final GenericEntry messUpMidfieldLowerMiddleNote = tab.add("Mess LowerMiddle", true).withWidget(BuiltInWidgets.kToggleSwitch).getEntry();
-    private static final GenericEntry messUpMidfieldBottomNote = tab.add("Mess Bottom", true).withWidget(BuiltInWidgets.kToggleSwitch).getEntry();
+    private static final GenericEntry messUpMidfieldTopNote = tab.add("Mess with Top", true).withWidget(BuiltInWidgets.kToggleSwitch).getEntry();
+    private static final GenericEntry messUpMidfieldUpperMiddleNote = tab.add("Mess with Upper Middle", true).withWidget(BuiltInWidgets.kToggleSwitch).getEntry();
+    private static final GenericEntry messUpMidfieldMiddleNote = tab.add("Mess with Middle", true).withWidget(BuiltInWidgets.kToggleSwitch).getEntry();
+    private static final GenericEntry messUpMidfieldLowerMiddleNote = tab.add("Mess with Lower Middle", true).withWidget(BuiltInWidgets.kToggleSwitch).getEntry();
+    private static final GenericEntry messUpMidfieldBottomNote = tab.add("Mess with Bottom", true).withWidget(BuiltInWidgets.kToggleSwitch).getEntry();
 
     private static final SendableChooser<StartingPoint> startingPoints = Util.make(() -> {
         var startingPoints = new SendableChooser<StartingPoint>();
@@ -53,31 +54,25 @@ public class AutoGenerator {
     //     return AutoBuilder.followPath(PathPlannerPath.fromPathFile(pathName));
     // }
 
-    public static Command generateAuto(Drivebase drivebase) {
+    public static Command generateAuto(Drivebase drivebase, Launcher launcher) {
         var startingPoint = startingPoints.getSelected();
         var commands = new SequentialCommandGroup();
 
         PathPlannerPath path = null;
         switch (startingPoint) {
-            case Top -> {
-                path = PathPlannerPath.fromPathFile("Starting top to subwoofer");
-            }
-            case Middle -> {
-                path = PathPlannerPath.fromPathFile("Starting middle to subwoofer");
-            }
-            case Bottom -> {
-                path = PathPlannerPath.fromPathFile("Starting bottom to subwoofer");
-            }
+            case Top -> path = PathPlannerPath.fromPathFile("Left starting point to subwoofer");
+            case Middle -> path = PathPlannerPath.fromPathFile("Middle starting point to subwoofer");
+            case Bottom -> path = PathPlannerPath.fromPathFile("Right starting point to subwoofer");
         }
         commands.addCommands(drivebase.setPoseCommand(GeometryUtil.flipFieldPose(path.getStartingDifferentialPose())));
         commands.addCommands(AutoBuilder.followPath(path));
+        commands.addCommands(launcher.launchCommand());
 
         if (messUpMidfieldTopNote.getBoolean(true)) {
-            path = PathPlannerPath.fromPathFile("Mess with Midfield(1) note");
+            path = PathPlannerPath.fromPathFile("Mess with far left midfield note");
         } else {
-            path = PathPlannerPath.fromPathFile("Go near midfield (1)");
+            path = PathPlannerPath.fromPathFile("Go near far left midfield");
         }
-        commands.addCommands(drivebase.setPoseCommand(GeometryUtil.flipFieldPose(path.getStartingDifferentialPose())));
         commands.addCommands(AutoBuilder.followPath(path));
 
         Rotation2d rotation = Rotation2d.fromDegrees(-90);
