@@ -1,14 +1,11 @@
 package frc.robot.subsystems.climber;
 
-import com.ctre.phoenix.motorcontrol.can.TalonSRXConfiguration;
-import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import com.revrobotics.CANSparkLowLevel;
 import com.revrobotics.CANSparkMax;
 import frc.robot.constants.ClimberConstants;
-import frc.robot.constants.DrivebaseConstants;
 
 public class ClimberIOReal extends ClimberIO {
-     private final CANSparkMax left = new CANSparkMax(ClimberConstants.leftMotorId, CANSparkLowLevel.MotorType.kBrushless);
+    private final CANSparkMax left = new CANSparkMax(ClimberConstants.leftMotorId, CANSparkLowLevel.MotorType.kBrushless);
     private final CANSparkMax right = new CANSparkMax(ClimberConstants.rightMotorId, CANSparkLowLevel.MotorType.kBrushless);
 
     public ClimberIOReal() {
