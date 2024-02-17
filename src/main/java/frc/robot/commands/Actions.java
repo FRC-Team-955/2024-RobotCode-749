@@ -7,6 +7,7 @@ import frc.robot.subsystems.drivebase.Drivebase;
 import frc.robot.subsystems.launcher.Launcher;
 import org.littletonrobotics.junction.AutoLogOutput;
 
+import java.util.Optional;
 import java.util.Set;
 
 public class Actions {
@@ -38,28 +39,32 @@ public class Actions {
         }
     }
 
-    private Command autoAlignForAction(CommandXboxController controller) {
+    private Optional<Command> autoAlignForAction() {
         switch (selectedAction) {
             case Source -> {
-                return drivebase.autoAlign.sourceCommand(controller);
+                return drivebase.autoAlign.sourceCommand();
             }
             case FrontSubwoofer -> {
-                return drivebase.autoAlign.frontSubwooferCommand(controller);
+                return drivebase.autoAlign.frontSubwooferCommand();
             }
             case LeftSubwoofer -> {
-                return drivebase.autoAlign.leftSubwooferCommand(controller);
+                return drivebase.autoAlign.leftSubwooferCommand();
             }
             case RightSubwoofer -> {
-                return drivebase.autoAlign.rightSubwooferCommand(controller);
+                return drivebase.autoAlign.rightSubwooferCommand();
             }
             default -> {
-                return Commands.none();
+                return Optional.empty();
             }
         }
     }
 
     public Command doSelectedActionCommand(CommandXboxController autoAlignController) {
-        return Commands.defer(() -> autoAlignForAction(autoAlignController).andThen(commandForAction()), Set.of());
+        return Commands.defer(() ->
+                        autoAlignForAction()
+                                .map(command -> (Command) command.andThen(commandForAction()))
+                                .orElse(Controller.setRumbleError(autoAlignController)),
+                Set.of());
     }
 
     public Command doSelectedActionWithoutAutoAlignCommand() {

@@ -4,13 +4,11 @@ import com.pathplanner.lib.util.GeometryUtil;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.Commands;
-import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.Util;
-import frc.robot.commands.Controller;
 import frc.robot.subsystems.drivebase.Drivebase;
 import frc.robot.util.Rect2d;
 
+import java.util.Optional;
 import java.util.function.Supplier;
 
 public class AutoAlign {
@@ -36,43 +34,37 @@ public class AutoAlign {
         this.drivebase = drivebase;
     }
 
-    public Command rightSubwooferCommand(CommandXboxController errorController) {
+    public Optional<Command> rightSubwooferCommand() {
         // Need to swap right and left on red
         Supplier<Pose2d> targetPose = () -> Util.shouldFlip() ? GeometryUtil.flipFieldPose(leftSubwoofer) : rightSubwoofer;
-        return autoAlignCommand(targetPose, errorController, subwooferBounds);
+        return getAutoAlignCommand(targetPose, subwooferBounds);
     }
 
-    public Command leftSubwooferCommand(CommandXboxController errorController) {
+    public Optional<Command> leftSubwooferCommand() {
         // Need to swap right and left on red
         Supplier<Pose2d> targetPose = () -> Util.shouldFlip() ? GeometryUtil.flipFieldPose(rightSubwoofer) : leftSubwoofer;
-        return autoAlignCommand(targetPose, errorController, subwooferBounds);
+        return getAutoAlignCommand(targetPose, subwooferBounds);
     }
 
-    public Command frontSubwooferCommand(CommandXboxController errorController) {
+    public Optional<Command> frontSubwooferCommand() {
         var targetPose = Util.flipIfNeeded(frontSubwoofer);
-        return autoAlignCommand(targetPose, errorController, subwooferBounds);
+        return getAutoAlignCommand(targetPose, subwooferBounds);
     }
 
-    public Command sourceCommand(CommandXboxController errorController) {
+    public Optional<Command> sourceCommand() {
         var targetPose = Util.flipIfNeeded(source);
         var bounds = new Rect2d(
                 new Pose2d(11.9, 0.4, new Rotation2d()),
                 new Pose2d(16.3, 4.2, new Rotation2d())
         );
-        return autoAlignCommand(targetPose, errorController, bounds);
+        return getAutoAlignCommand(targetPose, bounds);
     }
 
-    private Command autoAlignCommand(Supplier<Pose2d> targetPose, CommandXboxController errorController, Rect2d... bounds) {
-        return Commands.either(
-                drivebase.pathfindCommand(targetPose),
-                Controller.setRumbleError(errorController),
-                () -> {
-                    for (var bound : bounds) {
-                        if (Util.flipIfNeededNow(bound).contains(drivebase.getPose()))
-                            return true;
-                    }
-                    return false;
-                }
-        );
+    private Optional<Command> getAutoAlignCommand(Supplier<Pose2d> targetPose, Rect2d... bounds) {
+        for (var bound : bounds) {
+            if (Util.flipIfNeededNow(bound).contains(drivebase.getPose()))
+                return Optional.of(drivebase.pathfindCommand(targetPose));
+        }
+        return Optional.empty();
     }
 }
