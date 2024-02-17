@@ -35,7 +35,6 @@ import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
 
 import java.util.List;
-import java.util.Set;
 import java.util.function.Supplier;
 
 import static frc.robot.Util.chooseIO;
@@ -136,13 +135,13 @@ public class Drivebase extends SubsystemBase {
     }
 
     public Command pathfindCommand(Supplier<Pose2d> targetPoseSupplier) {
-        return Commands.defer(() -> {
+        return Commands.runOnce(() -> {
             var pose = getPose();
             var targetPose = targetPoseSupplier.get();
 
             // Check if the robot is already at the target pose.
             if (Math.abs(pose.getX() - targetPose.getX()) <= .1 && Math.abs(pose.getY() - targetPose.getY()) <= .1) {
-                return Commands.none();
+                return;
             }
 
             List<Translation2d> bezierPoints = PathPlannerPath.bezierFromPoses(
@@ -157,10 +156,11 @@ public class Drivebase extends SubsystemBase {
             );
 
             path.preventFlipping = true;
-            return AutoBuilder
+            AutoBuilder
                     .followPath(path)
-                    .andThen(swerveMode.swerveAngleCommand(targetPose.getRotation().getDegrees()));
-        }, Set.of());
+                    .andThen(swerveMode.swerveAngleCommand(targetPose.getRotation().getDegrees()))
+                    .schedule();
+        });
     }
 
     public boolean getReverseMode() {
@@ -181,13 +181,14 @@ public class Drivebase extends SubsystemBase {
 
     public Command toggleArcadeDrive(CommandXboxController controller) {
         return Commands.runOnce(() -> {
-            this.getCurrentCommand().cancel();
-            if (arcadeDrive) {
-                this.setDefaultCommand(swerveMode.swerveDriveCommand(controller));
-            } else {
-                this.setDefaultCommand(arcadeDriveCommand(controller));
-            }
+            if (this.getCurrentCommand() == this.getDefaultCommand())
+                this.getCurrentCommand().cancel();
             arcadeDrive = !arcadeDrive;
+            if (arcadeDrive) {
+                this.setDefaultCommand(arcadeDriveCommand(controller));
+            } else {
+                this.setDefaultCommand(swerveMode.swerveDriveCommand(controller));
+            }
         });
     }
 

@@ -8,7 +8,6 @@ import frc.robot.subsystems.launcher.Launcher;
 import org.littletonrobotics.junction.AutoLogOutput;
 
 import java.util.Optional;
-import java.util.Set;
 
 public class Actions {
     private final Drivebase drivebase;
@@ -60,15 +59,16 @@ public class Actions {
     }
 
     public Command doSelectedActionCommand(CommandXboxController autoAlignController) {
-        return Commands.defer(() ->
-                        autoAlignForAction()
-                                .map(command -> (Command) command.andThen(commandForAction()))
-                                .orElse(Controller.setRumbleError(autoAlignController)),
-                Set.of());
+        return Commands.runOnce(() ->
+                autoAlignForAction()
+                        .map(command -> (Command) command.andThen(commandForAction()))
+                        .orElse(Controller.setRumbleError(autoAlignController))
+                        .schedule()
+        );
     }
 
     public Command doSelectedActionWithoutAutoAlignCommand() {
-        return Commands.defer(this::commandForAction, Set.of());
+        return Commands.runOnce(() -> this.commandForAction().schedule());
     }
 
     public enum Action {
