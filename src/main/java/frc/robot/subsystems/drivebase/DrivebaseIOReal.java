@@ -35,7 +35,7 @@ public class DrivebaseIOReal extends DrivebaseIO {
         rightFollower.setCANTimeout(250);
 
         leftLeader.setInverted(false);
-        rightLeader.setInverted(true);
+        rightLeader.setInverted(false);
         leftFollower.follow(leftLeader, false);
         rightFollower.follow(rightLeader, false);
 

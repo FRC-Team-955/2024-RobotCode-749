@@ -40,10 +40,11 @@ public class SwerveMode {
                     var robotAngle = drivebase.getPose().getRotation().getDegrees();
                     var rotation = swerveModePID.calculate(robotAngle);
                     Logger.recordOutput("Drivebase/SwerveMode/Rotation", rotation);
+                    var speed = controller.getLeftY() * DrivebaseConstants.preciseModeMultiplier * (SimulationConstants.useNintendoSwitchProController ? 1 : -1);
                     if (drivebase.getPreciseMode()) {
-                        drivebase.arcadeDrive(controller.getLeftY() * DrivebaseConstants.preciseModeMultiplier, rotation);
+                        drivebase.arcadeDrive(speed, rotation);
                     } else {
-                        drivebase.arcadeDrive(controller.getLeftY(), rotation);
+                        drivebase.arcadeDrive(speed, rotation);
                     }
                 }));
     }
