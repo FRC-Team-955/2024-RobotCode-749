@@ -1,16 +1,14 @@
 package frc.robot;
 
-import java.io.File;
-import java.util.function.Supplier;
-
 import com.pathplanner.lib.util.GeometryUtil;
-
 import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Filesystem;
 import frc.robot.constants.GeneralConstants;
+import frc.robot.util.Rect2d;
+
+import java.io.File;
+import java.util.function.Supplier;
 
 public final class Util {
     public static <T> T chooseIO(Supplier<T> real, Supplier<T> sim, Supplier<T> replay) {
@@ -39,6 +37,10 @@ public final class Util {
         return () -> flipIfNeededNow(pose);
     }
 
+    public static Supplier<Rect2d> flipIfNeeded(Rect2d pose) {
+        return () -> flipIfNeededNow(pose);
+    }
+
     public static Pose2d flipIfNeededNow(Pose2d pose) {
         if (shouldFlip()) {
             return GeometryUtil.flipFieldPose(pose);
@@ -47,11 +49,16 @@ public final class Util {
         }
     }
 
-    public static Translation2d flipIfNeededNow(Translation2d pose) {
+    public static Rect2d flipIfNeededNow(Rect2d rect) {
         if (shouldFlip()) {
-            return GeometryUtil.flipFieldPose(new Pose2d(pose, new Rotation2d())).getTranslation();
+            var blX = rect.bottomLeftCorner.getX();
+            var blY = rect.bottomLeftCorner.getY();
+            var trX = rect.topRightCorner.getX();
+            var trY = rect.topRightCorner.getY();
+            // when flipping a Rect2d, we need to swap the X positions otherwise it will be an inside out rectangle and therefore .contains will always return false
+            return new Rect2d(GeometryUtil.flipFieldPose(new Pose2d(trX, blY, rect.bottomLeftCorner.getRotation())), GeometryUtil.flipFieldPose(new Pose2d(blX, trY, rect.topRightCorner.getRotation())));
         } else {
-            return pose;
+            return rect;
         }
     }
 

@@ -5,6 +5,7 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.Util;
 import frc.robot.constants.DrivebaseConstants;
+import frc.robot.constants.SimulationConstants;
 import frc.robot.subsystems.drivebase.Drivebase;
 import frc.robot.util.TunablePIDController;
 import org.littletonrobotics.junction.Logger;
@@ -28,7 +29,7 @@ public class SwerveMode {
                 .runOnce(() -> swerveModeSetpoint = drivebase.getPose().getRotation().getDegrees())
                 .andThen(drivebase.run(() -> {
                     var x = (drivebase.getReverseMode() ? -1 : 1) * controller.getRightX();
-                    var y = (drivebase.getReverseMode() ? -1 : 1) * controller.getRightY();
+                    var y = (drivebase.getReverseMode() ? -1 : 1) * controller.getRightY() * (SimulationConstants.useNintendoSwitchProController ? 1 : -1);
 
                     if (Math.abs(x) > DrivebaseConstants.swerveModeDeadzone || Math.abs(y) > DrivebaseConstants.swerveModeDeadzone) {
                         swerveModeSetpoint = Math.toDegrees(Math.atan2(-x, y));
@@ -39,10 +40,11 @@ public class SwerveMode {
                     var robotAngle = drivebase.getPose().getRotation().getDegrees();
                     var rotation = swerveModePID.calculate(robotAngle);
                     Logger.recordOutput("Drivebase/SwerveMode/Rotation", rotation);
+                    var speed = controller.getLeftY() * (SimulationConstants.useNintendoSwitchProController ? 1 : -1);
                     if (drivebase.getPreciseMode()) {
-                        drivebase.arcadeDrive(controller.getLeftY() * DrivebaseConstants.preciseModeMultiplier, rotation);
+                        drivebase.arcadeDrive(speed * DrivebaseConstants.preciseModeMultiplier, rotation);
                     } else {
-                        drivebase.arcadeDrive(controller.getLeftY(), rotation);
+                        drivebase.arcadeDrive(speed, rotation);
                     }
                 }));
     }

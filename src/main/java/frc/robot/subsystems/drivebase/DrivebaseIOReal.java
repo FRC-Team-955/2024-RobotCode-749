@@ -1,6 +1,10 @@
 package frc.robot.subsystems.drivebase;
 
+import com.ctre.phoenix6.StatusSignal;
+import com.ctre.phoenix6.configs.Pigeon2Configuration;
+import com.ctre.phoenix6.hardware.Pigeon2;
 import com.revrobotics.*;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.util.Units;
 import frc.robot.constants.DrivebaseConstants;
 
@@ -16,6 +20,9 @@ public class DrivebaseIOReal extends DrivebaseIO {
     private final SparkPIDController leftPID = leftLeader.getPIDController();
     private final SparkPIDController rightPID = rightLeader.getPIDController();
 
+    private final Pigeon2 pigeon = new Pigeon2(DrivebaseConstants.pigeonId);
+    private final StatusSignal<Double> yaw = pigeon.getYaw();
+
     public DrivebaseIOReal() {
         leftLeader.restoreFactoryDefaults();
         rightLeader.restoreFactoryDefaults();
@@ -28,7 +35,7 @@ public class DrivebaseIOReal extends DrivebaseIO {
         rightFollower.setCANTimeout(250);
 
         leftLeader.setInverted(false);
-        rightLeader.setInverted(true);
+        rightLeader.setInverted(false);
         leftFollower.follow(leftLeader, false);
         rightFollower.follow(rightLeader, false);
 
@@ -46,6 +53,11 @@ public class DrivebaseIOReal extends DrivebaseIO {
         rightLeader.burnFlash();
         leftFollower.burnFlash();
         rightFollower.burnFlash();
+
+        pigeon.getConfigurator().apply(new Pigeon2Configuration());
+        pigeon.getConfigurator().setYaw(0.0);
+        yaw.setUpdateFrequency(100.0);
+        pigeon.optimizeBusUtilization();
     }
 
     @Override
@@ -62,7 +74,7 @@ public class DrivebaseIOReal extends DrivebaseIO {
         inputs.rightLeaderCurrentAmps = rightLeader.getOutputCurrent();
         inputs.rightFollowerCurrentAmps = rightFollower.getOutputCurrent();
 
-//        inputs.gyroYaw = Gyro.getRotation2d();
+        inputs.gyroYaw = Rotation2d.fromDegrees(yaw.refresh().getValueAsDouble());
     }
 
     @Override

@@ -3,6 +3,7 @@ package frc.robot;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.auto.AutoGenerator;
+import frc.robot.commands.Actions;
 import frc.robot.constants.*;
 import frc.robot.subsystems.climber.Climber;
 import frc.robot.subsystems.drivebase.Drivebase;
@@ -31,6 +32,8 @@ public class Robot {
     private final Launcher launcher = new Launcher();
     private final Climber climber = new Climber();
 
+    private final Actions actions = new Actions(drivebase, launcher);
+
     public Robot() {
         setDefaultCommands();
         configureBindings();
@@ -42,7 +45,7 @@ public class Robot {
     }
 
     private void configureBindings() {
-        driverController.rightBumper().toggleOnTrue(drivebase.arcadeDriveCommand(driverController));
+        driverController.rightBumper().onTrue(drivebase.toggleArcadeDrive(driverController));
         driverController.rightTrigger()
                 .onTrue(drivebase.setReverseModeCommand(true))
                 .onFalse(drivebase.setReverseModeCommand(false));
@@ -55,17 +58,18 @@ public class Robot {
         driverController.povDown().onTrue(drivebase.swerveMode.swerveAngleCommand(180));
         driverController.povRight().onTrue(drivebase.swerveMode.swerveAngleCommand(270));
 
-        driverController.x().toggleOnTrue(launcher.launchCommand().withTimeout(5));
-        driverController.b().toggleOnTrue(launcher.intakeCommand().withTimeout(5));
+        driverController.b().toggleOnTrue(actions.doSelectedActionCommand(driverController));
+        driverController.x().toggleOnTrue(actions.doSelectedActionWithoutAutoAlignCommand());
 
-        operatorController.b().toggleOnTrue(drivebase.autoAlign.rightSubwooferCommand(driverController));
-        operatorController.x().toggleOnTrue(drivebase.autoAlign.leftSubwooferCommand(driverController));
-        operatorController.y().toggleOnTrue(drivebase.autoAlign.sourceCommand(driverController));
+        operatorController.y().toggleOnTrue(actions.selectActionCommand(Actions.Action.Source));
+        operatorController.a().toggleOnTrue(actions.selectActionCommand(Actions.Action.FrontSubwoofer));
+        operatorController.x().toggleOnTrue(actions.selectActionCommand(Actions.Action.LeftSubwoofer));
+        operatorController.b().toggleOnTrue(actions.selectActionCommand(Actions.Action.RightSubwoofer));
 
-        operatorController.povUp().whileTrue(climber.setRightCommand(1));
-        operatorController.povDown().whileTrue(climber.setRightCommand(-1));
-        operatorController.povLeft().whileTrue(climber.setLeftCommand(1));
-        operatorController.povRight().whileTrue(climber.setLeftCommand(-1));
+        operatorController.rightBumper().whileTrue(climber.setRightCommand(Climber.Direction.Up));
+        operatorController.rightTrigger().whileTrue(climber.setRightCommand(Climber.Direction.Down));
+        operatorController.leftBumper().whileTrue(climber.setLeftCommand(Climber.Direction.Up));
+        operatorController.leftTrigger().whileTrue(climber.setLeftCommand(Climber.Direction.Down));
     }
 
     public Command getAutonomousCommand() {

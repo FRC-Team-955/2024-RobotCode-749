@@ -3,8 +3,8 @@ package frc.robot.util;
 import edu.wpi.first.math.geometry.Pose2d;
 
 public class Rect2d {
-    private final Pose2d bottomLeftCorner;
-    private final Pose2d topRightCorner;
+    public Pose2d bottomLeftCorner;
+    public Pose2d topRightCorner;
 
     public Rect2d(Pose2d bottomLeftCorner, Pose2d topRightCorner) {
         this.bottomLeftCorner = bottomLeftCorner;

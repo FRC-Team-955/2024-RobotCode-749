@@ -45,6 +45,7 @@ public final class Main {
                     break;
             }
 
+            // By doing this, we also initialize file constants and any other variable constants
             for (var clazz : Robot.constantClasses) {
                 for (var field : clazz.getFields()) {
                     var key = clazz.getSimpleName() + "." + field.getName();
