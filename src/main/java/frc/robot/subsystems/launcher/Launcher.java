@@ -23,7 +23,7 @@ public class Launcher extends SubsystemBase {
                         this.runOnce(() -> io.setTopVoltage(LauncherConstants.launchingSpeed * 12)),
                         Commands.waitSeconds(0.2),
                         this.runOnce(() -> io.setBottomVoltage(LauncherConstants.launchingSpeed * 12)),
-                        Commands.idle(this)
+                        Commands.idle(this).withTimeout(1)
                 )
                 .finallyDo(io::stop);
     }

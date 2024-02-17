@@ -32,7 +32,7 @@ public class Actions {
                 selectedAction == Action.LeftSubwoofer ||
                 selectedAction == Action.RightSubwoofer
         ) {
-            return launcher.launchCommand().withTimeout(3);
+            return launcher.launchCommand();
         } else {
             return Commands.none();
         }
