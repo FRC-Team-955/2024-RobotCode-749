@@ -1,5 +1,6 @@
 package frc.robot.subsystems.drivebase.commands;
 
+import com.pathplanner.lib.util.GeometryUtil;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -37,13 +38,13 @@ public class AutoAlign {
 
     public Command rightSubwooferCommand(CommandXboxController errorController) {
         // Need to swap right and left on red
-        Supplier<Pose2d> targetPose = () -> Util.shouldFlip() ? Util.flipIfNeededNow(leftSubwoofer) : rightSubwoofer;
+        Supplier<Pose2d> targetPose = () -> Util.shouldFlip() ? GeometryUtil.flipFieldPose(leftSubwoofer) : rightSubwoofer;
         return autoAlignCommand(targetPose, errorController, subwooferBounds);
     }
 
     public Command leftSubwooferCommand(CommandXboxController errorController) {
         // Need to swap right and left on red
-        Supplier<Pose2d> targetPose = () -> Util.shouldFlip() ? Util.flipIfNeededNow(rightSubwoofer) : leftSubwoofer;
+        Supplier<Pose2d> targetPose = () -> Util.shouldFlip() ? GeometryUtil.flipFieldPose(rightSubwoofer) : leftSubwoofer;
         return autoAlignCommand(targetPose, errorController, subwooferBounds);
     }
 
