@@ -16,6 +16,7 @@ public final class GeneralConstants {
     public static final double errorRumbleDuration = 0.25;
 
     public static final boolean useFileConstants = mode == Mode.SIM;
+
     public static final boolean tuningMode = Util.fileConstant("tuningMode", false);
 
     public enum Mode {
