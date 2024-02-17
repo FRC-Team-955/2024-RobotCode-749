@@ -76,6 +76,6 @@ public class Robot {
 
         // return AutoBuilder.buildAuto("Mess with all");
         // Return null to do nothing during autonomous.
-        return AutoGenerator.generateAuto(drivebase);
+        return AutoGenerator.generateAuto(drivebase, launcher);
     }
 }
