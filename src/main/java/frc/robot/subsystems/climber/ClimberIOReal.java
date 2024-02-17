@@ -2,29 +2,41 @@ package frc.robot.subsystems.climber;
 
 import com.ctre.phoenix.motorcontrol.can.TalonSRXConfiguration;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
+import com.revrobotics.CANSparkLowLevel;
+import com.revrobotics.CANSparkMax;
 import frc.robot.constants.ClimberConstants;
+import frc.robot.constants.DrivebaseConstants;
 
 public class ClimberIOReal extends ClimberIO {
-    private final WPI_TalonSRX right = new WPI_TalonSRX(ClimberConstants.rightMotorId);
-    private final WPI_TalonSRX left = new WPI_TalonSRX(ClimberConstants.leftMotorId);
+     private final CANSparkMax left = new CANSparkMax(ClimberConstants.leftMotorId, CANSparkLowLevel.MotorType.kBrushless);
+    private final CANSparkMax right = new CANSparkMax(ClimberConstants.rightMotorId, CANSparkLowLevel.MotorType.kBrushless);
 
     public ClimberIOReal() {
-        var config = new TalonSRXConfiguration();
-        config.peakCurrentLimit = 80;
-        config.peakCurrentDuration = 250;
-        config.continuousCurrentLimit = 60;
-        config.voltageCompSaturation = 12.0;
-        right.configAllSettings(config);
-        left.configAllSettings(config);
+        left.restoreFactoryDefaults();
+        right.restoreFactoryDefaults();
+
+        left.setCANTimeout(250);
+        right.setCANTimeout(250);
+
+//        left.setInverted(false);
+//        right.setInverted(false);
+
+        left.enableVoltageCompensation(12.0);
+        right.enableVoltageCompensation(12.0);
+        left.setSmartCurrentLimit(60);
+        right.setSmartCurrentLimit(60);
+
+        left.burnFlash();
+        right.burnFlash();
     }
 
     @Override
     public void updateInputs(ClimberIOInputs inputs) {
-        inputs.leftAppliedVolts = left.getMotorOutputVoltage();
-        inputs.leftCurrentAmps = left.getStatorCurrent();
+        inputs.leftAppliedVolts = left.getAppliedOutput() * left.getBusVoltage();
+        inputs.leftCurrentAmps = left.getOutputCurrent();
 
-        inputs.rightAppliedVolts = right.getMotorOutputVoltage();
-        inputs.rightCurrentAmps = right.getStatorCurrent();
+        inputs.rightAppliedVolts = right.getAppliedOutput() * right.getBusVoltage();
+        inputs.rightCurrentAmps = right.getOutputCurrent();
     }
 
     @Override
