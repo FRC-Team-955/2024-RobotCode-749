@@ -102,7 +102,8 @@ public class Drivebase extends SubsystemBase {
             return;
         odometry.addVisionMeasurement(
                 new Pose2d(botpose[0], botpose[1], Rotation2d.fromDegrees(botpose[5])),
-                Timer.getFPGATimestamp() - (botpose[6] / 1000.0));
+                Timer.getFPGATimestamp() - (botpose[6] / 1000.0)
+        );
     }
 
     public void arcadeDrive(double speed, double rotation) {
