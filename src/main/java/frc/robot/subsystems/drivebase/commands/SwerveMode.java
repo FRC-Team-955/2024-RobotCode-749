@@ -16,12 +16,12 @@ public class SwerveMode {
         this.drivebase = drivebase;
     }
 
-    private static final TunablePIDController swerveModePID = Util.make(() -> {
+    private final TunablePIDController swerveModePID = Util.make(() -> {
         var pid = new TunablePIDController("Swerve Mode", DrivebaseConstants.swerveModeP, 0, DrivebaseConstants.swerveModeD);
         pid.enableContinuousInput(-180, 180);
         return pid;
     });
-    private static double swerveModeSetpoint = 0;
+    private double swerveModeSetpoint = 0;
 
     public Command swerveDriveCommand(CommandXboxController controller) {
         return new SwerveDriveCommand(controller);
