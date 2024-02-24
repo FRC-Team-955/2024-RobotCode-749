@@ -90,6 +90,10 @@ public class Drivebase extends SubsystemBase {
             odometry.addVisionMeasurement(inputs.rightLimelightBotpose, inputs.rightLimelightBotposeTimestamp);
     }
 
+    /**
+     * @param speed Positive = forward
+     * @param rotation Positive = counterclockwise
+     */
     public void arcadeDrive(double speed, double rotation) {
         Logger.recordOutput("Drivebase/ArcadeDrive/Speed", speed);
         Logger.recordOutput("Drivebase/ArcadeDrive/Rotation", rotation);
@@ -114,7 +118,7 @@ public class Drivebase extends SubsystemBase {
         return run(() -> {
             var precise = preciseMode ? DrivebaseConstants.preciseModeMultiplier : 1;
             var reverse = reverseMode ? -1 : 1;
-            arcadeDrive(precise * reverse * controller.getLeftY(), precise * controller.getRightX());
+            arcadeDrive(precise * reverse * -controller.getLeftY(), precise * -controller.getRightX());
         });
     }
 
