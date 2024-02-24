@@ -4,10 +4,11 @@
   "holonomicMode": false,
   "pathFolders": [
     "Auto Align",
-    "Left note interactions",
-    "Middle note interactions",
     "Right note interactions",
-    "Starting positions"
+    "Middle note interactions",
+    "Midfield notes",
+    "Starting positions",
+    "Left note interactions"
   ],
   "autoFolders": [
     "Screwing stuff up",
