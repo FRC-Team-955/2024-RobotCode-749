@@ -1,5 +1,13 @@
 package frc.robot.subsystems.drivebase;
 
+import static frc.robot.Util.chooseIO;
+
+import java.util.List;
+import java.util.function.Supplier;
+
+import org.littletonrobotics.junction.AutoLogOutput;
+import org.littletonrobotics.junction.Logger;
+
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.path.GoalEndState;
 import com.pathplanner.lib.path.PathConstraints;
@@ -7,6 +15,7 @@ import com.pathplanner.lib.path.PathPlannerPath;
 import com.pathplanner.lib.pathfinding.Pathfinding;
 import com.pathplanner.lib.util.PathPlannerLogging;
 import com.pathplanner.lib.util.ReplanningConfig;
+
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.estimator.DifferentialDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -26,13 +35,6 @@ import frc.robot.constants.DrivebaseConstants;
 import frc.robot.subsystems.drivebase.commands.AutoAlign;
 import frc.robot.subsystems.drivebase.commands.SwerveMode;
 import frc.robot.util.LocalADStarAK;
-import org.littletonrobotics.junction.AutoLogOutput;
-import org.littletonrobotics.junction.Logger;
-
-import java.util.List;
-import java.util.function.Supplier;
-
-import static frc.robot.Util.chooseIO;
 
 public class Drivebase extends SubsystemBase {
     private final DrivebaseIO io = chooseIO(DrivebaseIOReal::new, DrivebaseIOSim::new, DrivebaseIO::new);
@@ -213,5 +215,9 @@ public class Drivebase extends SubsystemBase {
     @AutoLogOutput
     public double getRightVelocityMetersPerSec() {
         return inputs.rightVelocityRadPerSec * DrivebaseConstants.wheelRadius;
+    }
+
+    public Command followPathCommand(String name) {
+        return AutoBuilder.followPath(PathPlannerPath.fromPathFile(name));
     }
 }
