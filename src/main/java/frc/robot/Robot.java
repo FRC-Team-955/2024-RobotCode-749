@@ -23,7 +23,6 @@ public class Robot {
             DrivebaseConstants.class,
             GeneralConstants.class,
             LauncherConstants.class,
-            LimelightConstants.class,
             SimulationConstants.class
     };
 
