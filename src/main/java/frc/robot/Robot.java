@@ -47,17 +47,13 @@ public class Robot {
     private void configureBindings() {
         driverController.leftBumper().onTrue(drivebase.resetGyroCommand());
         driverController.rightBumper().onTrue(drivebase.toggleArcadeDrive(driverController));
-        driverController.rightTrigger()
-                .onTrue(drivebase.setReverseModeCommand(true))
-                .onFalse(drivebase.setReverseModeCommand(false));
-        driverController.leftTrigger()
-                .onTrue(drivebase.setPreciseModeCommand(true))
-                .onFalse(drivebase.setPreciseModeCommand(false));
+        driverController.rightTrigger().whileTrue(drivebase.enableReverseModeCommand());
+        driverController.leftTrigger().whileTrue(drivebase.enablePreciseModeCommand());
 
         driverController.povUp().onTrue(drivebase.swerveMode.swerveAngleCommand(0));
-        driverController.povLeft().onTrue(drivebase.swerveMode.swerveAngleCommand(90));
+        driverController.povLeft().onTrue(drivebase.swerveMode.swerveAngleCommand(-90));
         driverController.povDown().onTrue(drivebase.swerveMode.swerveAngleCommand(180));
-        driverController.povRight().onTrue(drivebase.swerveMode.swerveAngleCommand(270));
+        driverController.povRight().onTrue(drivebase.swerveMode.swerveAngleCommand(90));
 
         driverController.b().toggleOnTrue(actions.doSelectedActionCommand(driverController));
         driverController.x().toggleOnTrue(actions.doSelectedActionWithoutAutoAlignCommand());
@@ -77,6 +73,7 @@ public class Robot {
 
         // return AutoBuilder.buildAuto("Mess with all");
         // Return null to do nothing during autonomous.
-        return AutoGenerator.generateAuto(drivebase, launcher);
+//        return AutoGenerator.generateAuto(drivebase, launcher);
+        return launcher.launchCommand();
     }
 }

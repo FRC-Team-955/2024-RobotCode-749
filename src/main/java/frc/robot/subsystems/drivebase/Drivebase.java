@@ -14,9 +14,6 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.DifferentialDriveKinematics;
 import edu.wpi.first.math.kinematics.DifferentialDriveWheelSpeeds;
-import edu.wpi.first.networktables.NetworkTable;
-import edu.wpi.first.networktables.NetworkTableInstance;
-import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -26,8 +23,6 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.Util;
 import frc.robot.constants.DrivebaseConstants;
-import frc.robot.constants.GeneralConstants;
-import frc.robot.constants.GeneralConstants.Mode;
 import frc.robot.subsystems.drivebase.commands.AutoAlign;
 import frc.robot.subsystems.drivebase.commands.SwerveMode;
 import frc.robot.util.LocalADStarAK;
@@ -48,7 +43,7 @@ public class Drivebase extends SubsystemBase {
     private final SimpleMotorFeedforward feedforward = new SimpleMotorFeedforward(DrivebaseConstants.feedforwardS, DrivebaseConstants.feedforwardV);
     private final Field2d field = new Field2d();
 
-    @AutoLogOutput
+    @AutoLogOutput(key = "Drivebase/ArcadeDrive/Enabled")
     private boolean arcadeDrive = false;
     @AutoLogOutput
     private boolean reverseMode = false;
@@ -89,31 +84,16 @@ public class Drivebase extends SubsystemBase {
 
         field.setRobotPose(odometry.update(inputs.gyroYaw.minus(rotationOffset), getLeftPositionMeters(), getRightPositionMeters()));
 
-        if (GeneralConstants.mode != Mode.SIM) {
-            addPoseEstimation("limelight_left");
-            addPoseEstimation("limelight_right");
-        }
-    }
-
-    private void addPoseEstimation(String limeLightName) {
-        NetworkTable table = NetworkTableInstance.getDefault().getTable(limeLightName);
-        if (table.getEntry("tv").getInteger(0) == 0)
-            return;
-        double[] botpose = table.getEntry("botpose").getDoubleArray((double[]) null);
-        if (botpose == null)
-            return;
-        odometry.addVisionMeasurement(
-                new Pose2d(botpose[0], botpose[1], Rotation2d.fromDegrees(botpose[5])),
-                Timer.getFPGATimestamp() - (botpose[6] / 1000.0)
-        );
+        if (inputs.leftLimelightTv == 1)
+            odometry.addVisionMeasurement(inputs.leftLimelightBotpose, inputs.leftLimelightBotposeTimestamp);
+        if (inputs.rightLimelightTv == 1)
+            odometry.addVisionMeasurement(inputs.rightLimelightBotpose, inputs.rightLimelightBotposeTimestamp);
     }
 
     public void arcadeDrive(double speed, double rotation) {
-        var speeds = DifferentialDrive.arcadeDriveIK(
-                (preciseMode ? DrivebaseConstants.preciseModeMultiplier : 1) * (reverseMode ? -1 : 1) * (GeneralConstants.mode == GeneralConstants.Mode.REAL ? -rotation : speed),
-                (preciseMode ? DrivebaseConstants.preciseModeMultiplier : 1) * (GeneralConstants.mode == GeneralConstants.Mode.REAL ? speed : rotation),
-                true
-        );
+        Logger.recordOutput("Drivebase/ArcadeDrive/Speed", speed);
+        Logger.recordOutput("Drivebase/ArcadeDrive/Rotation", rotation);
+        var speeds = DifferentialDrive.arcadeDriveIK(speed, rotation, true);
         io.setVoltage(speeds.left * 12, speeds.right * 12);
     }
 
@@ -131,17 +111,21 @@ public class Drivebase extends SubsystemBase {
     }
 
     private Command arcadeDriveCommand(CommandXboxController controller) {
-        return run(() -> arcadeDrive(controller.getLeftY(), -controller.getRightX()));
+        return run(() -> {
+            var precise = preciseMode ? DrivebaseConstants.preciseModeMultiplier : 1;
+            var reverse = reverseMode ? -1 : 1;
+            arcadeDrive(precise * reverse * controller.getLeftY(), precise * controller.getRightX());
+        });
     }
 
     public Command pathfindCommand(Supplier<Pose2d> targetPoseSupplier) {
-        return Commands.runOnce(() -> {
+        return Commands.deferredProxy(() -> {
             var pose = getPose();
             var targetPose = targetPoseSupplier.get();
 
             // Check if the robot is already at the target pose.
             if (Math.abs(pose.getX() - targetPose.getX()) <= .1 && Math.abs(pose.getY() - targetPose.getY()) <= .1) {
-                return;
+                return Commands.none();
             }
 
             List<Translation2d> bezierPoints = PathPlannerPath.bezierFromPoses(
@@ -156,10 +140,9 @@ public class Drivebase extends SubsystemBase {
             );
 
             path.preventFlipping = true;
-            AutoBuilder
+            return AutoBuilder
                     .followPath(path)
-                    .andThen(swerveMode.swerveAngleCommand(targetPose.getRotation().getDegrees()))
-                    .schedule();
+                    .andThen(swerveMode.swerveAngleCommand(targetPose.getRotation().getDegrees()));
         });
     }
 
@@ -167,16 +150,22 @@ public class Drivebase extends SubsystemBase {
         return reverseMode;
     }
 
-    public Command setReverseModeCommand(boolean reverseMode) {
-        return Commands.runOnce(() -> this.reverseMode = reverseMode);
+    public Command enableReverseModeCommand() {
+        return Commands.startEnd(
+                () -> this.reverseMode = true,
+                () -> this.reverseMode = false
+        );
     }
 
     public boolean getPreciseMode() {
         return preciseMode;
     }
 
-    public Command setPreciseModeCommand(boolean preciseMode) {
-        return Commands.runOnce(() -> this.preciseMode = preciseMode);
+    public Command enablePreciseModeCommand() {
+        return Commands.startEnd(
+                () -> this.preciseMode = true,
+                () -> this.preciseMode = false
+        );
     }
 
     public Command toggleArcadeDrive(CommandXboxController controller) {

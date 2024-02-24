@@ -1,5 +1,6 @@
 package frc.robot.subsystems.launcher;
 
+import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.TalonSRXConfiguration;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import frc.robot.constants.LauncherConstants;
@@ -16,6 +17,8 @@ public class LauncherIOReal extends LauncherIO {
         config.voltageCompSaturation = 12.0;
         top.configAllSettings(config);
         bottom.configAllSettings(config);
+        top.setNeutralMode(NeutralMode.Brake);
+        bottom.setNeutralMode(NeutralMode.Brake);
     }
 
     @Override

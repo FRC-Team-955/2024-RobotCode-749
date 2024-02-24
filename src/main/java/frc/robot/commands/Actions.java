@@ -27,7 +27,7 @@ public class Actions {
 
     private Command commandForAction() {
         if (selectedAction == Action.Source) {
-            return launcher.intakeCommand().withTimeout(5);
+            return launcher.intakeCommand().withTimeout(7.5);
         } else if (selectedAction == Action.FrontSubwoofer ||
                 selectedAction == Action.LeftSubwoofer ||
                 selectedAction == Action.RightSubwoofer
@@ -59,16 +59,15 @@ public class Actions {
     }
 
     public Command doSelectedActionCommand(CommandXboxController autoAlignController) {
-        return Commands.runOnce(() ->
+        return Commands.deferredProxy(() ->
                 autoAlignForAction()
                         .map(command -> (Command) command.andThen(commandForAction()))
                         .orElse(Controller.setRumbleError(autoAlignController))
-                        .schedule()
         );
     }
 
     public Command doSelectedActionWithoutAutoAlignCommand() {
-        return Commands.runOnce(() -> this.commandForAction().schedule());
+        return Commands.deferredProxy(this::commandForAction);
     }
 
     public enum Action {

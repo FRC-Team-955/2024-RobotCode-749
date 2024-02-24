@@ -61,7 +61,7 @@ public final class Main {
                 case REAL -> {
                     Logger.addDataReceiver(new WPILOGWriter()); // Log to a USB stick ("/U/logs")
                     Logger.addDataReceiver(new NT4Publisher()); // Log to NetworkTables
-                    new PowerDistribution(1, PowerDistribution.ModuleType.kRev); // Enables power distribution logging
+                    new PowerDistribution(GeneralConstants.pdhId, PowerDistribution.ModuleType.kRev); // Enables power distribution logging
                 }
                 case SIM -> {
                     Logger.addDataReceiver(new NT4Publisher());

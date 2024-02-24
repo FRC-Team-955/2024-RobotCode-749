@@ -5,7 +5,6 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.Util;
 import frc.robot.constants.DrivebaseConstants;
-import frc.robot.constants.GeneralConstants;
 import frc.robot.subsystems.drivebase.Drivebase;
 import frc.robot.util.TunablePIDController;
 import org.littletonrobotics.junction.Logger;
@@ -47,24 +46,23 @@ public class SwerveMode {
 
         @Override
         public void execute() {
-            var x = (drivebase.getReverseMode() ? -1 : 1) * controller.getRightX();
-            var y = (drivebase.getReverseMode() ? -1 : 1) * controller.getRightY() * GeneralConstants.controllerYMultiplier;
+            var reverse = drivebase.getReverseMode() ? -1 : 1;
+            var precise = drivebase.getPreciseMode() ? DrivebaseConstants.preciseModeMultiplier : 1;
+
+            var x = reverse * controller.getRightX();
+            var y = reverse * controller.getRightY();
 
             if (Math.abs(x) > DrivebaseConstants.swerveModeDeadzone || Math.abs(y) > DrivebaseConstants.swerveModeDeadzone) {
-                swerveModeSetpoint = Math.toDegrees(Math.atan2(-x, y));
+                swerveModeSetpoint = -Math.toDegrees(Math.atan2(x, y));
             }
 
             swerveModePID.setSetpoint(swerveModeSetpoint);
             Logger.recordOutput("Drivebase/SwerveMode/Setpoint", swerveModeSetpoint);
             var robotAngle = drivebase.getPose().getRotation().getDegrees();
-            var rotation = swerveModePID.calculate(robotAngle);
-            Logger.recordOutput("Drivebase/SwerveMode/Rotation", rotation);
-            var speed = controller.getLeftY() * GeneralConstants.controllerYMultiplier;
-            if (drivebase.getPreciseMode()) {
-                drivebase.arcadeDrive(speed * DrivebaseConstants.preciseModeMultiplier, rotation);
-            } else {
-                drivebase.arcadeDrive(speed, rotation);
-            }
+            Logger.recordOutput("Drivebase/SwerveMode/Measurement", robotAngle);
+            var rotation = precise * swerveModePID.calculate(robotAngle);
+            var speed = precise * reverse * controller.getLeftY();
+            drivebase.arcadeDrive(speed, rotation);
         }
     }
 }
