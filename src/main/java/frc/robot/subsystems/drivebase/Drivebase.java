@@ -54,8 +54,8 @@ public class Drivebase extends SubsystemBase {
     private Rotation2d rotationOffset = new Rotation2d();
 
     /* Command Groups */
-    public AutoAlign autoAlign = new AutoAlign(this);
-    public SwerveMode swerveMode = new SwerveMode(this);
+    public final AutoAlign autoAlign = new AutoAlign(this);
+    public final SwerveMode swerveMode = new SwerveMode(this);
 
     public Drivebase() {
         SmartDashboard.putData("Field", field);
@@ -91,7 +91,7 @@ public class Drivebase extends SubsystemBase {
     }
 
     /**
-     * @param speed Positive = forward
+     * @param speed    Positive = forward
      * @param rotation Positive = counterclockwise
      */
     public void arcadeDrive(double speed, double rotation) {
