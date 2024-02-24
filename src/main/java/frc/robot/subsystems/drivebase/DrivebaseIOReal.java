@@ -115,9 +115,6 @@ public class DrivebaseIOReal extends DrivebaseIO {
         inputs.gyroYaw = Rotation2d.fromDegrees(yaw.refresh().getValueAsDouble());
     }
 
-    private void setLimelightInputs(String name, long tv, Pose2d botpose, double botposeTimestamp) {
-    }
-
     @Override
     public void setVoltage(double leftVolts, double rightVolts) {
         leftLeader.setVoltage(leftVolts);
