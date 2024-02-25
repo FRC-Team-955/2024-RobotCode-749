@@ -11,7 +11,7 @@ import java.io.File;
 import java.util.function.Supplier;
 
 public final class Util {
-    public static <T> T chooseIO(Supplier<T> real, Supplier<T> sim, Supplier<T> replay) {
+    public static <T> T switchMode(Supplier<T> real, Supplier<T> sim, Supplier<T> replay) {
         switch (GeneralConstants.mode) {
             case REAL -> {
                 return real.get();
@@ -28,6 +28,11 @@ public final class Util {
     public static <T> T ifSimElse(T sim, T realAndReplay) {
         if (GeneralConstants.mode == GeneralConstants.Mode.SIM) return sim;
         else return realAndReplay;
+    }
+
+    public static <T> T ifRealElse(Supplier<T> real, Supplier<T> simAndReplay) {
+        if (GeneralConstants.mode == GeneralConstants.Mode.REAL) return real.get();
+        else return simAndReplay.get();
     }
 
     public static <T> T make(Supplier<T> maker) {

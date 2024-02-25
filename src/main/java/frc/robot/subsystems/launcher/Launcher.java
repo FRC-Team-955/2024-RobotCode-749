@@ -6,10 +6,10 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.constants.LauncherConstants;
 import org.littletonrobotics.junction.Logger;
 
-import static frc.robot.Util.chooseIO;
+import static frc.robot.Util.switchMode;
 
 public class Launcher extends SubsystemBase {
-    private final LauncherIO io = chooseIO(LauncherIOReal::new, LauncherIOSim::new, LauncherIO::new);
+    private final LauncherIO io = switchMode(LauncherIOReal::new, LauncherIOSim::new, LauncherIO::new);
     private final LauncherIOInputsAutoLogged inputs = new LauncherIOInputsAutoLogged();
 
     @Override

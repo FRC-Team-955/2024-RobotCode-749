@@ -1,17 +1,10 @@
 package frc.robot.subsystems.drivebase;
 
-import com.ctre.phoenix6.StatusSignal;
-import com.ctre.phoenix6.configs.Pigeon2Configuration;
-import com.ctre.phoenix6.hardware.Pigeon2;
 import com.revrobotics.CANSparkLowLevel;
 import com.revrobotics.CANSparkMax;
-import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.util.Units;
-import edu.wpi.first.networktables.NetworkTable;
-import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.Encoder;
-import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Util;
 import frc.robot.constants.DrivebaseConstants;
 
@@ -32,9 +25,6 @@ public class DrivebaseIOReal extends DrivebaseIO {
         encoder.setReverseDirection(true);
         return encoder;
     });
-
-    private final Pigeon2 pigeon = new Pigeon2(DrivebaseConstants.pigeonId);
-    private final StatusSignal<Double> yaw = pigeon.getYaw();
 
     public DrivebaseIOReal() {
         leftLeader.restoreFactoryDefaults();
@@ -62,10 +52,8 @@ public class DrivebaseIOReal extends DrivebaseIO {
         leftFollower.burnFlash();
         rightFollower.burnFlash();
 
-        pigeon.getConfigurator().apply(new Pigeon2Configuration());
-        pigeon.getConfigurator().setYaw(0.0);
-        yaw.setUpdateFrequency(100.0);
-        pigeon.optimizeBusUtilization();
+        SmartDashboard.putData("Drivebase Left", leftEncoder);
+        SmartDashboard.putData("Drivebase Right", rightEncoder);
     }
 
     @Override
@@ -85,24 +73,6 @@ public class DrivebaseIOReal extends DrivebaseIO {
         inputs.rightAppliedVolts = rightLeader.getAppliedOutput() * rightLeader.getBusVoltage();
         inputs.rightLeaderCurrentAmps = rightLeader.getOutputCurrent();
         inputs.rightFollowerCurrentAmps = rightFollower.getOutputCurrent();
-
-        NetworkTable leftLimelight = NetworkTableInstance.getDefault().getTable("limelight-left");
-        inputs.leftLimelightTv = leftLimelight.getEntry("tv").getInteger(-1);
-        double[] leftBotpose = leftLimelight.getEntry("botpose").getDoubleArray((double[]) null);
-        if (leftBotpose != null) {
-            inputs.leftLimelightBotpose = new Pose2d(leftBotpose[0], leftBotpose[1], Rotation2d.fromDegrees(leftBotpose[5]));
-            inputs.leftLimelightBotposeTimestamp = Timer.getFPGATimestamp() - (leftBotpose[6] / 1000.0);
-        }
-
-        NetworkTable rightLimelight = NetworkTableInstance.getDefault().getTable("limelight-right");
-        inputs.rightLimelightTv = rightLimelight.getEntry("tv").getInteger(-1);
-        double[] rightLimelightBotpose = rightLimelight.getEntry("botpose").getDoubleArray((double[]) null);
-        if (rightLimelightBotpose != null) {
-            inputs.rightLimelightBotpose = new Pose2d(rightLimelightBotpose[0], rightLimelightBotpose[1], Rotation2d.fromDegrees(rightLimelightBotpose[5]));
-            inputs.rightLimelightBotposeTimestamp = Timer.getFPGATimestamp() - (rightLimelightBotpose[6] / 1000.0);
-        }
-
-        inputs.gyroYaw = Rotation2d.fromDegrees(yaw.refresh().getValueAsDouble());
     }
 
     @Override

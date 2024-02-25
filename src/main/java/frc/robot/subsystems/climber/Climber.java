@@ -4,10 +4,10 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import org.littletonrobotics.junction.Logger;
 
-import static frc.robot.Util.chooseIO;
+import static frc.robot.Util.switchMode;
 
 public class Climber extends SubsystemBase {
-    private final ClimberIO io = chooseIO(ClimberIOReal::new, ClimberIOSim::new, ClimberIO::new);
+    private final ClimberIO io = switchMode(ClimberIOReal::new, ClimberIOSim::new, ClimberIO::new);
     private final ClimberIOInputsAutoLogged inputs = new ClimberIOInputsAutoLogged();
 
     @Override

@@ -1,11 +1,12 @@
 package frc.robot.subsystems.drivebase;
 
 import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.simulation.DifferentialDrivetrainSim;
 import frc.robot.constants.DrivebaseConstants;
 
 public class DrivebaseIOSim extends DrivebaseIO {
-    private final DifferentialDrivetrainSim sim = DifferentialDrivetrainSim.createKitbotSim(
+    private static final DifferentialDrivetrainSim sim = DifferentialDrivetrainSim.createKitbotSim(
             DrivebaseConstants.motor,
             DrivebaseConstants.gearRatio,
             DrivebaseConstants.wheelSize,
@@ -29,8 +30,6 @@ public class DrivebaseIOSim extends DrivebaseIO {
         inputs.rightAppliedVolts = rightAppliedVolts;
         inputs.rightLeaderCurrentAmps = sim.getRightCurrentDrawAmps();
         inputs.rightFollowerCurrentAmps = sim.getRightCurrentDrawAmps();
-
-        inputs.gyroYaw = sim.getHeading();
     }
 
     @Override
@@ -38,5 +37,9 @@ public class DrivebaseIOSim extends DrivebaseIO {
         leftAppliedVolts = MathUtil.clamp(leftVolts, -12.0, 12.0);
         rightAppliedVolts = MathUtil.clamp(rightVolts, -12.0, 12.0);
         sim.setInputs(leftAppliedVolts, rightAppliedVolts);
+    }
+
+    public static Rotation2d getHeading() {
+        return sim.getHeading();
     }
 }

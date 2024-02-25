@@ -30,7 +30,7 @@ public class AutoGenerator {
     private static final GenericEntry messUpMidfieldBottomNote = tab.add("Mess with Bottom", true).withWidget(BuiltInWidgets.kToggleSwitch).getEntry();
 
     private static final LoggedDashboardChooser<StartingPoint> startingPoints = Util.make(() -> {
-        var startingPoints = new LoggedDashboardChooser<StartingPoint>("Starting Point");
+        var startingPoints = new LoggedDashboardChooser<StartingPoint>("Auto Generator - Starting Point");
         startingPoints.addDefaultOption("Top", StartingPoint.Top);
         startingPoints.addOption("Middle", StartingPoint.Middle);
         startingPoints.addOption("Bottom", StartingPoint.Bottom);
@@ -98,7 +98,7 @@ public class AutoGenerator {
     }
 
     public static void initializeShuffleboard() {
-        tab.add("Starting Point", startingPoints);
+        tab.add("Starting Point", startingPoints.getSendableChooser());
         // tab.add("Notes", notes);
     }
 }
