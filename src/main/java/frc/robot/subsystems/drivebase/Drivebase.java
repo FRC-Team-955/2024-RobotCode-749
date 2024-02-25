@@ -24,6 +24,7 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.Util;
 import frc.robot.commands.FeedforwardCharacterization;
 import frc.robot.constants.DrivebaseConstants;
+import frc.robot.constants.GeneralConstants;
 import frc.robot.subsystems.drivebase.commands.AutoAlign;
 import frc.robot.subsystems.drivebase.commands.SwerveMode;
 import frc.robot.util.LocalADStarAK;
@@ -99,6 +100,10 @@ public class Drivebase extends SubsystemBase {
      * @param rotation Positive = counterclockwise
      */
     public void arcadeDrive(double speed, double rotation) {
+        if (GeneralConstants.useControllerDeadzone) {
+            if (Math.abs(speed) < GeneralConstants.controllerDeadzone) speed = 0;
+            if (Math.abs(rotation) < GeneralConstants.controllerDeadzone) rotation = 0;
+        }
         Logger.recordOutput("Drivebase/ArcadeDrive/Speed", speed);
         Logger.recordOutput("Drivebase/ArcadeDrive/Rotation", rotation);
         var speeds = DifferentialDrive.arcadeDriveIK(speed, rotation, true);

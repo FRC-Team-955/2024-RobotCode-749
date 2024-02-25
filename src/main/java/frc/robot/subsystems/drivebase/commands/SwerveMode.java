@@ -49,11 +49,11 @@ public class SwerveMode {
             var reverse = drivebase.getReverseMode() ? -1 : 1;
             var precise = drivebase.getPreciseMode() ? DrivebaseConstants.preciseModeMultiplier : 1;
 
-            var x = reverse * controller.getRightX();
-            var y = reverse * controller.getRightY();
+            var x = reverse * controller.getLeftX();
+            var y = reverse * -controller.getLeftY();
 
             if (Math.abs(x) > DrivebaseConstants.swerveModeDeadzone || Math.abs(y) > DrivebaseConstants.swerveModeDeadzone) {
-                swerveModeSetpoint = -Math.toDegrees(Math.atan2(x, -y));
+                swerveModeSetpoint = -Math.toDegrees(Math.atan2(x, y));
             }
 
             swerveModePID.setSetpoint(swerveModeSetpoint);
@@ -61,7 +61,7 @@ public class SwerveMode {
             var robotAngle = drivebase.getPose().getRotation().getDegrees();
             Logger.recordOutput("Drivebase/SwerveMode/Measurement", robotAngle);
             var rotation = precise * swerveModePID.calculate(robotAngle);
-            var speed = precise * reverse * -controller.getLeftY();
+            var speed = precise * reverse * -controller.getRightY();
             drivebase.arcadeDrive(speed, rotation);
         }
     }

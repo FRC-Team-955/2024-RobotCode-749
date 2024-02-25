@@ -54,9 +54,9 @@ public class Robot {
         driverController.leftTrigger().whileTrue(drivebase.enablePreciseModeCommand());
 
         driverController.povUp().onTrue(drivebase.swerveMode.swerveAngleCommand(0));
-        driverController.povLeft().onTrue(drivebase.swerveMode.swerveAngleCommand(-90));
+        driverController.povLeft().onTrue(drivebase.swerveMode.swerveAngleCommand(90));
         driverController.povDown().onTrue(drivebase.swerveMode.swerveAngleCommand(180));
-        driverController.povRight().onTrue(drivebase.swerveMode.swerveAngleCommand(90));
+        driverController.povRight().onTrue(drivebase.swerveMode.swerveAngleCommand(-90));
 
         driverController.b().toggleOnTrue(actions.doSelectedActionCommand(driverController));
         driverController.x().toggleOnTrue(actions.doSelectedActionWithoutAutoAlignCommand());
