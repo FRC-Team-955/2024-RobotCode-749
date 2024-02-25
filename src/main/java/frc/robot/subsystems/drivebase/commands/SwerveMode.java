@@ -5,6 +5,7 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.Util;
 import frc.robot.constants.DrivebaseConstants;
+import frc.robot.constants.GeneralConstants;
 import frc.robot.subsystems.drivebase.Drivebase;
 import frc.robot.util.TunablePIDController;
 import org.littletonrobotics.junction.Logger;
@@ -58,10 +59,17 @@ public class SwerveMode {
 
             swerveModePID.setSetpoint(swerveModeSetpoint);
             Logger.recordOutput("Drivebase/SwerveMode/Setpoint", swerveModeSetpoint);
+
             var robotAngle = drivebase.getPose().getRotation().getDegrees();
             Logger.recordOutput("Drivebase/SwerveMode/Measurement", robotAngle);
-            var rotation = precise * swerveModePID.calculate(robotAngle);
+
             var speed = precise * reverse * -controller.getRightY();
+            var rotation = precise * swerveModePID.calculate(robotAngle);
+
+            if (GeneralConstants.useControllerDeadzone) {
+                if (Math.abs(speed) < GeneralConstants.controllerDeadzone) speed = 0;
+            }
+
             drivebase.arcadeDrive(speed, rotation);
         }
     }

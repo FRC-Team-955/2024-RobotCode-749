@@ -110,10 +110,6 @@ public class Drivebase extends SubsystemBase {
      * @param rotation Positive = counterclockwise
      */
     public void arcadeDrive(double speed, double rotation) {
-        if (GeneralConstants.useControllerDeadzone) {
-            if (Math.abs(speed) < GeneralConstants.controllerDeadzone) speed = 0;
-            if (Math.abs(rotation) < GeneralConstants.controllerDeadzone) rotation = 0;
-        }
         Logger.recordOutput("Drivebase/ArcadeDrive/Speed", speed);
         Logger.recordOutput("Drivebase/ArcadeDrive/Rotation", rotation);
         var speeds = DifferentialDrive.arcadeDriveIK(speed, rotation, true);
@@ -142,7 +138,16 @@ public class Drivebase extends SubsystemBase {
         return run(() -> {
             var precise = preciseMode ? DrivebaseConstants.preciseModeMultiplier : 1;
             var reverse = reverseMode ? -1 : 1;
-            arcadeDrive(precise * reverse * -controller.getLeftY(), precise * -controller.getRightX());
+
+            var speed = precise * reverse * -controller.getLeftY();
+            var rotation = precise * -controller.getRightX();
+
+            if (GeneralConstants.useControllerDeadzone) {
+                if (Math.abs(speed) < GeneralConstants.controllerDeadzone) speed = 0;
+                if (Math.abs(rotation) < GeneralConstants.controllerDeadzone) rotation = 0;
+            }
+
+            arcadeDrive(speed, rotation);
         });
     }
 
