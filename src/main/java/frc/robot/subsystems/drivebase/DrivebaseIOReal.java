@@ -1,5 +1,6 @@
 package frc.robot.subsystems.drivebase;
 
+import com.revrobotics.CANSparkBase;
 import com.revrobotics.CANSparkLowLevel;
 import com.revrobotics.CANSparkMax;
 import edu.wpi.first.math.util.Units;
@@ -31,6 +32,11 @@ public class DrivebaseIOReal extends DrivebaseIO {
         rightLeader.restoreFactoryDefaults();
         leftFollower.restoreFactoryDefaults();
         rightFollower.restoreFactoryDefaults();
+
+        leftLeader.setIdleMode(CANSparkBase.IdleMode.kBrake);
+        rightLeader.setIdleMode(CANSparkBase.IdleMode.kBrake);
+        leftFollower.setIdleMode(CANSparkBase.IdleMode.kBrake);
+        rightFollower.setIdleMode(CANSparkBase.IdleMode.kBrake);
 
         leftLeader.setCANTimeout(250);
         rightLeader.setCANTimeout(250);
