@@ -39,7 +39,4 @@ public class DrivebaseIO {
 
     public void setVoltage(double leftVolts, double rightVolts) {
     }
-
-    public void setVelocity(double leftRadPerSec, double rightRadPerSec, double leftFFVolts, double rightFFVolts) {
-    }
 }

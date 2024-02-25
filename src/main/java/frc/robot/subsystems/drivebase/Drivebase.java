@@ -22,10 +22,12 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.Util;
+import frc.robot.commands.FeedforwardCharacterization;
 import frc.robot.constants.DrivebaseConstants;
 import frc.robot.subsystems.drivebase.commands.AutoAlign;
 import frc.robot.subsystems.drivebase.commands.SwerveMode;
 import frc.robot.util.LocalADStarAK;
+import frc.robot.util.TunablePIDController;
 import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
 
@@ -40,7 +42,9 @@ public class Drivebase extends SubsystemBase {
 
     private final DifferentialDriveKinematics kinematics = new DifferentialDriveKinematics(DrivebaseConstants.trackWidth);
     private final DifferentialDrivePoseEstimator odometry = new DifferentialDrivePoseEstimator(kinematics, new Rotation2d(), 0.0, 0.0, new Pose2d());
-    private final SimpleMotorFeedforward feedforward = new SimpleMotorFeedforward(DrivebaseConstants.feedforwardS, DrivebaseConstants.feedforwardV);
+    private final SimpleMotorFeedforward leftFeedforward = new SimpleMotorFeedforward(DrivebaseConstants.feedforwardLeftS, DrivebaseConstants.feedforwardLeftV);
+    private final SimpleMotorFeedforward rightFeedforward = new SimpleMotorFeedforward(DrivebaseConstants.feedforwardRightS, DrivebaseConstants.feedforwardRightV);
+    private final TunablePIDController driveVelocityPID = new TunablePIDController("Drivebase driveVelocity", DrivebaseConstants.velocityP, 0, DrivebaseConstants.velocityD);
     private final Field2d field = new Field2d();
 
     @AutoLogOutput(key = "Drivebase/ArcadeDrive/Enabled")
@@ -102,16 +106,21 @@ public class Drivebase extends SubsystemBase {
     }
 
     private void driveVelocity(double leftMetersPerSec, double rightMetersPerSec) {
-        Logger.recordOutput("Drivebase/LeftVelocitySetpointMetersPerSec", leftMetersPerSec);
-        Logger.recordOutput("Drivebase/RightVelocitySetpointMetersPerSec", rightMetersPerSec);
-        double leftRadPerSec = leftMetersPerSec / DrivebaseConstants.wheelRadius;
-        double rightRadPerSec = rightMetersPerSec / DrivebaseConstants.wheelRadius;
-        io.setVelocity(
-                leftRadPerSec,
-                rightRadPerSec,
-                feedforward.calculate(leftRadPerSec),
-                feedforward.calculate(rightRadPerSec)
-        );
+        Logger.recordOutput("Drivebase/DriveVelocity/LeftSetpointMetersPerSec", leftMetersPerSec);
+        Logger.recordOutput("Drivebase/DriveVelocity/RightSetpointMetersPerSec", rightMetersPerSec);
+        var leftPID = driveVelocityPID.calculate(getLeftVelocityMetersPerSec(), leftMetersPerSec);
+        var rightPID = driveVelocityPID.calculate(getRightVelocityMetersPerSec(), rightMetersPerSec);
+        var leftFF = leftFeedforward.calculate(leftMetersPerSec);
+        var rightFF = rightFeedforward.calculate(rightMetersPerSec);
+        Logger.recordOutput("Drivebase/DriveVelocity/LeftControlSignalPID", leftPID);
+        Logger.recordOutput("Drivebase/DriveVelocity/RightControlSignalPID", rightPID);
+        Logger.recordOutput("Drivebase/DriveVelocity/LeftControlSignalFF", leftFF);
+        Logger.recordOutput("Drivebase/DriveVelocity/RightControlSignalFF", rightFF);
+        io.setVoltage(leftPID + leftFF, rightPID + rightFF);
+    }
+
+    public Command driveVelocityCommand(double leftMetersPerSec, double rightMetersPerSec) {
+        return this.run(() -> driveVelocity(leftMetersPerSec, rightMetersPerSec));
     }
 
     private Command arcadeDriveCommand(CommandXboxController controller) {
@@ -183,6 +192,14 @@ public class Drivebase extends SubsystemBase {
                 this.setDefaultCommand(swerveMode.swerveDriveCommand(controller));
             }
         });
+    }
+
+    public Command feedforwardCharacterizationLeft() {
+        return new FeedforwardCharacterization(this, (volts) -> io.setVoltage(volts, volts), this::getLeftVelocityMetersPerSec);
+    }
+
+    public Command feedforwardCharacterizationRight() {
+        return new FeedforwardCharacterization(this, (volts) -> io.setVoltage(volts, volts), this::getRightVelocityMetersPerSec);
     }
 
     @AutoLogOutput

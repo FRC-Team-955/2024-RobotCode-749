@@ -1,6 +1,9 @@
 package frc.robot;
 
+import com.pathplanner.lib.auto.AutoBuilder;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.auto.AutoGenerator;
 import frc.robot.commands.Actions;
@@ -37,6 +40,7 @@ public class Robot {
         setDefaultCommands();
         configureBindings();
         AutoGenerator.initializeShuffleboard();
+        makeDebugTab();
     }
 
     private void setDefaultCommands() {
@@ -68,11 +72,18 @@ public class Robot {
         operatorController.leftTrigger().whileTrue(climber.setLeftCommand(Climber.Direction.Down));
     }
 
-    public Command getAutonomousCommand() {
+    private void makeDebugTab() {
+        var tab = Shuffleboard.getTab("Debug");
+        tab.add("Command Scheduler", CommandScheduler.getInstance());
+        tab.add("Drivebase", drivebase);
+        tab.add("Launcher", launcher);
+        tab.add("Climber", climber);
+    }
 
-        // return AutoBuilder.buildAuto("Mess with all");
+    public Command getAutonomousCommand() {
         // Return null to do nothing during autonomous.
+        return launcher.launchCommand().andThen(AutoBuilder.buildAuto("New Auto"));
 //        return AutoGenerator.generateAuto(drivebase, launcher);
-        return launcher.launchCommand();
+//        return drivebase.feedforwardCharacterizationRight();
     }
 }

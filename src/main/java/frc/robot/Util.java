@@ -25,6 +25,11 @@ public final class Util {
         }
     }
 
+    public static <T> T ifSimElse(T sim, T realAndReplay) {
+        if (GeneralConstants.mode == GeneralConstants.Mode.SIM) return sim;
+        else return realAndReplay;
+    }
+
     public static <T> T make(Supplier<T> maker) {
         return maker.get();
     }
