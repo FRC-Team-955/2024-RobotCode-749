@@ -36,7 +36,7 @@ public final class DrivebaseConstants {
 
     public static final double preciseModeMultiplier = 0.6;
 
-    public static final double swerveModeDeadzone = 0.25;
+    public static final double swerveModeDeadzone = 0.4;
     public static final double swerveModeP = ifSimElse(0.03, 0.018);
     public static final double swerveModeD = 0.0001;
 }
