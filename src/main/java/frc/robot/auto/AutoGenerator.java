@@ -12,12 +12,12 @@ import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
-import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.Util;
 import frc.robot.subsystems.drivebase.Drivebase;
 import frc.robot.subsystems.launcher.Launcher;
+import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
 import java.util.List;
 
@@ -29,9 +29,9 @@ public class AutoGenerator {
     private static final GenericEntry messUpMidfieldLowerMiddleNote = tab.add("Mess with Lower Middle", true).withWidget(BuiltInWidgets.kToggleSwitch).getEntry();
     private static final GenericEntry messUpMidfieldBottomNote = tab.add("Mess with Bottom", true).withWidget(BuiltInWidgets.kToggleSwitch).getEntry();
 
-    private static final SendableChooser<StartingPoint> startingPoints = Util.make(() -> {
-        var startingPoints = new SendableChooser<StartingPoint>();
-        startingPoints.setDefaultOption("Top", StartingPoint.Top);
+    private static final LoggedDashboardChooser<StartingPoint> startingPoints = Util.make(() -> {
+        var startingPoints = new LoggedDashboardChooser<StartingPoint>("Starting Point");
+        startingPoints.addDefaultOption("Top", StartingPoint.Top);
         startingPoints.addOption("Middle", StartingPoint.Middle);
         startingPoints.addOption("Bottom", StartingPoint.Bottom);
         return startingPoints;
@@ -55,7 +55,7 @@ public class AutoGenerator {
     // }
 
     public static Command generateAuto(Drivebase drivebase, Launcher launcher) {
-        var startingPoint = startingPoints.getSelected();
+        var startingPoint = startingPoints.get();
         var commands = new SequentialCommandGroup();
 
         PathPlannerPath path = null;
@@ -99,7 +99,6 @@ public class AutoGenerator {
 
     public static void initializeShuffleboard() {
         tab.add("Starting Point", startingPoints);
-
         // tab.add("Notes", notes);
     }
 }
