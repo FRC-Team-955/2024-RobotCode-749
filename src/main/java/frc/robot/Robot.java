@@ -34,7 +34,7 @@ public class Robot {
     private final Launcher launcher = new Launcher();
     private final Climber climber = new Climber();
 
-    private final Actions actions = new Actions(drivebase, launcher);
+    private final Actions actions = new Actions(driverController, operatorController, drivebase, launcher);
 
     public Robot() {
         setDefaultCommands();
@@ -56,8 +56,11 @@ public class Robot {
         driverController.povDown().onTrue(drivebase.swerveMode.swerveAngleCommand(180));
         driverController.povRight().onTrue(drivebase.swerveMode.swerveAngleCommand(-90));
 
-        driverController.b().toggleOnTrue(actions.doSelectedActionCommand(driverController));
+        driverController.b().toggleOnTrue(actions.doSelectedActionCommand());
         driverController.x().toggleOnTrue(actions.doSelectedActionWithoutAutoAlignCommand());
+        driverController.y().debounce(3).toggleOnTrue(actions.doSelectedActionWithoutBoundsCheckCommand());
+        driverController.a().toggleOnTrue(launcher.intakeCommand());
+        driverController.b().toggleOnTrue(launcher.launchCommand());
 
         operatorController.y().toggleOnTrue(actions.selectActionCommand(Actions.Action.Source));
         operatorController.a().toggleOnTrue(actions.selectActionCommand(Actions.Action.FrontSubwoofer));
