@@ -139,8 +139,8 @@ public class Drivebase extends SubsystemBase {
             var precise = preciseMode ? DrivebaseConstants.preciseModeMultiplier : 1;
             var reverse = reverseMode ? -1 : 1;
 
-            var speed = precise * reverse * -controller.getLeftY();
-            var rotation = precise * -controller.getRightX();
+            var speed = precise * reverse * Util.speed(controller);
+            var rotation = precise * -controller.getLeftX();
 
             if (GeneralConstants.useControllerDeadzone) {
                 if (Math.abs(speed) < GeneralConstants.controllerDeadzone) speed = 0;

@@ -4,6 +4,7 @@ import com.pathplanner.lib.util.GeometryUtil;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Filesystem;
+import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.constants.GeneralConstants;
 import frc.robot.util.Rect2d;
 
@@ -75,5 +76,9 @@ public final class Util {
     public static boolean fileConstant(String fileName, boolean fallback) {
         if (!GeneralConstants.useFileConstants) return fallback;
         return new File(Filesystem.getDeployDirectory(), "config/" + fileName).exists();
+    }
+
+    public static double speed(CommandXboxController controller) {
+        return -controller.getLeftTriggerAxis() + controller.getRightTriggerAxis();
     }
 }

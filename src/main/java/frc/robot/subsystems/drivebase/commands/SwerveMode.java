@@ -63,7 +63,7 @@ public class SwerveMode {
             var robotAngle = drivebase.getPose().getRotation().getDegrees();
             Logger.recordOutput("Drivebase/SwerveMode/Measurement", robotAngle);
 
-            var speed = precise * reverse * -controller.getRightY();
+            var speed = precise * reverse * Util.speed(controller);
             var rotation = precise * swerveModePID.calculate(robotAngle);
 
             if (GeneralConstants.useControllerDeadzone) {

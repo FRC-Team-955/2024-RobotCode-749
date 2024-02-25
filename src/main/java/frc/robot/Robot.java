@@ -49,9 +49,7 @@ public class Robot {
 
     private void configureBindings() {
         driverController.leftBumper().onTrue(drivebase.resetGyroCommand());
-        driverController.rightBumper().onTrue(drivebase.toggleArcadeDrive(driverController));
-        driverController.rightTrigger().whileTrue(drivebase.enableReverseModeCommand());
-        driverController.leftTrigger().whileTrue(drivebase.enablePreciseModeCommand());
+        driverController.start().onTrue(drivebase.toggleArcadeDrive(driverController));
 
         driverController.povUp().onTrue(drivebase.swerveMode.swerveAngleCommand(0));
         driverController.povLeft().onTrue(drivebase.swerveMode.swerveAngleCommand(90));
