@@ -13,7 +13,7 @@ public class LauncherIOReal extends LauncherIO {
         var config = new TalonSRXConfiguration();
         config.peakCurrentLimit = 80;
         config.peakCurrentDuration = 250;
-        config.continuousCurrentLimit = 60;
+        config.continuousCurrentLimit = 40;
         config.voltageCompSaturation = 12.0;
         top.configAllSettings(config);
         bottom.configAllSettings(config);

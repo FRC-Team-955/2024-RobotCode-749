@@ -19,13 +19,10 @@ public class ClimberIOReal extends ClimberIO {
         left.setCANTimeout(250);
         right.setCANTimeout(250);
 
-//        left.setInverted(false);
-//        right.setInverted(false);
-
         left.enableVoltageCompensation(12.0);
         right.enableVoltageCompensation(12.0);
-        left.setSmartCurrentLimit(60);
-        right.setSmartCurrentLimit(60);
+        left.setSmartCurrentLimit(40);
+        right.setSmartCurrentLimit(40);
 
         left.burnFlash();
         right.burnFlash();

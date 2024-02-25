@@ -44,8 +44,8 @@ public class DrivebaseIOReal extends DrivebaseIO {
 
         leftLeader.enableVoltageCompensation(12.0);
         rightLeader.enableVoltageCompensation(12.0);
-        leftLeader.setSmartCurrentLimit(60);
-        rightLeader.setSmartCurrentLimit(60);
+        leftLeader.setSmartCurrentLimit(40);
+        rightLeader.setSmartCurrentLimit(40);
 
         leftLeader.burnFlash();
         rightLeader.burnFlash();
