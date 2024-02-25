@@ -14,7 +14,7 @@ import java.util.function.Supplier;
 
 public class FeedforwardCharacterization extends Command {
     private static final double START_DELAY_SECS = 2.0;
-    private static final double RAMP_VOLTS_PER_SEC = 0.1;
+    private static final double RAMP_VOLTS_PER_SEC = 0.8;
 
     private FeedForwardCharacterizationData data;
     private final Consumer<Double> voltageConsumer;
