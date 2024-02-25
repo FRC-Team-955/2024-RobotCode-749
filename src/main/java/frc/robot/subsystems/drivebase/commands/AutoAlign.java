@@ -16,14 +16,14 @@ public class AutoAlign {
 
     private static final Pose2d rightSubwoofer = new Pose2d(1.195, 4.4, Rotation2d.fromRadians(3.0));
     private static final Pose2d leftSubwoofer = new Pose2d(1.3, 6.2, Rotation2d.fromRadians(-3.1));
-    private static final Pose2d frontSubwoofer = new Pose2d(1.391, 5.55, Rotation2d.fromRadians(/* 180 degrees */ Math.PI));
+    private static final Pose2d frontSubwoofer = new Pose2d(1.391, 6.0, Rotation2d.fromRadians(/* 180 degrees */ Math.PI));
     private static final Pose2d source = new Pose2d(15.38, 0.958, Rotation2d.fromRadians(-1));
 
     private static final Rect2d[] subwooferBounds = new Rect2d[]{
             // Top
             new Rect2d(
                     new Pose2d(1.0, 4.6, new Rotation2d()),
-                    new Pose2d(5.7, 7.7, new Rotation2d())
+                    new Pose2d(6.0, 7.7, new Rotation2d())
             ),
             // Bottom
             new Rect2d(
