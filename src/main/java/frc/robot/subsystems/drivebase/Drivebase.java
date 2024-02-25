@@ -62,9 +62,6 @@ public class Drivebase extends SubsystemBase {
     @AutoLogOutput
     private boolean preciseMode = false;
 
-    @AutoLogOutput
-    private Rotation2d rotationOffset = new Rotation2d();
-
     /* Command Groups */
     public final AutoAlign autoAlign = new AutoAlign(this);
     public final SwerveMode swerveMode = new SwerveMode(this);
@@ -100,7 +97,7 @@ public class Drivebase extends SubsystemBase {
         limelightIO.updateInputs(limelightInputs);
         Logger.processInputs("Inputs/Limelight", limelightInputs);
 
-        field.setRobotPose(odometry.update(gyroInputs.yaw.minus(rotationOffset), getLeftPositionMeters(), getRightPositionMeters()));
+        field.setRobotPose(odometry.update(gyroInputs.yaw, getLeftPositionMeters(), getRightPositionMeters()));
 
         if (limelightInputs.leftTv == 1)
             odometry.addVisionMeasurement(limelightInputs.leftBotpose, limelightInputs.leftBotposeTimestamp);
@@ -230,8 +227,7 @@ public class Drivebase extends SubsystemBase {
     }
 
     public Command resetGyroCommand() {
-        return Commands.runOnce(() -> rotationOffset = gyroInputs.yaw)
-                .andThen(swerveMode.swerveAngleCommand(0));
+        return runOnce(gyroIO::resetYaw).andThen(swerveMode.swerveAngleCommand(0));
     }
 
     @AutoLogOutput

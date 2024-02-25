@@ -12,13 +12,18 @@ public class GyroIOReal extends GyroIO {
 
     public GyroIOReal() {
         pigeon.getConfigurator().apply(new Pigeon2Configuration());
-        pigeon.getConfigurator().setYaw(0.0);
-        yaw.setUpdateFrequency(100.0);
+        pigeon.setYaw(0);
+        yaw.setUpdateFrequency(100);
         pigeon.optimizeBusUtilization();
     }
 
     @Override
     public void updateInputs(GyroIOInputs inputs) {
         inputs.yaw = Rotation2d.fromDegrees(yaw.refresh().getValueAsDouble());
+    }
+
+    @Override
+    public void resetYaw() {
+        pigeon.setYaw(0);
     }
 }

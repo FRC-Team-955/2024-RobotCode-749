@@ -11,4 +11,7 @@ public class GyroIO {
 
     public void updateInputs(GyroIOInputs inputs) {
     }
+
+    public void resetYaw() {
+    }
 }

@@ -1,6 +1,7 @@
 package frc.robot.subsystems.drivebase;
 
 import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.simulation.DifferentialDrivetrainSim;
 import frc.robot.constants.DrivebaseConstants;
@@ -41,5 +42,10 @@ public class DrivebaseIOSim extends DrivebaseIO {
 
     public static Rotation2d getHeading() {
         return sim.getHeading();
+    }
+
+    public static void resetHeading() {
+        var pose = sim.getPose();
+        sim.setPose(new Pose2d(pose.getX(), pose.getY(), new Rotation2d()));
     }
 }
