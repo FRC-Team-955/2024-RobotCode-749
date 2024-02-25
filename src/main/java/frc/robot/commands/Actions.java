@@ -3,11 +3,8 @@ package frc.robot.commands;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
-import frc.robot.constants.GeneralConstants;
-import frc.robot.constants.SimulationConstants;
 import frc.robot.subsystems.drivebase.Drivebase;
 import frc.robot.subsystems.launcher.Launcher;
-import frc.robot.util.CommandNintendoSwitchProController;
 import org.littletonrobotics.junction.AutoLogOutput;
 
 import java.util.Optional;
@@ -78,8 +75,9 @@ public class Actions {
     public Command doSelectedActionCommand() {
         return Commands.deferredProxy(() ->
                 checkForNone().orElse(
-                        autoAlignForAction(true).get()
-                                .andThen(commandForAction())
+                        autoAlignForAction(true)
+                                .map(command -> (Command) command.andThen(commandForAction()))
+                                .orElse(Controller.setRumbleError(driverController))
                 )
         );
     }
@@ -87,9 +85,8 @@ public class Actions {
     public Command doSelectedActionWithoutBoundsCheckCommand() {
         return Commands.deferredProxy(() ->
                 checkForNone().orElse(
-                    autoAlignForAction(false)
-                            .map(command -> (Command) command.andThen(commandForAction()))
-                            .orElse(Controller.setRumbleError(driverController))
+                        autoAlignForAction(false).orElse(Commands.print("No command even with bounds check disabled!"))
+                                .andThen(commandForAction())
                 )
         );
     }

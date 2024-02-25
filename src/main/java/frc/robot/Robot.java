@@ -58,9 +58,9 @@ public class Robot {
 
         driverController.b().toggleOnTrue(actions.doSelectedActionCommand());
         driverController.x().toggleOnTrue(actions.doSelectedActionWithoutAutoAlignCommand());
-        driverController.y().debounce(3).toggleOnTrue(actions.doSelectedActionWithoutBoundsCheckCommand());
         driverController.a().toggleOnTrue(launcher.intakeCommand());
         driverController.b().toggleOnTrue(launcher.launchCommand());
+        driverController.y().debounce(1).toggleOnTrue(actions.doSelectedActionWithoutBoundsCheckCommand());
 
         operatorController.y().toggleOnTrue(actions.selectActionCommand(Actions.Action.Source));
         operatorController.a().toggleOnTrue(actions.selectActionCommand(Actions.Action.FrontSubwoofer));
