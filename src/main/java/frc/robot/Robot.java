@@ -70,10 +70,10 @@ public class Robot {
         operatorController.x().toggleOnTrue(actions.selectActionCommand(Actions.Action.LeftSubwoofer));
         operatorController.b().toggleOnTrue(actions.selectActionCommand(Actions.Action.RightSubwoofer));
 
-        operatorController.rightBumper().whileTrue(rightClimber.moveCommand(Climber.Direction.Up));
-        operatorController.rightTrigger().whileTrue(rightClimber.moveCommand(Climber.Direction.Down));
         operatorController.leftBumper().whileTrue(leftClimber.moveCommand(Climber.Direction.Up));
         operatorController.leftTrigger().whileTrue(leftClimber.moveCommand(Climber.Direction.Down));
+        operatorController.rightBumper().whileTrue(rightClimber.moveCommand(Climber.Direction.Up));
+        operatorController.rightTrigger().whileTrue(rightClimber.moveCommand(Climber.Direction.Down));
     }
 
     private void makeDebugTab() {
@@ -81,7 +81,8 @@ public class Robot {
         tab.add("Command Scheduler", CommandScheduler.getInstance());
         tab.add("Drivebase", drivebase);
         tab.add("Launcher", launcher);
-        tab.add("Climber", climber);
+        tab.add("Left Climber", leftClimber);
+        tab.add("Right Climber", rightClimber);
     }
 
     public Command getAutonomousCommand() {
