@@ -58,7 +58,7 @@ public class Drivebase extends SubsystemBase {
     private final TunablePIDController driveVelocityPID = new TunablePIDController("Drivebase driveVelocity", DrivebaseConstants.velocityP, 0, DrivebaseConstants.velocityD);
     private final Field2d field = new Field2d();
 
-    private final LoggedDashboardBoolean arcadeDriveToggle = new LoggedDashboardBoolean("ArcadeDrive", false);
+    private final LoggedDashboardBoolean arcadeDriveToggle = new LoggedDashboardBoolean("Arcade Drive", false);
     private boolean arcadeDrive = arcadeDriveToggle.get();
     @AutoLogOutput
     private boolean reverseMode = false;
