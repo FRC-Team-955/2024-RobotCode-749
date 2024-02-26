@@ -9,6 +9,8 @@ import frc.robot.auto.AutoGenerator;
 import frc.robot.commands.Actions;
 import frc.robot.constants.*;
 import frc.robot.subsystems.climber.Climber;
+import frc.robot.subsystems.climber.ClimberIORealLeft;
+import frc.robot.subsystems.climber.ClimberIORealRight;
 import frc.robot.subsystems.drivebase.Drivebase;
 import frc.robot.subsystems.launcher.Launcher;
 import frc.robot.util.CommandNintendoSwitchProController;
@@ -32,7 +34,8 @@ public class Robot {
     /* Subsystems */
     private final Drivebase drivebase = new Drivebase(driverController);
     private final Launcher launcher = new Launcher();
-    private final Climber climber = new Climber();
+    private final Climber leftClimber = new Climber("ClimberLeft", ClimberIORealLeft::new);
+    private final Climber rightClimber = new Climber("ClimberRight", ClimberIORealRight::new);
 
     private final Actions actions = new Actions(driverController, operatorController, drivebase, launcher);
 
@@ -67,10 +70,10 @@ public class Robot {
         operatorController.x().toggleOnTrue(actions.selectActionCommand(Actions.Action.LeftSubwoofer));
         operatorController.b().toggleOnTrue(actions.selectActionCommand(Actions.Action.RightSubwoofer));
 
-        operatorController.rightBumper().whileTrue(climber.setRightCommand(Climber.Direction.Up));
-        operatorController.rightTrigger().whileTrue(climber.setRightCommand(Climber.Direction.Down));
-        operatorController.leftBumper().whileTrue(climber.setLeftCommand(Climber.Direction.Up));
-        operatorController.leftTrigger().whileTrue(climber.setLeftCommand(Climber.Direction.Down));
+        operatorController.rightBumper().whileTrue(rightClimber.moveCommand(Climber.Direction.Up));
+        operatorController.rightTrigger().whileTrue(rightClimber.moveCommand(Climber.Direction.Down));
+        operatorController.leftBumper().whileTrue(leftClimber.moveCommand(Climber.Direction.Up));
+        operatorController.leftTrigger().whileTrue(leftClimber.moveCommand(Climber.Direction.Down));
     }
 
     private void makeDebugTab() {
