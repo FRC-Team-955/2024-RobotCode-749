@@ -11,9 +11,13 @@ import frc.robot.util.TunablePIDController;
 import org.littletonrobotics.junction.Logger;
 
 public class SwerveMode {
+    private final CommandXboxController driverController;
+
     private final Drivebase drivebase;
 
-    public SwerveMode(Drivebase drivebase) {
+    public SwerveMode(CommandXboxController driverController, Drivebase drivebase) {
+        this.driverController = driverController;
+
         this.drivebase = drivebase;
     }
 
@@ -24,8 +28,8 @@ public class SwerveMode {
     });
     private double swerveModeSetpoint = 0;
 
-    public Command swerveDriveCommand(CommandXboxController controller) {
-        return new SwerveDriveCommand(controller);
+    public Command swerveDriveCommand() {
+        return new SwerveDriveCommand();
     }
 
     public Command swerveAngleCommand(double angle) {
@@ -33,10 +37,7 @@ public class SwerveMode {
     }
 
     private class SwerveDriveCommand extends Command {
-        private final CommandXboxController controller;
-
-        private SwerveDriveCommand(CommandXboxController controller) {
-            this.controller = controller;
+        private SwerveDriveCommand() {
             addRequirements(drivebase);
         }
 
@@ -50,8 +51,8 @@ public class SwerveMode {
             var reverse = drivebase.getReverseMode() ? -1 : 1;
             var precise = drivebase.getPreciseMode() ? DrivebaseConstants.preciseModeMultiplier : 1;
 
-            var x = reverse * controller.getLeftX();
-            var y = reverse * -controller.getLeftY();
+            var x = reverse * driverController.getLeftX();
+            var y = reverse * -driverController.getLeftY();
 
             if (Math.abs(x) > DrivebaseConstants.swerveModeDeadzone || Math.abs(y) > DrivebaseConstants.swerveModeDeadzone) {
                 swerveModeSetpoint = -Math.toDegrees(Math.atan2(x, y));
@@ -63,7 +64,7 @@ public class SwerveMode {
             var robotAngle = drivebase.getPose().getRotation().getDegrees();
             Logger.recordOutput("Drivebase/SwerveMode/Measurement", robotAngle);
 
-            var speed = precise * reverse * Util.speed(controller);
+            var speed = precise * reverse * Util.speed(driverController);
             var rotation = precise * swerveModePID.calculate(robotAngle);
 
             if (GeneralConstants.useControllerDeadzone) {

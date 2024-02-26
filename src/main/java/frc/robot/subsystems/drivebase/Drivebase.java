@@ -31,6 +31,7 @@ import frc.robot.util.LocalADStarAK;
 import frc.robot.util.TunablePIDController;
 import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
+import org.littletonrobotics.junction.networktables.LoggedDashboardBoolean;
 
 import java.util.List;
 import java.util.function.Supplier;
@@ -39,6 +40,8 @@ import static frc.robot.Util.ifRealElse;
 import static frc.robot.Util.switchMode;
 
 public class Drivebase extends SubsystemBase {
+    private final CommandXboxController driverController;
+
     private final DrivebaseIO io = switchMode(DrivebaseIOReal::new, DrivebaseIOSim::new, DrivebaseIO::new);
     private final DrivebaseIOInputsAutoLogged inputs = new DrivebaseIOInputsAutoLogged();
 
@@ -55,8 +58,8 @@ public class Drivebase extends SubsystemBase {
     private final TunablePIDController driveVelocityPID = new TunablePIDController("Drivebase driveVelocity", DrivebaseConstants.velocityP, 0, DrivebaseConstants.velocityD);
     private final Field2d field = new Field2d();
 
-    @AutoLogOutput(key = "Drivebase/ArcadeDrive/Enabled")
-    private boolean arcadeDrive = false;
+    private final LoggedDashboardBoolean arcadeDriveToggle = new LoggedDashboardBoolean("ArcadeDrive", false);
+    private boolean arcadeDrive = arcadeDriveToggle.get();
     @AutoLogOutput
     private boolean reverseMode = false;
     @AutoLogOutput
@@ -64,9 +67,12 @@ public class Drivebase extends SubsystemBase {
 
     /* Command Groups */
     public final AutoAlign autoAlign = new AutoAlign(this);
-    public final SwerveMode swerveMode = new SwerveMode(this);
+    public final SwerveMode swerveMode;
 
-    public Drivebase() {
+    public Drivebase(CommandXboxController driverController) {
+        this.driverController = driverController;
+        swerveMode = new SwerveMode(this.driverController, this);
+
         SmartDashboard.putData("Field", field);
 
         AutoBuilder.configureRamsete(
@@ -103,6 +109,11 @@ public class Drivebase extends SubsystemBase {
             odometry.addVisionMeasurement(limelightInputs.leftBotpose, limelightInputs.leftBotposeTimestamp);
         if (limelightInputs.rightTv == 1)
             odometry.addVisionMeasurement(limelightInputs.rightBotpose, limelightInputs.rightBotposeTimestamp);
+
+        if (arcadeDriveToggle.get() != arcadeDrive) {
+            arcadeDrive = arcadeDriveToggle.get();
+            updateDefaultCommand();
+        }
     }
 
     /**
@@ -134,13 +145,13 @@ public class Drivebase extends SubsystemBase {
         return this.run(() -> driveVelocity(leftMetersPerSec, rightMetersPerSec));
     }
 
-    private Command arcadeDriveCommand(CommandXboxController controller) {
+    private Command arcadeDriveCommand() {
         return run(() -> {
             var precise = preciseMode ? DrivebaseConstants.preciseModeMultiplier : 1;
             var reverse = reverseMode ? -1 : 1;
 
-            var speed = precise * reverse * Util.speed(controller);
-            var rotation = precise * -controller.getLeftX();
+            var speed = precise * reverse * Util.speed(driverController);
+            var rotation = precise * -driverController.getLeftX();
 
             if (GeneralConstants.useControllerDeadzone) {
                 if (Math.abs(speed) < GeneralConstants.controllerDeadzone) speed = 0;
@@ -201,17 +212,24 @@ public class Drivebase extends SubsystemBase {
         );
     }
 
-    public Command toggleArcadeDrive(CommandXboxController controller) {
+    public Command toggleArcadeDrive() {
         return Commands.runOnce(() -> {
-            if (this.getCurrentCommand() == this.getDefaultCommand())
-                this.getCurrentCommand().cancel();
-            arcadeDrive = !arcadeDrive;
-            if (arcadeDrive) {
-                this.setDefaultCommand(arcadeDriveCommand(controller));
-            } else {
-                this.setDefaultCommand(swerveMode.swerveDriveCommand(controller));
-            }
+            var newVal = !arcadeDriveToggle.get();
+            arcadeDriveToggle.set(newVal);
+            arcadeDrive = newVal;
+            updateDefaultCommand();
         });
+    }
+
+    public void updateDefaultCommand() {
+        System.out.println("Updating default command (arcadeDrive = " + arcadeDrive + ")");
+        if (this.getCurrentCommand() == this.getDefaultCommand())
+            this.getCurrentCommand().cancel();
+        if (arcadeDrive) {
+            this.setDefaultCommand(arcadeDriveCommand());
+        } else {
+            this.setDefaultCommand(swerveMode.swerveDriveCommand());
+        }
     }
 
     public Command feedforwardCharacterizationLeft() {

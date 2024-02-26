@@ -30,7 +30,7 @@ public class Robot {
     };
 
     /* Subsystems */
-    private final Drivebase drivebase = new Drivebase();
+    private final Drivebase drivebase = new Drivebase(driverController);
     private final Launcher launcher = new Launcher();
     private final Climber climber = new Climber();
 
@@ -44,12 +44,12 @@ public class Robot {
     }
 
     private void setDefaultCommands() {
-        drivebase.setDefaultCommand(drivebase.swerveMode.swerveDriveCommand(driverController));
+        drivebase.setDefaultCommand(drivebase.swerveMode.swerveDriveCommand());
     }
 
     private void configureBindings() {
         driverController.leftBumper().onTrue(drivebase.resetGyroCommand());
-        driverController.start().onTrue(drivebase.toggleArcadeDrive(driverController));
+        driverController.start().onTrue(drivebase.toggleArcadeDrive());
 
         driverController.povUp().onTrue(drivebase.swerveMode.swerveAngleCommand(0));
         driverController.povLeft().onTrue(drivebase.swerveMode.swerveAngleCommand(90));
