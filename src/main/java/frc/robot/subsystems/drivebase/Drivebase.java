@@ -179,8 +179,8 @@ public class Drivebase extends SubsystemBase {
 
             PathPlannerPath path = new PathPlannerPath(
                     bezierPoints,
-                    new PathConstraints(3.0, 3.0, 2 * Math.PI, 4 * Math.PI), // The constraints for this path. If using a differential drivetrain, the angular constraints have no effect.
-                    new GoalEndState(0.0, targetPose.getRotation()) // Goal end state. You can set a holonomic rotation here. If using a differential drivetrain, the rotation will have no effect.
+                    new PathConstraints(DrivebaseConstants.pathfindMaxSpeed, DrivebaseConstants.pathfindMaxAccel, 2 * Math.PI, 4 * Math.PI), // The constraints for this path. If using a differential drivetrain, the angular constraints have no effect.
+                    new GoalEndState(DrivebaseConstants.pathfindEndSpeed, targetPose.getRotation()) // Goal end state. You can set a holonomic rotation here. If using a differential drivetrain, the rotation will have no effect.
             );
 
             path.preventFlipping = true;
