@@ -33,7 +33,7 @@ public class Actions {
 
     private Command commandForAction() {
         if (selectedAction == Action.Source) {
-            return launcher.intakeCommand().withTimeout(7.5);
+            return launcher.intakeCommand().withTimeout(6);
         } else if (selectedAction == Action.FrontSubwoofer ||
                 selectedAction == Action.LeftSubwoofer ||
                 selectedAction == Action.RightSubwoofer
