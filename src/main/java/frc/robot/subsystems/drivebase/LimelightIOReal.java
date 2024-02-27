@@ -11,7 +11,7 @@ public class LimelightIOReal extends LimelightIO {
     public void updateInputs(LimelightIOInputs inputs) {
         NetworkTable left = NetworkTableInstance.getDefault().getTable("limelight-left");
         inputs.leftTv = left.getEntry("tv").getInteger(-1);
-        double[] leftBotpose = left.getEntry("botpose").getDoubleArray((double[]) null);
+        double[] leftBotpose = left.getEntry("botpose_wpiblue").getDoubleArray((double[]) null);
         if (leftBotpose != null && leftBotpose.length >= 6) {
             inputs.leftBotpose = new Pose2d(leftBotpose[0], leftBotpose[1], Rotation2d.fromDegrees(leftBotpose[5]));
             inputs.leftBotposeTimestamp = Timer.getFPGATimestamp() - (leftBotpose[6] / 1000.0);
@@ -19,7 +19,7 @@ public class LimelightIOReal extends LimelightIO {
 
         NetworkTable right = NetworkTableInstance.getDefault().getTable("limelight-right");
         inputs.rightTv = right.getEntry("tv").getInteger(-1);
-        double[] rightBotpose = right.getEntry("botpose").getDoubleArray((double[]) null);
+        double[] rightBotpose = right.getEntry("botpose_wpiblue").getDoubleArray((double[]) null);
         if (rightBotpose != null && rightBotpose.length >= 6) {
             inputs.rightBotpose = new Pose2d(rightBotpose[0], rightBotpose[1], Rotation2d.fromDegrees(rightBotpose[5]));
             inputs.rightBotposeTimestamp = Timer.getFPGATimestamp() - (rightBotpose[6] / 1000.0);
