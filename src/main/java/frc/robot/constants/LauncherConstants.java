@@ -8,4 +8,6 @@ public final class LauncherConstants {
 
     public static final double topIntakeSpeed = -1;
     public static final double bottomIntakeSpeed = -0.2;
+
+    public static final double spinUpTime = 1.0;
 }

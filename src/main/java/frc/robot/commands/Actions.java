@@ -27,10 +27,6 @@ public class Actions {
         this.launcher = launcher;
     }
 
-    public Command selectActionCommand(Action action) {
-        return Commands.runOnce(() -> selectedAction = action);
-    }
-
     private Command commandForAction() {
         if (selectedAction == Action.Source) {
             return launcher.intakeCommand().withTimeout(6);
@@ -64,12 +60,30 @@ public class Actions {
         }
     }
 
+    private Command onSelectForAction() {
+        if (selectedAction == Action.Source) {
+            return launcher.stopSpinUp();
+        } else if (selectedAction == Action.FrontSubwoofer ||
+                selectedAction == Action.LeftSubwoofer ||
+                selectedAction == Action.RightSubwoofer
+        ) {
+            return launcher.startSpinUp();
+        } else {
+            return Commands.none();
+        }
+    }
+
     private Optional<Command> checkForNone() {
         if (selectedAction == Action.None) return Optional.of(Commands.parallel(
                 Controller.setRumbleError(driverController),
                 Controller.setRumbleError(operatorController)
         ));
         return Optional.empty();
+    }
+
+    public Command selectActionCommand(Action action) {
+        return Commands.runOnce(() -> selectedAction = action)
+                .andThen(Commands.deferredProxy(this::onSelectForAction));
     }
 
     public Command doSelectedActionCommand() {
