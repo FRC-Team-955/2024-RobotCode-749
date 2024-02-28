@@ -7,6 +7,7 @@ public class ClimberIO {
     public static class ClimberIOInputs {
         public double appliedVolts = 0.0;
         public double currentAmps = 0.0;
+        public double positionRad = 0.0;
     }
 
     public void updateInputs(ClimberIOInputs inputs) {
@@ -16,5 +17,8 @@ public class ClimberIO {
     }
 
     public void stop() {
+    }
+
+    public void resetPosition() {
     }
 }

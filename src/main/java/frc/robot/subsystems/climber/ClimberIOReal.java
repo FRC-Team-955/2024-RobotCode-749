@@ -2,9 +2,13 @@ package frc.robot.subsystems.climber;
 
 import com.revrobotics.CANSparkBase;
 import com.revrobotics.CANSparkMax;
+import com.revrobotics.RelativeEncoder;
+import edu.wpi.first.math.util.Units;
+import frc.robot.constants.ClimberConstants;
 
 public abstract class ClimberIOReal extends ClimberIO {
     private final CANSparkMax motor = getMotor();
+    private final RelativeEncoder encoder = motor.getEncoder();
 
     protected abstract CANSparkMax getMotor();
 
@@ -15,12 +19,14 @@ public abstract class ClimberIOReal extends ClimberIO {
         motor.enableVoltageCompensation(12.0);
         motor.setSmartCurrentLimit(40);
         motor.burnFlash();
+        encoder.setPosition(0);
     }
 
     @Override
     public void updateInputs(ClimberIOInputs inputs) {
         inputs.appliedVolts = motor.getAppliedOutput() * motor.getBusVoltage();
         inputs.currentAmps = motor.getOutputCurrent();
+        inputs.positionRad = Units.rotationsToRadians(encoder.getPosition() / ClimberConstants.gearRatio);
     }
 
     @Override
@@ -31,5 +37,10 @@ public abstract class ClimberIOReal extends ClimberIO {
     @Override
     public void stop() {
         motor.stopMotor();
+    }
+
+    @Override
+    public void resetPosition() {
+        encoder.setPosition(0);
     }
 }
