@@ -102,7 +102,7 @@ public class Robot {
         auto.addDefaultOption("None", null);
         auto.addOption("Generate", AutoGenerator.generateAuto(drivebase, launcher));
         auto.addOption("Launch", launcher.launchCommand());
-        auto.addOption("Launch and move back", LaunchAndMove.get(drivebase, launcher));
+        auto.addOption("Launch and move", LaunchAndMove.get(drivebase, launcher));
         auto.addOption("Launch from front and move to corner", launcher.launchCommand()
                 .andThen(
                         drivebase.followPathCommand("Front Subwoofer to Corner"),
