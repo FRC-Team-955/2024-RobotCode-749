@@ -18,6 +18,12 @@ public final class DrivebaseConstants {
     public static final KitbotGearing gearRatio = KitbotGearing.k10p71;
     public static final KitbotMotor motor = KitbotMotor.kDualCIMPerSide;
 
+    public static final int leftEncoderChannelA = 5;
+    public static final int leftEncoderChannelB = 7;
+    public static final int rightEncoderChannelA = 2;
+    public static final int rightEncoderChannelB = 1;
+    public static final double encoderDistancePerPulse = 1 / 2048.0; // AKA divide encoder reading by 2048
+
     public static final double motorP = 1;
     public static final double motorD = 0;
 

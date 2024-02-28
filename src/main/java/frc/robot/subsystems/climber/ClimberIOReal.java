@@ -1,5 +1,6 @@
 package frc.robot.subsystems.climber;
 
+import com.revrobotics.CANSparkBase;
 import com.revrobotics.CANSparkLowLevel;
 import com.revrobotics.CANSparkMax;
 import frc.robot.constants.ClimberConstants;
@@ -11,6 +12,9 @@ public class ClimberIOReal extends ClimberIO {
     public ClimberIOReal() {
         left.restoreFactoryDefaults();
         right.restoreFactoryDefaults();
+
+        left.setIdleMode(CANSparkBase.IdleMode.kBrake);
+        right.setIdleMode(CANSparkBase.IdleMode.kBrake);
 
         left.setCANTimeout(250);
         right.setCANTimeout(250);

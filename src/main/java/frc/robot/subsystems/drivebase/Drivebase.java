@@ -1,5 +1,13 @@
 package frc.robot.subsystems.drivebase;
 
+import static frc.robot.Util.chooseIO;
+
+import java.util.List;
+import java.util.function.Supplier;
+
+import org.littletonrobotics.junction.AutoLogOutput;
+import org.littletonrobotics.junction.Logger;
+
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.path.GoalEndState;
 import com.pathplanner.lib.path.PathConstraints;
@@ -7,6 +15,7 @@ import com.pathplanner.lib.path.PathPlannerPath;
 import com.pathplanner.lib.pathfinding.Pathfinding;
 import com.pathplanner.lib.util.PathPlannerLogging;
 import com.pathplanner.lib.util.ReplanningConfig;
+
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.estimator.DifferentialDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -14,9 +23,6 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.DifferentialDriveKinematics;
 import edu.wpi.first.math.kinematics.DifferentialDriveWheelSpeeds;
-import edu.wpi.first.networktables.NetworkTable;
-import edu.wpi.first.networktables.NetworkTableInstance;
-import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -26,19 +32,9 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.Util;
 import frc.robot.constants.DrivebaseConstants;
-import frc.robot.constants.GeneralConstants;
-import frc.robot.constants.GeneralConstants.Mode;
 import frc.robot.subsystems.drivebase.commands.AutoAlign;
 import frc.robot.subsystems.drivebase.commands.SwerveMode;
 import frc.robot.util.LocalADStarAK;
-import org.littletonrobotics.junction.AutoLogOutput;
-import org.littletonrobotics.junction.Logger;
-
-import java.util.List;
-import java.util.Set;
-import java.util.function.Supplier;
-
-import static frc.robot.Util.chooseIO;
 
 public class Drivebase extends SubsystemBase {
     private final DrivebaseIO io = chooseIO(DrivebaseIOReal::new, DrivebaseIOSim::new, DrivebaseIO::new);
@@ -49,12 +45,15 @@ public class Drivebase extends SubsystemBase {
     private final SimpleMotorFeedforward feedforward = new SimpleMotorFeedforward(DrivebaseConstants.feedforwardS, DrivebaseConstants.feedforwardV);
     private final Field2d field = new Field2d();
 
-    @AutoLogOutput
+    @AutoLogOutput(key = "Drivebase/ArcadeDrive/Enabled")
     private boolean arcadeDrive = false;
     @AutoLogOutput
     private boolean reverseMode = false;
     @AutoLogOutput
     private boolean preciseMode = false;
+
+    @AutoLogOutput
+    private Rotation2d rotationOffset = new Rotation2d();
 
     /* Command Groups */
     public AutoAlign autoAlign = new AutoAlign(this);
@@ -85,33 +84,18 @@ public class Drivebase extends SubsystemBase {
         io.updateInputs(inputs);
         Logger.processInputs("Inputs/Drivebase", inputs);
 
-        field.setRobotPose(odometry.update(inputs.gyroYaw, getLeftPositionMeters(), getRightPositionMeters()));
+        field.setRobotPose(odometry.update(inputs.gyroYaw.minus(rotationOffset), getLeftPositionMeters(), getRightPositionMeters()));
 
-        if (GeneralConstants.mode != Mode.SIM) {
-            addPoseEstimation("limelight_left");
-            addPoseEstimation("limelight_right");
-        }
-    }
-
-    private void addPoseEstimation(String limeLightName) {
-        NetworkTable table = NetworkTableInstance.getDefault().getTable(limeLightName);
-        if (table.getEntry("tv").getInteger(0) == 0)
-            return;
-        double[] botpose = table.getEntry("botpose").getDoubleArray((double[]) null);
-        if (botpose == null)
-            return;
-        odometry.addVisionMeasurement(
-                new Pose2d(botpose[0], botpose[1], Rotation2d.fromDegrees(botpose[5])),
-                Timer.getFPGATimestamp() - (botpose[6] / 1000.0)
-        );
+        if (inputs.leftLimelightTv == 1)
+            odometry.addVisionMeasurement(inputs.leftLimelightBotpose, inputs.leftLimelightBotposeTimestamp);
+        if (inputs.rightLimelightTv == 1)
+            odometry.addVisionMeasurement(inputs.rightLimelightBotpose, inputs.rightLimelightBotposeTimestamp);
     }
 
     public void arcadeDrive(double speed, double rotation) {
-        var speeds = DifferentialDrive.arcadeDriveIK(
-                (preciseMode ? DrivebaseConstants.preciseModeMultiplier : 1) * (reverseMode ? -1 : 1) * (GeneralConstants.mode == GeneralConstants.Mode.REAL ? -rotation : speed),
-                (preciseMode ? DrivebaseConstants.preciseModeMultiplier : 1) * (GeneralConstants.mode == GeneralConstants.Mode.REAL ? speed : rotation),
-                true
-        );
+        Logger.recordOutput("Drivebase/ArcadeDrive/Speed", speed);
+        Logger.recordOutput("Drivebase/ArcadeDrive/Rotation", rotation);
+        var speeds = DifferentialDrive.arcadeDriveIK(speed, rotation, true);
         io.setVoltage(speeds.left * 12, speeds.right * 12);
     }
 
@@ -129,11 +113,15 @@ public class Drivebase extends SubsystemBase {
     }
 
     private Command arcadeDriveCommand(CommandXboxController controller) {
-        return run(() -> arcadeDrive(controller.getLeftY(), -controller.getRightX()));
+        return run(() -> {
+            var precise = preciseMode ? DrivebaseConstants.preciseModeMultiplier : 1;
+            var reverse = reverseMode ? -1 : 1;
+            arcadeDrive(precise * reverse * controller.getLeftY(), precise * controller.getRightX());
+        });
     }
 
     public Command pathfindCommand(Supplier<Pose2d> targetPoseSupplier) {
-        return Commands.defer(() -> {
+        return Commands.deferredProxy(() -> {
             var pose = getPose();
             var targetPose = targetPoseSupplier.get();
 
@@ -157,34 +145,41 @@ public class Drivebase extends SubsystemBase {
             return AutoBuilder
                     .followPath(path)
                     .andThen(swerveMode.swerveAngleCommand(targetPose.getRotation().getDegrees()));
-        }, Set.of());
+        });
     }
 
     public boolean getReverseMode() {
         return reverseMode;
     }
 
-    public Command setReverseModeCommand(boolean reverseMode) {
-        return Commands.runOnce(() -> this.reverseMode = reverseMode);
+    public Command enableReverseModeCommand() {
+        return Commands.startEnd(
+                () -> this.reverseMode = true,
+                () -> this.reverseMode = false
+        );
     }
 
     public boolean getPreciseMode() {
         return preciseMode;
     }
 
-    public Command setPreciseModeCommand(boolean preciseMode) {
-        return Commands.runOnce(() -> this.preciseMode = preciseMode);
+    public Command enablePreciseModeCommand() {
+        return Commands.startEnd(
+                () -> this.preciseMode = true,
+                () -> this.preciseMode = false
+        );
     }
 
     public Command toggleArcadeDrive(CommandXboxController controller) {
         return Commands.runOnce(() -> {
-            this.getCurrentCommand().cancel();
-            if (arcadeDrive) {
-                this.setDefaultCommand(swerveMode.swerveDriveCommand(controller));
-            } else {
-                this.setDefaultCommand(arcadeDriveCommand(controller));
-            }
+            if (this.getCurrentCommand() == this.getDefaultCommand())
+                this.getCurrentCommand().cancel();
             arcadeDrive = !arcadeDrive;
+            if (arcadeDrive) {
+                this.setDefaultCommand(arcadeDriveCommand(controller));
+            } else {
+                this.setDefaultCommand(swerveMode.swerveDriveCommand(controller));
+            }
         });
     }
 
@@ -197,8 +192,9 @@ public class Drivebase extends SubsystemBase {
         return Commands.runOnce(() -> odometry.resetPosition(inputs.gyroYaw, getLeftPositionMeters(), getRightPositionMeters(), newPose));
     }
 
-    public Command resetPoseCommand() {
-        return Commands.runOnce(() -> odometry.resetPosition(new Rotation2d(), 0, 0, new Pose2d()));
+    public Command resetGyroCommand() {
+        return Commands.runOnce(() -> rotationOffset = inputs.gyroYaw)
+                .andThen(swerveMode.swerveAngleCommand(0));
     }
 
     @AutoLogOutput
@@ -219,5 +215,9 @@ public class Drivebase extends SubsystemBase {
     @AutoLogOutput
     public double getRightVelocityMetersPerSec() {
         return inputs.rightVelocityRadPerSec * DrivebaseConstants.wheelRadius;
+    }
+
+    public Command followPathCommand(String name) {
+        return AutoBuilder.followPath(PathPlannerPath.fromPathFile(name));
     }
 }

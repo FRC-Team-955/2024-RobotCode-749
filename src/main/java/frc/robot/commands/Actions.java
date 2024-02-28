@@ -8,7 +8,6 @@ import frc.robot.subsystems.launcher.Launcher;
 import org.littletonrobotics.junction.AutoLogOutput;
 
 import java.util.Optional;
-import java.util.Set;
 
 public class Actions {
     private final Drivebase drivebase;
@@ -28,12 +27,12 @@ public class Actions {
 
     private Command commandForAction() {
         if (selectedAction == Action.Source) {
-            return launcher.intakeCommand().withTimeout(5);
+            return launcher.intakeCommand().withTimeout(7.5);
         } else if (selectedAction == Action.FrontSubwoofer ||
                 selectedAction == Action.LeftSubwoofer ||
                 selectedAction == Action.RightSubwoofer
         ) {
-            return launcher.launchCommand().withTimeout(3);
+            return launcher.launchCommand();
         } else {
             return Commands.none();
         }
@@ -60,15 +59,15 @@ public class Actions {
     }
 
     public Command doSelectedActionCommand(CommandXboxController autoAlignController) {
-        return Commands.defer(() ->
-                        autoAlignForAction()
-                                .map(command -> (Command) command.andThen(commandForAction()))
-                                .orElse(Controller.setRumbleError(autoAlignController)),
-                Set.of());
+        return Commands.deferredProxy(() ->
+                autoAlignForAction()
+                        .map(command -> (Command) command.andThen(commandForAction()))
+                        .orElse(Controller.setRumbleError(autoAlignController))
+        );
     }
 
     public Command doSelectedActionWithoutAutoAlignCommand() {
-        return Commands.defer(this::commandForAction, Set.of());
+        return Commands.deferredProxy(this::commandForAction);
     }
 
     public enum Action {

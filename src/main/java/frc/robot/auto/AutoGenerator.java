@@ -1,5 +1,7 @@
 package frc.robot.auto;
 
+import java.util.List;
+
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.path.GoalEndState;
 import com.pathplanner.lib.path.PathConstraints;
@@ -28,6 +30,7 @@ public class AutoGenerator {
     private static final GenericEntry messUpMidfieldMiddleNote = tab.add("Mess with Middle", true).withWidget(BuiltInWidgets.kToggleSwitch).getEntry();
     private static final GenericEntry messUpMidfieldLowerMiddleNote = tab.add("Mess with Lower Middle", true).withWidget(BuiltInWidgets.kToggleSwitch).getEntry();
     private static final GenericEntry messUpMidfieldBottomNote = tab.add("Mess with Bottom", true).withWidget(BuiltInWidgets.kToggleSwitch).getEntry();
+    private static final GenericEntry flipOrder = tab.add("Flip order", false).withWidget(BuiltInWidgets.kToggleSwitch).getEntry();
 
     private static final SendableChooser<StartingPoint> startingPoints = Util.make(() -> {
         var startingPoints = new SendableChooser<StartingPoint>();
@@ -55,18 +58,21 @@ public class AutoGenerator {
     // }
 
     public static Command generateAuto(Drivebase drivebase, Launcher launcher) {
+        var flipOrder = AutoGenerator.flipOrder.getBoolean(false);
         var startingPoint = startingPoints.getSelected();
         var commands = new SequentialCommandGroup();
 
         PathPlannerPath path = null;
-        switch (startingPoint) {
-            case Top -> path = PathPlannerPath.fromPathFile("Left starting point to subwoofer");
-            case Middle -> path = PathPlannerPath.fromPathFile("Middle starting point to subwoofer");
-            case Bottom -> path = PathPlannerPath.fromPathFile("Right starting point to subwoofer");
+        if (!flipOrder) {
+            switch (startingPoint) {
+                case Top -> path = PathPlannerPath.fromPathFile("Left starting point to subwoofer");
+                case Middle -> path = PathPlannerPath.fromPathFile("Middle starting point to subwoofer");
+                case Bottom -> path = PathPlannerPath.fromPathFile("Right starting point to subwoofer");
+            }
+            commands.addCommands(drivebase.setPoseCommand(GeometryUtil.flipFieldPose(path.getStartingDifferentialPose())));
+            commands.addCommands(AutoBuilder.followPath(path));
+            commands.addCommands(launcher.launchCommand());
         }
-        commands.addCommands(drivebase.setPoseCommand(GeometryUtil.flipFieldPose(path.getStartingDifferentialPose())));
-        commands.addCommands(AutoBuilder.followPath(path));
-        commands.addCommands(launcher.launchCommand());
 
         if (messUpMidfieldTopNote.getBoolean(true)) {
             path = PathPlannerPath.fromPathFile("Mess with far left midfield note");
@@ -78,21 +84,29 @@ public class AutoGenerator {
         Rotation2d rotation = Rotation2d.fromDegrees(-90);
 
         List<Translation2d> bezierPoints = PathPlannerPath.bezierFromPoses(
-                Util.flipIfNeededNow(messUpMidfieldTopNote.getBoolean(true) ? new Pose2d(7.70, 7.40, rotation) : new Pose2d(7.30, 7.40, rotation)),
-                Util.flipIfNeededNow(messUpMidfieldUpperMiddleNote.getBoolean(true) ? new Pose2d(7.70, 5.75, rotation) : new Pose2d(7.30, 5.75, rotation)),
-                Util.flipIfNeededNow(messUpMidfieldMiddleNote.getBoolean(true) ? new Pose2d(7.70, 4.10, rotation) : new Pose2d(7.30, 4.10, rotation)),
-                Util.flipIfNeededNow(messUpMidfieldLowerMiddleNote.getBoolean(true) ? new Pose2d(7.70, 2.50, rotation) : new Pose2d(7.30, 2.50, rotation)),
-                Util.flipIfNeededNow(messUpMidfieldBottomNote.getBoolean(true) ? new Pose2d(7.70, 0.80, rotation) : new Pose2d(7.30, 0.80, rotation))
-        );
+                Util.flipIfNeededNow(messUpMidfieldTopNote.getBoolean(true) ? new Pose2d(8.30, 7.40, rotation) : new Pose2d(7.30, 7.40, rotation)),
+                Util.flipIfNeededNow(messUpMidfieldUpperMiddleNote.getBoolean(true) ? new Pose2d(8.30, 5.75, rotation) : new Pose2d(7.30, 5.75, rotation)),
+                Util.flipIfNeededNow(messUpMidfieldMiddleNote.getBoolean(true) ? new Pose2d(8.30, 4.10, rotation) : new Pose2d(7.30, 4.10, rotation)),
+                Util.flipIfNeededNow(messUpMidfieldLowerMiddleNote.getBoolean(true) ? new Pose2d(8.30, 2.50, rotation) : new Pose2d(7.30, 2.50, rotation)),
+                Util.flipIfNeededNow(messUpMidfieldBottomNote.getBoolean(true) ? new Pose2d(8.30, 0.80, rotation) : new Pose2d(7.30, 0.80, rotation)));
 
         path = new PathPlannerPath(
                 bezierPoints,
                 new PathConstraints(3.0, 3.0, 2 * Math.PI, 4 * Math.PI),
-                new GoalEndState(0.0, Rotation2d.fromDegrees(90))
-        );
+                new GoalEndState(0.0, Rotation2d.fromDegrees(90)));
 
         path.preventFlipping = true;
         commands.addCommands(AutoBuilder.followPath(path));
+
+        if (flipOrder) {
+            switch (startingPoint) {
+                case Top -> path = PathPlannerPath.fromPathFile("Left starting point to subwoofer");
+                case Middle -> path = PathPlannerPath.fromPathFile("Middle starting point to subwoofer");
+                case Bottom -> path = PathPlannerPath.fromPathFile("Right starting point to subwoofer");
+            }
+            commands.addCommands(AutoBuilder.followPath(path));
+            commands.addCommands(launcher.launchCommand());
+        }
 
         return commands;
     }
