@@ -26,11 +26,11 @@ public final class DrivebaseConstants {
     public static final int rightEncoderChannelB = 1;
     public static final double encoderDistancePerPulse = 1 / 2048.0; // AKA divide encoder reading by 2048
 
-    public static final double velocityP = ifSimElse(0.05, 6.4);
+    public static final double velocityP = ifSimElse(1.0, 6.4);
     public static final double velocityD = 0.001;
 
-    public static final double feedforwardLeftS = ifSimElse(0.0, 1.379);
-    public static final double feedforwardLeftV = ifSimElse(0.35, 2.2);
+    public static final double feedforwardLeftS = ifSimElse(0.5, 1.379);
+    public static final double feedforwardLeftV = ifSimElse(0.7, 2.2);
     public static final double feedforwardRightS = ifSimElse(feedforwardLeftS, 1.463);
     public static final double feedforwardRightV = ifSimElse(feedforwardLeftV, 2.3);
 

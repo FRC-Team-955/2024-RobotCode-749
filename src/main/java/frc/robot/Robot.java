@@ -1,14 +1,14 @@
 package frc.robot;
 
-import com.pathplanner.lib.auto.AutoBuilder;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.auto.AutoGenerator;
+import frc.robot.auto.LaunchAndMove;
 import frc.robot.commands.Actions;
 import frc.robot.constants.*;
 import frc.robot.subsystems.climber.Climber;
@@ -17,6 +17,7 @@ import frc.robot.subsystems.climber.ClimberIORealRight;
 import frc.robot.subsystems.drivebase.Drivebase;
 import frc.robot.subsystems.launcher.Launcher;
 import frc.robot.util.CommandNintendoSwitchProController;
+import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
 public class Robot {
     private final CommandXboxController driverController = SimulationConstants.useNintendoSwitchProController ?
@@ -96,10 +97,26 @@ public class Robot {
         tab.add("Zero pose to front of subwoofer", drivebase.setPoseCommand(Util.flipIfNeeded(new Pose2d(1.33, 5.5, Rotation2d.fromDegrees(180)))));
     }
 
+    private final LoggedDashboardChooser<Command> autoChooser = Util.make(() -> {
+        var auto = new LoggedDashboardChooser<Command>("Auto");
+        auto.addDefaultOption("None", null);
+        auto.addOption("Generate", AutoGenerator.generateAuto(drivebase, launcher));
+        auto.addOption("Launch", launcher.launchCommand());
+        auto.addOption("Launch and move", LaunchAndMove.get(drivebase, launcher));
+        auto.addOption("Launch from front and move to corner", launcher.launchCommand()
+                .andThen(
+                        drivebase.followPathCommand("Front Subwoofer to Corner"),
+                        Commands.parallel(
+                                drivebase.swerveMode.swerveDriveCommand(),
+                                Commands.deferredProxy(() -> drivebase.swerveMode.swerveAngleCommand(Util.shouldFlip() ? 180 : 0))
+                        ).withTimeout(1.5)
+                )
+        );
+        return auto;
+    });
+
     public Command getAutonomousCommand() {
         // Return null to do nothing during autonomous.
-        return launcher.launchCommand().andThen(AutoBuilder.buildAuto("New Auto"));
-//        return AutoGenerator.generateAuto(drivebase, launcher);
-//        return drivebase.feedforwardCharacterizationRight();
+        return autoChooser.get();
     }
 }
