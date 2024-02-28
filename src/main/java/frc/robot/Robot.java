@@ -42,7 +42,6 @@ public class Robot {
     public Robot() {
         setDefaultCommands();
         configureBindings();
-        AutoGenerator.initializeShuffleboard();
         makeDebugTab();
     }
 

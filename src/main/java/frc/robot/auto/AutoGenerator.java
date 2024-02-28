@@ -17,20 +17,20 @@ import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.Util;
 import frc.robot.subsystems.drivebase.Drivebase;
 import frc.robot.subsystems.launcher.Launcher;
+import org.littletonrobotics.junction.networktables.LoggedDashboardBoolean;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
 import java.util.List;
 
 public class AutoGenerator {
-    private static final ShuffleboardTab tab = Shuffleboard.getTab("Auto Generator");
-    private static final GenericEntry messUpMidfieldTopNote = tab.add("Mess with Top", true).withWidget(BuiltInWidgets.kToggleSwitch).getEntry();
-    private static final GenericEntry messUpMidfieldUpperMiddleNote = tab.add("Mess with Upper Middle", true).withWidget(BuiltInWidgets.kToggleSwitch).getEntry();
-    private static final GenericEntry messUpMidfieldMiddleNote = tab.add("Mess with Middle", true).withWidget(BuiltInWidgets.kToggleSwitch).getEntry();
-    private static final GenericEntry messUpMidfieldLowerMiddleNote = tab.add("Mess with Lower Middle", true).withWidget(BuiltInWidgets.kToggleSwitch).getEntry();
-    private static final GenericEntry messUpMidfieldBottomNote = tab.add("Mess with Bottom", true).withWidget(BuiltInWidgets.kToggleSwitch).getEntry();
+    private static final LoggedDashboardBoolean messUpMidfieldTopNote = new LoggedDashboardBoolean("Auto Generator: Mess with Top", true);
+    private static final LoggedDashboardBoolean messUpMidfieldUpperMiddleNote = new LoggedDashboardBoolean("Auto Generator: Mess with Upper Middle", true);
+    private static final LoggedDashboardBoolean messUpMidfieldMiddleNote = new LoggedDashboardBoolean("Auto Generator: Mess with Middle", true);
+    private static final LoggedDashboardBoolean messUpMidfieldLowerMiddleNote = new LoggedDashboardBoolean("Auto Generator: Mess with Lower Middle", true);
+    private static final LoggedDashboardBoolean messUpMidfieldBottomNote = new LoggedDashboardBoolean("Auto Generator: Mess with Bottom", true);
 
     private static final LoggedDashboardChooser<StartingPoint> startingPoints = Util.make(() -> {
-        var startingPoints = new LoggedDashboardChooser<StartingPoint>("Auto Generator - Starting Point");
+        var startingPoints = new LoggedDashboardChooser<StartingPoint>("Auto Generator: Starting Point");
         startingPoints.addDefaultOption("Top", StartingPoint.Top);
         startingPoints.addOption("Middle", StartingPoint.Middle);
         startingPoints.addOption("Bottom", StartingPoint.Bottom);
@@ -68,7 +68,7 @@ public class AutoGenerator {
         commands.addCommands(AutoBuilder.followPath(path));
         commands.addCommands(launcher.launchCommand());
 
-        if (messUpMidfieldTopNote.getBoolean(true)) {
+        if (messUpMidfieldTopNote.get()) {
             path = PathPlannerPath.fromPathFile("Mess with far left midfield note");
         } else {
             path = PathPlannerPath.fromPathFile("Go near far left midfield");
@@ -78,11 +78,11 @@ public class AutoGenerator {
         Rotation2d rotation = Rotation2d.fromDegrees(-90);
 
         List<Translation2d> bezierPoints = PathPlannerPath.bezierFromPoses(
-                Util.flipIfNeededNow(messUpMidfieldTopNote.getBoolean(true) ? new Pose2d(7.70, 7.40, rotation) : new Pose2d(7.30, 7.40, rotation)),
-                Util.flipIfNeededNow(messUpMidfieldUpperMiddleNote.getBoolean(true) ? new Pose2d(7.70, 5.75, rotation) : new Pose2d(7.30, 5.75, rotation)),
-                Util.flipIfNeededNow(messUpMidfieldMiddleNote.getBoolean(true) ? new Pose2d(7.70, 4.10, rotation) : new Pose2d(7.30, 4.10, rotation)),
-                Util.flipIfNeededNow(messUpMidfieldLowerMiddleNote.getBoolean(true) ? new Pose2d(7.70, 2.50, rotation) : new Pose2d(7.30, 2.50, rotation)),
-                Util.flipIfNeededNow(messUpMidfieldBottomNote.getBoolean(true) ? new Pose2d(7.70, 0.80, rotation) : new Pose2d(7.30, 0.80, rotation))
+                Util.flipIfNeededNow(messUpMidfieldTopNote.get() ? new Pose2d(7.70, 7.40, rotation) : new Pose2d(7.30, 7.40, rotation)),
+                Util.flipIfNeededNow(messUpMidfieldUpperMiddleNote.get() ? new Pose2d(7.70, 5.75, rotation) : new Pose2d(7.30, 5.75, rotation)),
+                Util.flipIfNeededNow(messUpMidfieldMiddleNote.get() ? new Pose2d(7.70, 4.10, rotation) : new Pose2d(7.30, 4.10, rotation)),
+                Util.flipIfNeededNow(messUpMidfieldLowerMiddleNote.get() ? new Pose2d(7.70, 2.50, rotation) : new Pose2d(7.30, 2.50, rotation)),
+                Util.flipIfNeededNow(messUpMidfieldBottomNote.get() ? new Pose2d(7.70, 0.80, rotation) : new Pose2d(7.30, 0.80, rotation))
         );
 
         path = new PathPlannerPath(
@@ -95,10 +95,5 @@ public class AutoGenerator {
         commands.addCommands(AutoBuilder.followPath(path));
 
         return commands;
-    }
-
-    public static void initializeShuffleboard() {
-        tab.add("Starting Point", startingPoints.getSendableChooser());
-        // tab.add("Notes", notes);
     }
 }
