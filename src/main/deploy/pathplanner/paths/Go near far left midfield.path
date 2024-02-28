@@ -42,7 +42,7 @@
     "rotation": -150.66002913184357,
     "rotateFast": false
   },
-  "reversed": true,
+  "reversed": false,
   "folder": "Midfield notes",
   "previewStartingState": null,
   "useDefaultConstraints": false

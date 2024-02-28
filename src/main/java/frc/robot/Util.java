@@ -1,16 +1,15 @@
 package frc.robot;
 
-import java.io.File;
-import java.util.function.Supplier;
-
 import com.pathplanner.lib.util.GeometryUtil;
-
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.constants.GeneralConstants;
 import frc.robot.util.Rect2d;
+
+import java.io.File;
+import java.util.function.Supplier;
 
 public final class Util {
     public static <T> T switchMode(Supplier<T> real, Supplier<T> sim, Supplier<T> replay) {

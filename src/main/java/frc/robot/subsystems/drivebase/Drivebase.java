@@ -199,6 +199,11 @@ public class Drivebase extends SubsystemBase {
         });
     }
 
+    public Command followPathCommand(String name) {
+        var path = PathPlannerPath.fromPathFile(name);
+        return setPoseCommand(Util.flipIfNeeded(path.getStartingDifferentialPose())).andThen(AutoBuilder.followPath(path));
+    }
+
     public Command pathfindCommand(Supplier<Pose2d> targetPoseSupplier) {
         return Commands.deferredProxy(() -> {
             var pose = getPose();
