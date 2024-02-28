@@ -1,7 +1,10 @@
 package frc.robot;
 
 import com.pathplanner.lib.auto.AutoBuilder;
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
@@ -43,6 +46,7 @@ public class Robot {
         setDefaultCommands();
         configureBindings();
         makeDebugTab();
+        makeButtonsTab();
     }
 
     private void setDefaultCommands() {
@@ -85,6 +89,11 @@ public class Robot {
         tab.add("Launcher", launcher);
         tab.add("Left Climber", leftClimber);
         tab.add("Right Climber", rightClimber);
+    }
+
+    private void makeButtonsTab() {
+        var tab = Shuffleboard.getTab("Buttons");
+        tab.add("Zero pose to front of subwoofer", drivebase.setPoseCommand(Util.flipIfNeeded(new Pose2d(1.33, 5.5, Rotation2d.fromDegrees(180)))));
     }
 
     public Command getAutonomousCommand() {

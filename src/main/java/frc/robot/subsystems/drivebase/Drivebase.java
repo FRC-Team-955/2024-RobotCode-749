@@ -283,7 +283,11 @@ public class Drivebase extends SubsystemBase {
     }
 
     public Command setPoseCommand(Pose2d newPose) {
-        return Commands.runOnce(() -> odometry.resetPosition(gyroInputs.yaw, getLeftPositionMeters(), getRightPositionMeters(), newPose));
+        return setPoseCommand(() -> newPose);
+    }
+
+    public Command setPoseCommand(Supplier<Pose2d> newPose) {
+        return Commands.runOnce(() -> odometry.resetPosition(gyroInputs.yaw, getLeftPositionMeters(), getRightPositionMeters(), newPose.get()));
     }
 
     public Command resetGyroCommand() {
