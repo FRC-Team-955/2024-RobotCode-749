@@ -1,58 +1,46 @@
 package frc.robot.subsystems.climber;
 
 import com.revrobotics.CANSparkBase;
-import com.revrobotics.CANSparkLowLevel;
 import com.revrobotics.CANSparkMax;
+import com.revrobotics.RelativeEncoder;
+import edu.wpi.first.math.util.Units;
 import frc.robot.constants.ClimberConstants;
 
-public class ClimberIOReal extends ClimberIO {
-    private final CANSparkMax left = new CANSparkMax(ClimberConstants.leftMotorId, CANSparkLowLevel.MotorType.kBrushless);
-    private final CANSparkMax right = new CANSparkMax(ClimberConstants.rightMotorId, CANSparkLowLevel.MotorType.kBrushless);
+public abstract class ClimberIOReal extends ClimberIO {
+    private final CANSparkMax motor = getMotor();
+    private final RelativeEncoder encoder = motor.getEncoder();
+
+    protected abstract CANSparkMax getMotor();
 
     public ClimberIOReal() {
-        left.restoreFactoryDefaults();
-        right.restoreFactoryDefaults();
-
-        left.setIdleMode(CANSparkBase.IdleMode.kBrake);
-        right.setIdleMode(CANSparkBase.IdleMode.kBrake);
-
-        left.setCANTimeout(250);
-        right.setCANTimeout(250);
-
-//        left.setInverted(false);
-//        right.setInverted(false);
-
-        left.enableVoltageCompensation(12.0);
-        right.enableVoltageCompensation(12.0);
-        left.setSmartCurrentLimit(60);
-        right.setSmartCurrentLimit(60);
-
-        left.burnFlash();
-        right.burnFlash();
+        motor.restoreFactoryDefaults();
+        motor.setIdleMode(CANSparkBase.IdleMode.kBrake);
+        motor.setCANTimeout(250);
+        motor.enableVoltageCompensation(12.0);
+        motor.setSmartCurrentLimit(40);
+        motor.burnFlash();
+        encoder.setPosition(0);
     }
 
     @Override
     public void updateInputs(ClimberIOInputs inputs) {
-        inputs.leftAppliedVolts = left.getAppliedOutput() * left.getBusVoltage();
-        inputs.leftCurrentAmps = left.getOutputCurrent();
-
-        inputs.rightAppliedVolts = right.getAppliedOutput() * right.getBusVoltage();
-        inputs.rightCurrentAmps = right.getOutputCurrent();
+        inputs.appliedVolts = motor.getAppliedOutput() * motor.getBusVoltage();
+        inputs.currentAmps = motor.getOutputCurrent();
+        inputs.positionRad = Units.rotationsToRadians(encoder.getPosition() / ClimberConstants.gearRatio);
     }
 
     @Override
-    public void setRight(double speed) {
-        right.setVoltage(speed * 12.0);
-    }
-
-    @Override
-    public void setLeft(double speed) {
-        left.setVoltage(speed * 12.0);
+    public void set(double volts) {
+        motor.setVoltage(volts);
     }
 
     @Override
     public void stop() {
-        right.stopMotor();
-        left.stopMotor();
+        motor.stopMotor();
+    }
+
+    @Override
+    public void resetPosition() {
+        encoder.setPosition(0);
     }
 }

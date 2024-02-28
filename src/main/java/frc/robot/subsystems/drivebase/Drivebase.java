@@ -1,13 +1,5 @@
 package frc.robot.subsystems.drivebase;
 
-import static frc.robot.Util.chooseIO;
-
-import java.util.List;
-import java.util.function.Supplier;
-
-import org.littletonrobotics.junction.AutoLogOutput;
-import org.littletonrobotics.junction.Logger;
-
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.path.GoalEndState;
 import com.pathplanner.lib.path.PathConstraints;
@@ -15,7 +7,7 @@ import com.pathplanner.lib.path.PathPlannerPath;
 import com.pathplanner.lib.pathfinding.Pathfinding;
 import com.pathplanner.lib.util.PathPlannerLogging;
 import com.pathplanner.lib.util.ReplanningConfig;
-
+import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.estimator.DifferentialDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -23,6 +15,7 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.DifferentialDriveKinematics;
 import edu.wpi.first.math.kinematics.DifferentialDriveWheelSpeeds;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -31,40 +24,63 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.Util;
+import frc.robot.commands.FeedforwardCharacterization;
 import frc.robot.constants.DrivebaseConstants;
+import frc.robot.constants.GeneralConstants;
 import frc.robot.subsystems.drivebase.commands.AutoAlign;
 import frc.robot.subsystems.drivebase.commands.SwerveMode;
 import frc.robot.util.LocalADStarAK;
+import frc.robot.util.TunablePIDController;
+import org.littletonrobotics.junction.AutoLogOutput;
+import org.littletonrobotics.junction.Logger;
+import org.littletonrobotics.junction.networktables.LoggedDashboardBoolean;
+
+import java.util.List;
+import java.util.function.Supplier;
+
+import static frc.robot.Util.ifRealElse;
+import static frc.robot.Util.switchMode;
 
 public class Drivebase extends SubsystemBase {
-    private final DrivebaseIO io = chooseIO(DrivebaseIOReal::new, DrivebaseIOSim::new, DrivebaseIO::new);
+    private final CommandXboxController driverController;
+
+    private final DrivebaseIO io = switchMode(DrivebaseIOReal::new, DrivebaseIOSim::new, DrivebaseIO::new);
     private final DrivebaseIOInputsAutoLogged inputs = new DrivebaseIOInputsAutoLogged();
+
+    private final GyroIO gyroIO = switchMode(GyroIOReal::new, GyroIOSim::new, GyroIO::new);
+    private final GyroIOInputsAutoLogged gyroInputs = new GyroIOInputsAutoLogged();
+
+    private final LimelightIO limelightIO = ifRealElse(LimelightIOReal::new, LimelightIO::new);
+    private final LimelightIOInputsAutoLogged limelightInputs = new LimelightIOInputsAutoLogged();
+    private final LoggedDashboardBoolean usePoseEstimation = new LoggedDashboardBoolean("Use Pose Estimation", true);
 
     private final DifferentialDriveKinematics kinematics = new DifferentialDriveKinematics(DrivebaseConstants.trackWidth);
     private final DifferentialDrivePoseEstimator odometry = new DifferentialDrivePoseEstimator(kinematics, new Rotation2d(), 0.0, 0.0, new Pose2d());
-    private final SimpleMotorFeedforward feedforward = new SimpleMotorFeedforward(DrivebaseConstants.feedforwardS, DrivebaseConstants.feedforwardV);
     private final Field2d field = new Field2d();
+    private final SimpleMotorFeedforward leftFeedforward = new SimpleMotorFeedforward(DrivebaseConstants.feedforwardLeftS, DrivebaseConstants.feedforwardLeftV);
+    private final SimpleMotorFeedforward rightFeedforward = new SimpleMotorFeedforward(DrivebaseConstants.feedforwardRightS, DrivebaseConstants.feedforwardRightV);
+    private final TunablePIDController driveVelocityPID = new TunablePIDController("Drivebase driveVelocity", DrivebaseConstants.velocityP, 0, DrivebaseConstants.velocityD);
 
-    @AutoLogOutput(key = "Drivebase/ArcadeDrive/Enabled")
-    private boolean arcadeDrive = false;
+    private final LoggedDashboardBoolean arcadeDriveToggle = new LoggedDashboardBoolean("Arcade Drive", false);
+    private boolean arcadeDrive = arcadeDriveToggle.get();
     @AutoLogOutput
     private boolean reverseMode = false;
     @AutoLogOutput
     private boolean preciseMode = false;
 
-    @AutoLogOutput
-    private Rotation2d rotationOffset = new Rotation2d();
-
     /* Command Groups */
-    public AutoAlign autoAlign = new AutoAlign(this);
-    public SwerveMode swerveMode = new SwerveMode(this);
+    public final AutoAlign autoAlign = new AutoAlign(this);
+    public final SwerveMode swerveMode;
 
-    public Drivebase() {
+    public Drivebase(CommandXboxController driverController) {
+        this.driverController = driverController;
+        swerveMode = new SwerveMode(this.driverController, this);
+
         SmartDashboard.putData("Field", field);
 
         AutoBuilder.configureRamsete(
                 this::getPose,
-                (pose) -> odometry.resetPosition(inputs.gyroYaw, getLeftPositionMeters(), getRightPositionMeters(), pose),
+                (pose) -> odometry.resetPosition(gyroInputs.yaw, getLeftPositionMeters(), getRightPositionMeters(), pose),
                 () -> kinematics.toChassisSpeeds(new DifferentialDriveWheelSpeeds(getLeftVelocityMetersPerSec(), getRightVelocityMetersPerSec())),
                 (speeds) -> {
                     var wheelSpeeds = kinematics.toWheelSpeeds(speeds);
@@ -84,14 +100,63 @@ public class Drivebase extends SubsystemBase {
         io.updateInputs(inputs);
         Logger.processInputs("Inputs/Drivebase", inputs);
 
-        field.setRobotPose(odometry.update(inputs.gyroYaw.minus(rotationOffset), getLeftPositionMeters(), getRightPositionMeters()));
+        gyroIO.updateInputs(gyroInputs);
+        Logger.processInputs("Inputs/Gyro", gyroInputs);
 
-        if (inputs.leftLimelightTv == 1)
-            odometry.addVisionMeasurement(inputs.leftLimelightBotpose, inputs.leftLimelightBotposeTimestamp);
-        if (inputs.rightLimelightTv == 1)
-            odometry.addVisionMeasurement(inputs.rightLimelightBotpose, inputs.rightLimelightBotposeTimestamp);
+        limelightIO.updateInputs(limelightInputs);
+        Logger.processInputs("Inputs/Limelight", limelightInputs);
+
+        field.setRobotPose(odometry.update(gyroInputs.yaw, getLeftPositionMeters(), getRightPositionMeters()));
+
+        if (usePoseEstimation.get()) {
+            if (limelightInputs.leftTv == 1)
+                addVisionMeasurement(limelightInputs.leftBotpose, limelightInputs.leftBotposeTimestamp, limelightInputs.leftTagCount, limelightInputs.leftAvgArea);
+            if (limelightInputs.rightTv == 1)
+                addVisionMeasurement(limelightInputs.rightBotpose, limelightInputs.rightBotposeTimestamp, limelightInputs.leftTagCount, limelightInputs.leftAvgArea);
+        }
+
+        if (arcadeDriveToggle.get() != arcadeDrive) {
+            arcadeDrive = arcadeDriveToggle.get();
+            updateDefaultCommand();
+        }
     }
 
+    private void addVisionMeasurement(Pose2d botpose, double timestamp, double tagCount, double avgArea) {
+        double odometryDifference = odometry.getEstimatedPosition().getTranslation().getDistance(botpose.getTranslation());
+
+        double xyStdDev;
+        double rotStdDev;
+
+        if (avgArea > 0.8 && odometryDifference < 0.5) {
+            xyStdDev = 0.75;
+            rotStdDev = 10;
+        } else if (avgArea > 0.5 && odometryDifference < 1) {
+            xyStdDev = 1.5;
+            rotStdDev = 15;
+        } else if (avgArea > 0.2 && odometryDifference < 2) {
+            xyStdDev = 3;
+            rotStdDev = 30;
+        } else if (avgArea > 0.05 && odometryDifference < 5) {
+            xyStdDev = 7;
+            rotStdDev = 30;
+        } else return;
+
+        if (tagCount >= 2) {
+            xyStdDev -= 0.5;
+            rotStdDev -= 8;
+        }
+
+        odometry.addVisionMeasurement(
+                botpose,
+                timestamp,
+                VecBuilder.fill(xyStdDev, xyStdDev, Units.degreesToRadians(rotStdDev))
+        );
+    }
+
+    /**
+     * @param speed    Positive = forward
+     * @param rotation Positive = counterclockwise
+     */
     public void arcadeDrive(double speed, double rotation) {
         Logger.recordOutput("Drivebase/ArcadeDrive/Speed", speed);
         Logger.recordOutput("Drivebase/ArcadeDrive/Rotation", rotation);
@@ -100,23 +165,37 @@ public class Drivebase extends SubsystemBase {
     }
 
     private void driveVelocity(double leftMetersPerSec, double rightMetersPerSec) {
-        Logger.recordOutput("Drivebase/LeftVelocitySetpointMetersPerSec", leftMetersPerSec);
-        Logger.recordOutput("Drivebase/RightVelocitySetpointMetersPerSec", rightMetersPerSec);
-        double leftRadPerSec = leftMetersPerSec / DrivebaseConstants.wheelRadius;
-        double rightRadPerSec = rightMetersPerSec / DrivebaseConstants.wheelRadius;
-        io.setVelocity(
-                leftRadPerSec,
-                rightRadPerSec,
-                feedforward.calculate(leftRadPerSec),
-                feedforward.calculate(rightRadPerSec)
-        );
+        Logger.recordOutput("Drivebase/DriveVelocity/LeftSetpointMetersPerSec", leftMetersPerSec);
+        Logger.recordOutput("Drivebase/DriveVelocity/RightSetpointMetersPerSec", rightMetersPerSec);
+        var leftPID = driveVelocityPID.calculate(getLeftVelocityMetersPerSec(), leftMetersPerSec);
+        var rightPID = driveVelocityPID.calculate(getRightVelocityMetersPerSec(), rightMetersPerSec);
+        var leftFF = leftFeedforward.calculate(leftMetersPerSec);
+        var rightFF = rightFeedforward.calculate(rightMetersPerSec);
+        Logger.recordOutput("Drivebase/DriveVelocity/LeftControlSignalPID", leftPID);
+        Logger.recordOutput("Drivebase/DriveVelocity/RightControlSignalPID", rightPID);
+        Logger.recordOutput("Drivebase/DriveVelocity/LeftControlSignalFF", leftFF);
+        Logger.recordOutput("Drivebase/DriveVelocity/RightControlSignalFF", rightFF);
+        io.setVoltage(leftPID + leftFF, rightPID + rightFF);
     }
 
-    private Command arcadeDriveCommand(CommandXboxController controller) {
+    public Command driveVelocityCommand(double leftMetersPerSec, double rightMetersPerSec) {
+        return this.run(() -> driveVelocity(leftMetersPerSec, rightMetersPerSec));
+    }
+
+    private Command arcadeDriveCommand() {
         return run(() -> {
             var precise = preciseMode ? DrivebaseConstants.preciseModeMultiplier : 1;
             var reverse = reverseMode ? -1 : 1;
-            arcadeDrive(precise * reverse * controller.getLeftY(), precise * controller.getRightX());
+
+            var speed = precise * reverse * Util.speed(driverController);
+            var rotation = precise * -driverController.getLeftX();
+
+            if (GeneralConstants.useControllerDeadzone) {
+                if (Math.abs(speed) < GeneralConstants.controllerDeadzone) speed = 0;
+                if (Math.abs(rotation) < GeneralConstants.controllerDeadzone) rotation = 0;
+            }
+
+            arcadeDrive(speed, rotation);
         });
     }
 
@@ -137,8 +216,8 @@ public class Drivebase extends SubsystemBase {
 
             PathPlannerPath path = new PathPlannerPath(
                     bezierPoints,
-                    new PathConstraints(3.0, 3.0, 2 * Math.PI, 4 * Math.PI), // The constraints for this path. If using a differential drivetrain, the angular constraints have no effect.
-                    new GoalEndState(0.0, targetPose.getRotation()) // Goal end state. You can set a holonomic rotation here. If using a differential drivetrain, the rotation will have no effect.
+                    new PathConstraints(DrivebaseConstants.pathfindMaxSpeed, DrivebaseConstants.pathfindMaxAccel, 2 * Math.PI, 4 * Math.PI), // The constraints for this path. If using a differential drivetrain, the angular constraints have no effect.
+                    new GoalEndState(DrivebaseConstants.pathfindEndSpeed, targetPose.getRotation()) // Goal end state. You can set a holonomic rotation here. If using a differential drivetrain, the rotation will have no effect.
             );
 
             path.preventFlipping = true;
@@ -170,17 +249,32 @@ public class Drivebase extends SubsystemBase {
         );
     }
 
-    public Command toggleArcadeDrive(CommandXboxController controller) {
+    public Command toggleArcadeDrive() {
         return Commands.runOnce(() -> {
-            if (this.getCurrentCommand() == this.getDefaultCommand())
-                this.getCurrentCommand().cancel();
-            arcadeDrive = !arcadeDrive;
-            if (arcadeDrive) {
-                this.setDefaultCommand(arcadeDriveCommand(controller));
-            } else {
-                this.setDefaultCommand(swerveMode.swerveDriveCommand(controller));
-            }
+            var newVal = !arcadeDriveToggle.get();
+            arcadeDriveToggle.set(newVal);
+            arcadeDrive = newVal;
+            updateDefaultCommand();
         });
+    }
+
+    public void updateDefaultCommand() {
+        System.out.println("Updating default command (arcadeDrive = " + arcadeDrive + ")");
+        if (this.getCurrentCommand() == this.getDefaultCommand())
+            this.getCurrentCommand().cancel();
+        if (arcadeDrive) {
+            this.setDefaultCommand(arcadeDriveCommand());
+        } else {
+            this.setDefaultCommand(swerveMode.swerveDriveCommand());
+        }
+    }
+
+    public Command feedforwardCharacterizationLeft() {
+        return new FeedforwardCharacterization(this, (volts) -> io.setVoltage(volts, volts), this::getLeftVelocityMetersPerSec);
+    }
+
+    public Command feedforwardCharacterizationRight() {
+        return new FeedforwardCharacterization(this, (volts) -> io.setVoltage(volts, volts), this::getRightVelocityMetersPerSec);
     }
 
     @AutoLogOutput
@@ -189,12 +283,15 @@ public class Drivebase extends SubsystemBase {
     }
 
     public Command setPoseCommand(Pose2d newPose) {
-        return Commands.runOnce(() -> odometry.resetPosition(inputs.gyroYaw, getLeftPositionMeters(), getRightPositionMeters(), newPose));
+        return setPoseCommand(() -> newPose);
+    }
+
+    public Command setPoseCommand(Supplier<Pose2d> newPose) {
+        return Commands.runOnce(() -> odometry.resetPosition(gyroInputs.yaw, getLeftPositionMeters(), getRightPositionMeters(), newPose.get()));
     }
 
     public Command resetGyroCommand() {
-        return Commands.runOnce(() -> rotationOffset = inputs.gyroYaw)
-                .andThen(swerveMode.swerveAngleCommand(0));
+        return runOnce(gyroIO::resetYaw).andThen(swerveMode.swerveAngleCommand(0));
     }
 
     @AutoLogOutput
@@ -215,9 +312,5 @@ public class Drivebase extends SubsystemBase {
     @AutoLogOutput
     public double getRightVelocityMetersPerSec() {
         return inputs.rightVelocityRadPerSec * DrivebaseConstants.wheelRadius;
-    }
-
-    public Command followPathCommand(String name) {
-        return AutoBuilder.followPath(PathPlannerPath.fromPathFile(name));
     }
 }

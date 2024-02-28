@@ -106,7 +106,7 @@ public class CommandNintendoSwitchProController extends CommandXboxController {
 
     @Override
     public double getLeftY() {
-        return -getRawAxis(1);
+        return getRawAxis(1);
     }
 
     @Override
@@ -116,7 +116,7 @@ public class CommandNintendoSwitchProController extends CommandXboxController {
 
     @Override
     public double getRightY() {
-        return -getRawAxis(3);
+        return getRawAxis(3);
     }
 
     @Override

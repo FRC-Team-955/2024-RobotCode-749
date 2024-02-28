@@ -16,14 +16,14 @@ public class AutoAlign {
 
     private static final Pose2d rightSubwoofer = new Pose2d(1.195, 4.4, Rotation2d.fromRadians(3.0));
     private static final Pose2d leftSubwoofer = new Pose2d(1.3, 6.2, Rotation2d.fromRadians(-3.1));
-    private static final Pose2d frontSubwoofer = new Pose2d(1.391, 5.55, Rotation2d.fromRadians(/* 180 degrees */ Math.PI));
+    private static final Pose2d frontSubwoofer = new Pose2d(1.391, 6.0, Rotation2d.fromRadians(/* 180 degrees */ Math.PI));
     private static final Pose2d source = new Pose2d(15.38, 0.958, Rotation2d.fromRadians(-1));
 
     private static final Rect2d[] subwooferBounds = new Rect2d[]{
             // Top
             new Rect2d(
                     new Pose2d(1.0, 4.6, new Rotation2d()),
-                    new Pose2d(5.7, 7.7, new Rotation2d())
+                    new Pose2d(6.0, 7.7, new Rotation2d())
             ),
             // Bottom
             new Rect2d(
@@ -36,33 +36,34 @@ public class AutoAlign {
         this.drivebase = drivebase;
     }
 
-    public Optional<Command> rightSubwooferCommand() {
+    public Optional<Command> rightSubwooferCommand(boolean boundsCheck) {
         // Need to swap right and left on red
         Supplier<Pose2d> targetPose = () -> Util.shouldFlip() ? GeometryUtil.flipFieldPose(leftSubwoofer) : rightSubwoofer;
-        return getAutoAlignCommand(targetPose, subwooferBounds);
+        return getAutoAlignCommand(targetPose, boundsCheck, subwooferBounds);
     }
 
-    public Optional<Command> leftSubwooferCommand() {
+    public Optional<Command> leftSubwooferCommand(boolean boundsCheck) {
         // Need to swap right and left on red
         Supplier<Pose2d> targetPose = () -> Util.shouldFlip() ? GeometryUtil.flipFieldPose(rightSubwoofer) : leftSubwoofer;
-        return getAutoAlignCommand(targetPose, subwooferBounds);
+        return getAutoAlignCommand(targetPose, boundsCheck, subwooferBounds);
     }
 
-    public Optional<Command> frontSubwooferCommand() {
+    public Optional<Command> frontSubwooferCommand(boolean boundsCheck) {
         var targetPose = Util.flipIfNeeded(frontSubwoofer);
-        return getAutoAlignCommand(targetPose, subwooferBounds);
+        return getAutoAlignCommand(targetPose, boundsCheck, subwooferBounds);
     }
 
-    public Optional<Command> sourceCommand() {
+    public Optional<Command> sourceCommand(boolean boundsCheck) {
         var targetPose = Util.flipIfNeeded(source);
         var bounds = new Rect2d(
                 new Pose2d(10.9, 0.2, new Rotation2d()),
                 new Pose2d(16.3, 4.2, new Rotation2d())
         );
-        return getAutoAlignCommand(targetPose, bounds);
+        return getAutoAlignCommand(targetPose, boundsCheck, bounds);
     }
 
-    private Optional<Command> getAutoAlignCommand(Supplier<Pose2d> targetPose, Rect2d... bounds) {
+    private Optional<Command> getAutoAlignCommand(Supplier<Pose2d> targetPose, boolean boundsCheck, Rect2d... bounds) {
+        if (!boundsCheck) return Optional.of(drivebase.pathfindCommand(targetPose));
         for (var bound : bounds) {
             if (Util.flipIfNeededNow(bound).contains(drivebase.getPose()))
                 return Optional.of(drivebase.pathfindCommand(targetPose));

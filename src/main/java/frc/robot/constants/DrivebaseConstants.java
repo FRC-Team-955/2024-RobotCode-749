@@ -5,6 +5,8 @@ import edu.wpi.first.wpilibj.simulation.DifferentialDrivetrainSim.KitbotGearing;
 import edu.wpi.first.wpilibj.simulation.DifferentialDrivetrainSim.KitbotMotor;
 import edu.wpi.first.wpilibj.simulation.DifferentialDrivetrainSim.KitbotWheelSize;
 
+import static frc.robot.Util.ifSimElse;
+
 public final class DrivebaseConstants {
     public static final int leftLeaderMotorId = 1;
     public static final int leftFollowerMotorId = 2;
@@ -24,15 +26,21 @@ public final class DrivebaseConstants {
     public static final int rightEncoderChannelB = 1;
     public static final double encoderDistancePerPulse = 1 / 2048.0; // AKA divide encoder reading by 2048
 
-    public static final double motorP = 1;
-    public static final double motorD = 0;
+    public static final double velocityP = ifSimElse(0.05, 6.4);
+    public static final double velocityD = 0.001;
 
-    public static final double feedforwardS = 0;
-    public static final double feedforwardV = GeneralConstants.mode == GeneralConstants.Mode.SIM ? 0.35 : 0;
+    public static final double feedforwardLeftS = ifSimElse(0.0, 1.379);
+    public static final double feedforwardLeftV = ifSimElse(0.35, 2.2);
+    public static final double feedforwardRightS = ifSimElse(feedforwardLeftS, 1.463);
+    public static final double feedforwardRightV = ifSimElse(feedforwardLeftV, 2.3);
+
+    public static final double swerveModeDeadzone = SimulationConstants.useNintendoSwitchProController ? 0.5 : 0.8;
+    public static final double swerveModeP = ifSimElse(0.08, 0.018);
+    public static final double swerveModeD = ifSimElse(0.006, 0.0001);
 
     public static final double preciseModeMultiplier = 0.6;
 
-    public static final double swerveModeDeadzone = 0.25;
-    public static final double swerveModeP = GeneralConstants.mode == GeneralConstants.Mode.SIM ? 0.03 : 0.018;
-    public static final double swerveModeD = 0.0001;
+    public static final double pathfindMaxSpeed = 1.0;//2.5;
+    public static final double pathfindMaxAccel = pathfindMaxSpeed;
+    public static final double pathfindEndSpeed = 0.7;
 }

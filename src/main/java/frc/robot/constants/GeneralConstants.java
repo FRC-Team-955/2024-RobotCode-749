@@ -1,7 +1,6 @@
 package frc.robot.constants;
 
 import edu.wpi.first.wpilibj.RobotBase;
-import frc.robot.Util;
 
 public final class GeneralConstants {
     /**
@@ -12,14 +11,15 @@ public final class GeneralConstants {
     public static final int driverControllerPort = 0;
     public static final int operatorControllerPort = 1;
 
+    public static final double controllerDeadzone = 0.05;
+    public static final boolean useControllerDeadzone = true;
+
     public static final int pdhId = 12;
 
     public static final double errorRumbleAmount = 0.75;
     public static final double errorRumbleDuration = 0.25;
 
     public static final boolean useFileConstants = mode == Mode.SIM;
-
-    public static final boolean tuningMode = Util.fileConstant("tuningMode", true);
 
     public enum Mode {
         /**

@@ -8,11 +8,12 @@ import com.pathplanner.lib.util.GeometryUtil;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Filesystem;
+import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.constants.GeneralConstants;
 import frc.robot.util.Rect2d;
 
 public final class Util {
-    public static <T> T chooseIO(Supplier<T> real, Supplier<T> sim, Supplier<T> replay) {
+    public static <T> T switchMode(Supplier<T> real, Supplier<T> sim, Supplier<T> replay) {
         switch (GeneralConstants.mode) {
             case REAL -> {
                 return real.get();
@@ -24,6 +25,16 @@ public final class Util {
                 return replay.get();
             }
         }
+    }
+
+    public static <T> T ifSimElse(T sim, T realAndReplay) {
+        if (GeneralConstants.mode == GeneralConstants.Mode.SIM) return sim;
+        else return realAndReplay;
+    }
+
+    public static <T> T ifRealElse(Supplier<T> real, Supplier<T> simAndReplay) {
+        if (GeneralConstants.mode == GeneralConstants.Mode.REAL) return real.get();
+        else return simAndReplay.get();
     }
 
     public static <T> T make(Supplier<T> maker) {
@@ -66,5 +77,9 @@ public final class Util {
     public static boolean fileConstant(String fileName, boolean fallback) {
         if (!GeneralConstants.useFileConstants) return fallback;
         return new File(Filesystem.getDeployDirectory(), "config/" + fileName).exists();
+    }
+
+    public static double speed(CommandXboxController controller) {
+        return -controller.getLeftTriggerAxis() + controller.getRightTriggerAxis();
     }
 }

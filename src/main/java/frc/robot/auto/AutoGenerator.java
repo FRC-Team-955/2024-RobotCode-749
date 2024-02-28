@@ -10,31 +10,26 @@ import com.pathplanner.lib.util.GeometryUtil;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
-import edu.wpi.first.networktables.GenericEntry;
-import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
-import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
-import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
-import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.Util;
 import frc.robot.subsystems.drivebase.Drivebase;
 import frc.robot.subsystems.launcher.Launcher;
+import org.littletonrobotics.junction.networktables.LoggedDashboardBoolean;
+import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
 import java.util.List;
 
 public class AutoGenerator {
-    private static final ShuffleboardTab tab = Shuffleboard.getTab("Auto Generator");
-    private static final GenericEntry messUpMidfieldTopNote = tab.add("Mess with Top", true).withWidget(BuiltInWidgets.kToggleSwitch).getEntry();
-    private static final GenericEntry messUpMidfieldUpperMiddleNote = tab.add("Mess with Upper Middle", true).withWidget(BuiltInWidgets.kToggleSwitch).getEntry();
-    private static final GenericEntry messUpMidfieldMiddleNote = tab.add("Mess with Middle", true).withWidget(BuiltInWidgets.kToggleSwitch).getEntry();
-    private static final GenericEntry messUpMidfieldLowerMiddleNote = tab.add("Mess with Lower Middle", true).withWidget(BuiltInWidgets.kToggleSwitch).getEntry();
-    private static final GenericEntry messUpMidfieldBottomNote = tab.add("Mess with Bottom", true).withWidget(BuiltInWidgets.kToggleSwitch).getEntry();
-    private static final GenericEntry flipOrder = tab.add("Flip order", false).withWidget(BuiltInWidgets.kToggleSwitch).getEntry();
+    private static final LoggedDashboardBoolean messUpMidfieldTopNote = new LoggedDashboardBoolean("Auto Generator: Mess with Top", true);
+    private static final LoggedDashboardBoolean messUpMidfieldUpperMiddleNote = new LoggedDashboardBoolean("Auto Generator: Mess with Upper Middle", true);
+    private static final LoggedDashboardBoolean messUpMidfieldMiddleNote = new LoggedDashboardBoolean("Auto Generator: Mess with Middle", true);
+    private static final LoggedDashboardBoolean messUpMidfieldLowerMiddleNote = new LoggedDashboardBoolean("Auto Generator: Mess with Lower Middle", true);
+    private static final LoggedDashboardBoolean messUpMidfieldBottomNote = new LoggedDashboardBoolean("Auto Generator: Mess with Bottom", true);
 
-    private static final SendableChooser<StartingPoint> startingPoints = Util.make(() -> {
-        var startingPoints = new SendableChooser<StartingPoint>();
-        startingPoints.setDefaultOption("Top", StartingPoint.Top);
+    private static final LoggedDashboardChooser<StartingPoint> startingPoints = Util.make(() -> {
+        var startingPoints = new LoggedDashboardChooser<StartingPoint>("Auto Generator: Starting Point");
+        startingPoints.addDefaultOption("Top", StartingPoint.Top);
         startingPoints.addOption("Middle", StartingPoint.Middle);
         startingPoints.addOption("Bottom", StartingPoint.Bottom);
         return startingPoints;
@@ -58,6 +53,7 @@ public class AutoGenerator {
     // }
 
     public static Command generateAuto(Drivebase drivebase, Launcher launcher) {
+        var startingPoint = startingPoints.get();
         var flipOrder = AutoGenerator.flipOrder.getBoolean(false);
         var startingPoint = startingPoints.getSelected();
         var commands = new SequentialCommandGroup();
@@ -74,7 +70,7 @@ public class AutoGenerator {
             commands.addCommands(launcher.launchCommand());
         }
 
-        if (messUpMidfieldTopNote.getBoolean(true)) {
+        if (messUpMidfieldTopNote.get()) {
             path = PathPlannerPath.fromPathFile("Mess with far left midfield note");
         } else {
             path = PathPlannerPath.fromPathFile("Go near far left midfield");
@@ -109,11 +105,5 @@ public class AutoGenerator {
         }
 
         return commands;
-    }
-
-    public static void initializeShuffleboard() {
-        tab.add("Starting Point", startingPoints);
-
-        // tab.add("Notes", notes);
     }
 }

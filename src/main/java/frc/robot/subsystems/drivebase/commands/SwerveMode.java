@@ -5,26 +5,31 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.Util;
 import frc.robot.constants.DrivebaseConstants;
+import frc.robot.constants.GeneralConstants;
 import frc.robot.subsystems.drivebase.Drivebase;
 import frc.robot.util.TunablePIDController;
 import org.littletonrobotics.junction.Logger;
 
 public class SwerveMode {
+    private final CommandXboxController driverController;
+
     private final Drivebase drivebase;
 
-    public SwerveMode(Drivebase drivebase) {
+    public SwerveMode(CommandXboxController driverController, Drivebase drivebase) {
+        this.driverController = driverController;
+
         this.drivebase = drivebase;
     }
 
-    private static final TunablePIDController swerveModePID = Util.make(() -> {
+    private final TunablePIDController swerveModePID = Util.make(() -> {
         var pid = new TunablePIDController("Swerve Mode", DrivebaseConstants.swerveModeP, 0, DrivebaseConstants.swerveModeD);
         pid.enableContinuousInput(-180, 180);
         return pid;
     });
-    private static double swerveModeSetpoint = 0;
+    private double swerveModeSetpoint = 0;
 
-    public Command swerveDriveCommand(CommandXboxController controller) {
-        return new SwerveDriveCommand(controller);
+    public Command swerveDriveCommand() {
+        return new SwerveDriveCommand();
     }
 
     public Command swerveAngleCommand(double angle) {
@@ -32,10 +37,7 @@ public class SwerveMode {
     }
 
     private class SwerveDriveCommand extends Command {
-        private final CommandXboxController controller;
-
-        private SwerveDriveCommand(CommandXboxController controller) {
-            this.controller = controller;
+        private SwerveDriveCommand() {
             addRequirements(drivebase);
         }
 
@@ -49,8 +51,8 @@ public class SwerveMode {
             var reverse = drivebase.getReverseMode() ? -1 : 1;
             var precise = drivebase.getPreciseMode() ? DrivebaseConstants.preciseModeMultiplier : 1;
 
-            var x = reverse * controller.getRightX();
-            var y = reverse * controller.getRightY();
+            var x = reverse * driverController.getLeftX();
+            var y = reverse * -driverController.getLeftY();
 
             if (Math.abs(x) > DrivebaseConstants.swerveModeDeadzone || Math.abs(y) > DrivebaseConstants.swerveModeDeadzone) {
                 swerveModeSetpoint = -Math.toDegrees(Math.atan2(x, y));
@@ -58,10 +60,17 @@ public class SwerveMode {
 
             swerveModePID.setSetpoint(swerveModeSetpoint);
             Logger.recordOutput("Drivebase/SwerveMode/Setpoint", swerveModeSetpoint);
+
             var robotAngle = drivebase.getPose().getRotation().getDegrees();
             Logger.recordOutput("Drivebase/SwerveMode/Measurement", robotAngle);
+
+            var speed = precise * reverse * Util.speed(driverController);
             var rotation = precise * swerveModePID.calculate(robotAngle);
-            var speed = precise * reverse * controller.getLeftY();
+
+            if (GeneralConstants.useControllerDeadzone) {
+                if (Math.abs(speed) < GeneralConstants.controllerDeadzone) speed = 0;
+            }
+
             drivebase.arcadeDrive(speed, rotation);
         }
     }
