@@ -52,13 +52,14 @@ public class Drivebase extends SubsystemBase {
 
     private final LimelightIO limelightIO = ifRealElse(LimelightIOReal::new, LimelightIO::new);
     private final LimelightIOInputsAutoLogged limelightInputs = new LimelightIOInputsAutoLogged();
+    private final LoggedDashboardBoolean usePoseEstimation = new LoggedDashboardBoolean("Use Pose Estimation", true);
 
     private final DifferentialDriveKinematics kinematics = new DifferentialDriveKinematics(DrivebaseConstants.trackWidth);
     private final DifferentialDrivePoseEstimator odometry = new DifferentialDrivePoseEstimator(kinematics, new Rotation2d(), 0.0, 0.0, new Pose2d());
+    private final Field2d field = new Field2d();
     private final SimpleMotorFeedforward leftFeedforward = new SimpleMotorFeedforward(DrivebaseConstants.feedforwardLeftS, DrivebaseConstants.feedforwardLeftV);
     private final SimpleMotorFeedforward rightFeedforward = new SimpleMotorFeedforward(DrivebaseConstants.feedforwardRightS, DrivebaseConstants.feedforwardRightV);
     private final TunablePIDController driveVelocityPID = new TunablePIDController("Drivebase driveVelocity", DrivebaseConstants.velocityP, 0, DrivebaseConstants.velocityD);
-    private final Field2d field = new Field2d();
 
     private final LoggedDashboardBoolean arcadeDriveToggle = new LoggedDashboardBoolean("Arcade Drive", false);
     private boolean arcadeDrive = arcadeDriveToggle.get();
@@ -107,10 +108,12 @@ public class Drivebase extends SubsystemBase {
 
         field.setRobotPose(odometry.update(gyroInputs.yaw, getLeftPositionMeters(), getRightPositionMeters()));
 
-        if (limelightInputs.leftTv == 1)
-            addVisionMeasurement(limelightInputs.leftBotpose, limelightInputs.leftBotposeTimestamp, limelightInputs.leftTagCount, limelightInputs.leftAvgArea);
-        if (limelightInputs.rightTv == 1)
-            addVisionMeasurement(limelightInputs.rightBotpose, limelightInputs.rightBotposeTimestamp, limelightInputs.leftTagCount, limelightInputs.leftAvgArea);
+        if (usePoseEstimation.get()) {
+            if (limelightInputs.leftTv == 1)
+                addVisionMeasurement(limelightInputs.leftBotpose, limelightInputs.leftBotposeTimestamp, limelightInputs.leftTagCount, limelightInputs.leftAvgArea);
+            if (limelightInputs.rightTv == 1)
+                addVisionMeasurement(limelightInputs.rightBotpose, limelightInputs.rightBotposeTimestamp, limelightInputs.leftTagCount, limelightInputs.leftAvgArea);
+        }
 
         if (arcadeDriveToggle.get() != arcadeDrive) {
             arcadeDrive = arcadeDriveToggle.get();
