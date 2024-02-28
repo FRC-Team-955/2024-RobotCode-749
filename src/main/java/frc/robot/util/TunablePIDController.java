@@ -35,7 +35,7 @@ public class TunablePIDController extends PIDController implements LoggableInput
     @Override
     public void fromLog(LogTable table) {
         System.out.printf(
-                "TunablePIDControllers do not listen to log changes; this one (%s):\n- P = %d\n- I = %d\n- D = %d\n- IZone = %d\n- PosTol = %d\n- VelTol = %d",
+                "TunablePIDControllers do not listen to log changes; values for %s are as follows:\n- P = %d\n- I = %d\n- D = %d\n- IZone = %d\n- PosTol = %d\n- VelTol = %d",
                 name,
                 table.get("P", -1),
                 table.get("I", -1),
