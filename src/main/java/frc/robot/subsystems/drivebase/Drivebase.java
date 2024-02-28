@@ -7,6 +7,7 @@ import com.pathplanner.lib.path.PathPlannerPath;
 import com.pathplanner.lib.pathfinding.Pathfinding;
 import com.pathplanner.lib.util.PathPlannerLogging;
 import com.pathplanner.lib.util.ReplanningConfig;
+import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.estimator.DifferentialDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -14,6 +15,7 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.DifferentialDriveKinematics;
 import edu.wpi.first.math.kinematics.DifferentialDriveWheelSpeeds;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -106,14 +108,46 @@ public class Drivebase extends SubsystemBase {
         field.setRobotPose(odometry.update(gyroInputs.yaw, getLeftPositionMeters(), getRightPositionMeters()));
 
         if (limelightInputs.leftTv == 1)
-            odometry.addVisionMeasurement(limelightInputs.leftBotpose, limelightInputs.leftBotposeTimestamp);
+            addVisionMeasurement(limelightInputs.leftBotpose, limelightInputs.leftBotposeTimestamp, limelightInputs.leftTagCount, limelightInputs.leftAvgArea);
         if (limelightInputs.rightTv == 1)
-            odometry.addVisionMeasurement(limelightInputs.rightBotpose, limelightInputs.rightBotposeTimestamp);
+            addVisionMeasurement(limelightInputs.rightBotpose, limelightInputs.rightBotposeTimestamp, limelightInputs.leftTagCount, limelightInputs.leftAvgArea);
 
         if (arcadeDriveToggle.get() != arcadeDrive) {
             arcadeDrive = arcadeDriveToggle.get();
             updateDefaultCommand();
         }
+    }
+
+    private void addVisionMeasurement(Pose2d botpose, double timestamp, double tagCount, double avgArea) {
+        double odometryDifference = odometry.getEstimatedPosition().getTranslation().getDistance(botpose.getTranslation());
+
+        double xyStdDev;
+        double rotStdDev;
+
+        if (avgArea > 0.8 && odometryDifference < 0.5) {
+            xyStdDev = 0.75;
+            rotStdDev = 10;
+        } else if (avgArea > 0.5 && odometryDifference < 1) {
+            xyStdDev = 1.5;
+            rotStdDev = 15;
+        } else if (avgArea > 0.2 && odometryDifference < 2) {
+            xyStdDev = 3;
+            rotStdDev = 30;
+        } else if (avgArea > 0.05 && odometryDifference < 5) {
+            xyStdDev = 7;
+            rotStdDev = 30;
+        } else return;
+
+        if (tagCount >= 2) {
+            xyStdDev -= 0.5;
+            rotStdDev -= 8;
+        }
+
+        odometry.addVisionMeasurement(
+                botpose,
+                timestamp,
+                VecBuilder.fill(xyStdDev, xyStdDev, Units.degreesToRadians(rotStdDev))
+        );
     }
 
     /**
