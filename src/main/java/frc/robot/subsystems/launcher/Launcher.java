@@ -47,10 +47,10 @@ public class Launcher extends SubsystemBase {
     }
 
     public Command startSpinUp() {
-        return this.runOnce(() -> {
+        return Commands.waitSeconds(3).andThen(this.runOnce(() -> {
             io.setTopVoltage(LauncherConstants.launchingSpeed * 12);
             spinUpTimer.restart();
-        });
+        }));
     }
 
     public Command stopSpinUp() {
