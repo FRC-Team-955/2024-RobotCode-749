@@ -35,8 +35,8 @@ public final class DrivebaseConstants {
     public static final double feedforwardRightV = ifSimElse(feedforwardLeftV, 2.3);
 
     public static final double swerveModeDeadzone = SimulationConstants.useNintendoSwitchProController ? 0.5 : 0.8;
-    public static final double swerveModeP = ifSimElse(0.08, 0.018);
-    public static final double swerveModeD = ifSimElse(0.006, 0.0001);
+    public static final double swerveModeP = ifSimElse(0.08, 0.05);
+    public static final double swerveModeD = ifSimElse(0.006, 0.008);
 
     public static final double preciseModeMultiplier = 0.6;
 
