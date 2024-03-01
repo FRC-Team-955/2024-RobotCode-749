@@ -6,6 +6,6 @@ public final class ClimberConstants {
 
     public static final double gearRatio = 35;
     public static final double spoolDiameter = 0.75;
-    public static final double ropeLength = 21;
+    public static final double ropeLength = 25.5;
     public static final double ropeLeftThreshold = 1;
 }
