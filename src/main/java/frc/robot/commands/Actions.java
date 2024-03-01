@@ -62,12 +62,12 @@ public class Actions {
 
     private Command onSelectForAction() {
         if (selectedAction == Action.Source) {
-            return launcher.stopSpinUp();
+            return launcher.stopSpinUpCommand();
         } else if (selectedAction == Action.FrontSubwoofer ||
                 selectedAction == Action.LeftSubwoofer ||
                 selectedAction == Action.RightSubwoofer
         ) {
-            return launcher.startSpinUp();
+            return launcher.startSpinUpCommand();
         } else {
             return Commands.none();
         }

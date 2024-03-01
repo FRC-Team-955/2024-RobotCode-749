@@ -39,6 +39,7 @@ public class SwerveMode {
     private class SwerveDriveCommand extends Command {
         private SwerveDriveCommand() {
             addRequirements(drivebase);
+            setName("Drivebase$swerveDrive");
         }
 
         @Override

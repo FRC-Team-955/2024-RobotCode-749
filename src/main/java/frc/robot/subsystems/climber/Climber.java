@@ -59,6 +59,7 @@ public class Climber extends SubsystemBase {
 
         private MoveClimberCommand(Direction direction) {
             this.direction = direction;
+            setName("Climber$move");
         }
 
         @Override

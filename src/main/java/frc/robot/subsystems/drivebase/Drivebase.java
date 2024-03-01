@@ -179,7 +179,7 @@ public class Drivebase extends SubsystemBase {
     }
 
     public Command driveVelocityCommand(double leftMetersPerSec, double rightMetersPerSec) {
-        return this.run(() -> driveVelocity(leftMetersPerSec, rightMetersPerSec));
+        return this.run(() -> driveVelocity(leftMetersPerSec, rightMetersPerSec)).withName("Drivebase$driveVelocity");
     }
 
     private Command arcadeDriveCommand() {
@@ -196,12 +196,12 @@ public class Drivebase extends SubsystemBase {
             }
 
             arcadeDrive(speed, rotation);
-        });
+        }).withName("Drivebase$arcadeDrive");
     }
 
     public Command followPathCommand(String name) {
         var path = PathPlannerPath.fromPathFile(name);
-        return setPoseCommand(Util.flipIfNeeded(path.getStartingDifferentialPose())).andThen(AutoBuilder.followPath(path));
+        return setPoseCommand(Util.flipIfNeeded(path.getStartingDifferentialPose())).andThen(AutoBuilder.followPath(path)).withName("Drivebase$followPath");
     }
 
     public Command pathfindCommand(Supplier<Pose2d> targetPoseSupplier) {
@@ -229,7 +229,7 @@ public class Drivebase extends SubsystemBase {
             return AutoBuilder
                     .followPath(path)
                     .andThen(swerveMode.swerveAngleCommand(targetPose.getRotation().getDegrees()));
-        });
+        }).withName("Drivebase$pathfind");
     }
 
     public boolean getReverseMode() {
@@ -240,7 +240,7 @@ public class Drivebase extends SubsystemBase {
         return Commands.startEnd(
                 () -> this.reverseMode = true,
                 () -> this.reverseMode = false
-        );
+        ).withName("Drivebase$enableReverseMode");
     }
 
     public boolean getPreciseMode() {
@@ -251,7 +251,7 @@ public class Drivebase extends SubsystemBase {
         return Commands.startEnd(
                 () -> this.preciseMode = true,
                 () -> this.preciseMode = false
-        );
+        ).withName("Drivebase$enablePreciseMode");
     }
 
     public Command toggleArcadeDrive() {

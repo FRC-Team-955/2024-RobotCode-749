@@ -39,18 +39,18 @@ public class AutoAlign {
     public Optional<Command> rightSubwooferCommand(boolean boundsCheck) {
         // Need to swap right and left on red
         Supplier<Pose2d> targetPose = () -> Util.shouldFlip() ? GeometryUtil.flipFieldPose(leftSubwoofer) : rightSubwoofer;
-        return getAutoAlignCommand(targetPose, boundsCheck, subwooferBounds);
+        return getAutoAlignCommand(targetPose, boundsCheck, subwooferBounds).map(c -> c.withName("AutoAlign$rightSubwoofer"));
     }
 
     public Optional<Command> leftSubwooferCommand(boolean boundsCheck) {
         // Need to swap right and left on red
         Supplier<Pose2d> targetPose = () -> Util.shouldFlip() ? GeometryUtil.flipFieldPose(rightSubwoofer) : leftSubwoofer;
-        return getAutoAlignCommand(targetPose, boundsCheck, subwooferBounds);
+        return getAutoAlignCommand(targetPose, boundsCheck, subwooferBounds).map(c -> c.withName("AutoAlign$leftSubwoofer"));
     }
 
     public Optional<Command> frontSubwooferCommand(boolean boundsCheck) {
         var targetPose = Util.flipIfNeeded(frontSubwoofer);
-        return getAutoAlignCommand(targetPose, boundsCheck, subwooferBounds);
+        return getAutoAlignCommand(targetPose, boundsCheck, subwooferBounds).map(c -> c.withName("AutoAlign$frontSubwoofer"));
     }
 
     public Optional<Command> sourceCommand(boolean boundsCheck) {
@@ -59,7 +59,7 @@ public class AutoAlign {
                 new Pose2d(10.9, 0.2, new Rotation2d()),
                 new Pose2d(16.3, 4.2, new Rotation2d())
         );
-        return getAutoAlignCommand(targetPose, boundsCheck, bounds);
+        return getAutoAlignCommand(targetPose, boundsCheck, bounds).map(c -> c.withName("AutoAlign$source"));
     }
 
     private Optional<Command> getAutoAlignCommand(Supplier<Pose2d> targetPose, boolean boundsCheck, Rect2d... bounds) {

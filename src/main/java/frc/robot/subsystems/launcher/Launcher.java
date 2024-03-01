@@ -33,7 +33,8 @@ public class Launcher extends SubsystemBase {
                         }),
                         Commands.idle(this).withTimeout(1)
                 )
-                .finallyDo(io::stop);
+                .finallyDo(io::stop)
+                .withName("Launcher$launch");
     }
 
     public Command intakeCommand() {
@@ -43,20 +44,20 @@ public class Launcher extends SubsystemBase {
                     io.setBottomVoltage(LauncherConstants.bottomIntakeSpeed * 12);
                 },
                 io::stop
-        );
+        ).withName("Launcher$intake");
     }
 
-    public Command startSpinUp() {
-        return Commands.waitSeconds(3).andThen(this.runOnce(() -> {
+    public Command startSpinUpCommand() {
+        return Commands.waitSeconds(4).andThen(this.runOnce(() -> {
             io.setTopVoltage(LauncherConstants.launchingSpeed * 12);
             spinUpTimer.restart();
-        }));
+        })).withName("Launcher$startSpinUpCommand");
     }
 
-    public Command stopSpinUp() {
+    public Command stopSpinUpCommand() {
         return this.runOnce(() -> {
             io.stop();
             spinUpTimer.stop();
-        });
+        }).withName("Launcher$stopSpinUpCommand");
     }
 }
