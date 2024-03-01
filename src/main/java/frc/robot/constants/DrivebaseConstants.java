@@ -26,13 +26,13 @@ public final class DrivebaseConstants {
     public static final int rightEncoderChannelB = 1;
     public static final double encoderDistancePerPulse = 1 / 2048.0; // AKA divide encoder reading by 2048
 
-    public static final double velocityP = ifSimElse(1.0, 6.4);
-    public static final double velocityD = 0.001;
+    public static final double velocityP = 1.2;//ifSimElse(1.0, 6.0);
+    public static final double velocityD = 0;
 
-    public static final double feedforwardLeftS = ifSimElse(0.5, 1.379);
-    public static final double feedforwardLeftV = ifSimElse(0.7, 2.2);
-    public static final double feedforwardRightS = ifSimElse(feedforwardLeftS, 1.463);
-    public static final double feedforwardRightV = ifSimElse(feedforwardLeftV, 2.3);
+    public static final double feedforwardLeftS = 0.1;//ifSimElse(0.5, 0.4);
+    public static final double feedforwardLeftV = 0.5;//ifSimElse(0.7, 1.0);
+    public static final double feedforwardRightS = feedforwardLeftS;//ifSimElse(feedforwardLeftS, 0.4);
+    public static final double feedforwardRightV = feedforwardLeftV;//ifSimElse(feedforwardLeftV, 1.0);
 
     public static final double swerveModeDeadzone = SimulationConstants.useNintendoSwitchProController ? 0.5 : 0.8;
     public static final double swerveModeP = ifSimElse(0.08, 0.05);
