@@ -2,6 +2,7 @@ package frc.robot;
 
 import edu.wpi.first.wpilibj.PowerDistribution;
 import edu.wpi.first.wpilibj.RobotBase;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.constants.BuildConstants;
@@ -60,7 +61,7 @@ public final class Main {
                 case REAL -> {
                     Logger.addDataReceiver(new WPILOGWriter()); // Log to a USB stick ("/U/logs")
                     Logger.addDataReceiver(new NT4Publisher()); // Log to NetworkTables
-                    new PowerDistribution(GeneralConstants.pdhId, PowerDistribution.ModuleType.kRev); // Enables power distribution logging
+                    SmartDashboard.putData("PowerDistribution", new PowerDistribution(GeneralConstants.pdhId, PowerDistribution.ModuleType.kRev)); // Enables power distribution logging
                 }
                 case SIM -> {
                     Logger.addDataReceiver(new NT4Publisher());
