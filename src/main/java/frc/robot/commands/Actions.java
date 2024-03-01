@@ -19,6 +19,9 @@ public class Actions {
     @AutoLogOutput(key = "SelectedAction")
     private Action selectedAction = Action.None;
 
+    @AutoLogOutput(key = "PrevSelectedAction")
+    private Action prevSelectedAction = Action.None;
+
     public Actions(CommandXboxController driverController, CommandXboxController operatorController, Drivebase drivebase, Launcher launcher) {
         this.driverController = driverController;
         this.operatorController = operatorController;
@@ -61,16 +64,19 @@ public class Actions {
     }
 
     private Command onSelectForAction() {
-        if (selectedAction == Action.Source) {
-            return launcher.stopSpinUpCommand();
-        } else if (selectedAction == Action.FrontSubwoofer ||
+        if (selectedAction == prevSelectedAction) return Commands.none();
+        if (selectedAction != Action.None) return launcher.stopSpinUpCommand();
+        return Commands.none();
+    }
+
+    private Command onReSelectForAction() {
+        if (selectedAction != prevSelectedAction) return Commands.none();
+        if (selectedAction == Action.Source) return launcher.stopSpinUpCommand();
+        if (selectedAction == Action.FrontSubwoofer ||
                 selectedAction == Action.LeftSubwoofer ||
                 selectedAction == Action.RightSubwoofer
-        ) {
-            return launcher.startSpinUpCommand();
-        } else {
-            return Commands.none();
-        }
+        ) return launcher.startSpinUpCommand();
+        return Commands.none();
     }
 
     private Optional<Command> checkForNone() {
@@ -82,8 +88,14 @@ public class Actions {
     }
 
     public Command selectActionCommand(Action action) {
-        return Commands.runOnce(() -> selectedAction = action)
-                .andThen(Commands.deferredProxy(this::onSelectForAction));
+        return Commands.runOnce(() -> {
+                    prevSelectedAction = selectedAction;
+                    selectedAction = action;
+                })
+                .andThen(Commands.parallel(
+                        Commands.deferredProxy(this::onSelectForAction),
+                        Commands.deferredProxy(this::onReSelectForAction)
+                ));
     }
 
     public Command doSelectedActionCommand() {
