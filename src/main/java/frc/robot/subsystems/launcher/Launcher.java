@@ -25,11 +25,14 @@ public class Launcher extends SubsystemBase {
 
     public Command launchCommand() {
         return Commands.sequence(
-                        this.runOnce(() -> io.setTopVoltage(LauncherConstants.launchingSpeed * 12)),
-                        spinUpTimer.get() < LauncherConstants.spinUpTime ? Commands.waitSeconds(LauncherConstants.spinUpTime - spinUpTimer.get()) : Commands.none(),
-                        this.runOnce(() -> {
-                            io.setBottomVoltage(LauncherConstants.launchingSpeed * 12);
+                        runOnce(() -> {
+                            io.setTopVoltage(LauncherConstants.launchingSpeed * 12);
                             spinUpTimer.stop();
+                        }),
+                        spinUpTimer.hasElapsed(LauncherConstants.spinUpTime) ? Commands.none() : Commands.waitSeconds(LauncherConstants.spinUpTime - spinUpTimer.get()),
+                        runOnce(() -> {
+                            io.setBottomVoltage(LauncherConstants.launchingSpeed * 12);
+                            spinUpTimer.reset();
                         }),
                         Commands.idle(this).withTimeout(1)
                 )
@@ -38,7 +41,7 @@ public class Launcher extends SubsystemBase {
     }
 
     public Command intakeCommand() {
-        return this.startEnd(
+        return startEnd(
                 () -> {
                     io.setTopVoltage(LauncherConstants.topIntakeSpeed * 12);
                     io.setBottomVoltage(LauncherConstants.bottomIntakeSpeed * 12);
@@ -48,16 +51,17 @@ public class Launcher extends SubsystemBase {
     }
 
     public Command startSpinUpCommand() {
-        return this.runOnce(() -> {
+        return runOnce(() -> {
             io.setTopVoltage(LauncherConstants.launchingSpeed * 12);
             spinUpTimer.restart();
         }).withName("Launcher$startSpinUpCommand");
     }
 
     public Command stopSpinUpCommand() {
-        return this.runOnce(() -> {
+        return runOnce(() -> {
             io.stop();
             spinUpTimer.stop();
+            spinUpTimer.reset();
         }).withName("Launcher$stopSpinUpCommand");
     }
 }
