@@ -115,6 +115,9 @@ public class Robot {
                         ).withTimeout(1.5)
                 )
         );
+        auto.addOption("Launch right and away", launcher.launchCommand().andThen(drivebase.followPathCommand("Right Away")));
+        auto.addOption("Launch front and away", launcher.launchCommand().andThen(drivebase.followPathCommand("Front Away")));
+        auto.addOption("Launch left and away", launcher.launchCommand().andThen(drivebase.followPathCommand("Left Away")));
 //        auto.addDefaultOption("Score Right and Corner", AutoBuilder.buildAuto("Score Right and Corner"));
         return auto;
     });

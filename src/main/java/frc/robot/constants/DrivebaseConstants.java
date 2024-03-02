@@ -29,8 +29,8 @@ public final class DrivebaseConstants {
     public static final double velocityP = 1.2;//ifSimElse(1.0, 6.0);
     public static final double velocityD = 0;
 
-    public static final double feedforwardLeftS = 0.4;//ifSimElse(0.5, 0.4);
-    public static final double feedforwardLeftV = 1.0;//ifSimElse(0.7, 1.0);
+    public static final double feedforwardLeftS = 0.5;//ifSimElse(0.5, 0.4);
+    public static final double feedforwardLeftV = 2.0;//ifSimElse(0.7, 1.0);
     public static final double feedforwardRightS = feedforwardLeftS;//ifSimElse(feedforwardLeftS, 0.4);
     public static final double feedforwardRightV = feedforwardLeftV;//ifSimElse(feedforwardLeftV, 1.0);
 
