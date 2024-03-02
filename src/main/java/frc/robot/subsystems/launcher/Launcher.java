@@ -29,7 +29,8 @@ public class Launcher extends SubsystemBase {
                             io.setTopVoltage(LauncherConstants.launchingSpeed * 12);
                             spinUpTimer.stop();
                         }),
-                        spinUpTimer.hasElapsed(LauncherConstants.spinUpTime) ? Commands.none() : Commands.waitSeconds(LauncherConstants.spinUpTime - spinUpTimer.get()),
+//                        spinUpTimer.hasElapsed(LauncherConstants.spinUpTime) ? Commands.none() : Commands.waitSeconds(LauncherConstants.spinUpTime - spinUpTimer.get()),
+                        Commands.waitSeconds(LauncherConstants.spinUpTime),
                         runOnce(() -> {
                             io.setBottomVoltage(LauncherConstants.launchingSpeed * 12);
                             spinUpTimer.reset();
