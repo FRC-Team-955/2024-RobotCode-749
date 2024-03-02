@@ -65,17 +65,20 @@ public class Actions {
 
     private Command onSelectForAction() {
         if (selectedAction == prevSelectedAction) return Commands.none();
+        if (selectedAction == Action.FrontSubwoofer ||
+                selectedAction == Action.LeftSubwoofer ||
+                selectedAction == Action.RightSubwoofer
+        ) return launcher.startSpinUpCommand();
         if (selectedAction != Action.None) return launcher.stopSpinUpCommand();
         return Commands.none();
     }
 
     private Command onReSelectForAction() {
-        if (selectedAction != prevSelectedAction) return Commands.none();
-        if (selectedAction == Action.Source) return launcher.stopSpinUpCommand();
-        if (selectedAction == Action.FrontSubwoofer ||
-                selectedAction == Action.LeftSubwoofer ||
-                selectedAction == Action.RightSubwoofer
-        ) return launcher.startSpinUpCommand();
+//        if (selectedAction != prevSelectedAction) return Commands.none();
+//        if (selectedAction == Action.FrontSubwoofer ||
+//                selectedAction == Action.LeftSubwoofer ||
+//                selectedAction == Action.RightSubwoofer
+//        ) return launcher.startSpinUpCommand();
         return Commands.none();
     }
 
