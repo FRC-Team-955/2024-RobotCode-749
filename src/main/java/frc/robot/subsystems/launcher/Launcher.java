@@ -52,19 +52,17 @@ public class Launcher extends SubsystemBase {
     }
 
     public Command startSpinUpCommand() {
-        return Commands.none();
-//        return runOnce(() -> {
+        return runOnce(() -> {
 //            io.setTopVoltage(LauncherConstants.launchingSpeed * 12);
-//            spinUpTimer.restart();
-//        }).withName("Launcher$startSpinUpCommand");
+            spinUpTimer.restart();
+        }).withName("Launcher$startSpinUpCommand");
     }
 
     public Command stopSpinUpCommand() {
-        return Commands.none();
-//        return runOnce(() -> {
+        return runOnce(() -> {
 //            io.stop();
-//            spinUpTimer.stop();
-//            spinUpTimer.reset();
-//        }).withName("Launcher$stopSpinUpCommand");
+            spinUpTimer.stop();
+            spinUpTimer.reset();
+        }).withName("Launcher$stopSpinUpCommand");
     }
 }
