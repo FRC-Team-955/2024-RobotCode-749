@@ -78,7 +78,7 @@ public class Drivebase extends SubsystemBase {
 
         SmartDashboard.putData("Field", field);
 
-        AutoBuilder.configureRamsete(
+        AutoBuilder.configureLTV(
                 this::getPose,
                 (pose) -> odometry.resetPosition(gyroInputs.yaw, getLeftPositionMeters(), getRightPositionMeters(), pose),
                 () -> kinematics.toChassisSpeeds(new DifferentialDriveWheelSpeeds(getLeftVelocityMetersPerSec(), getRightVelocityMetersPerSec())),
@@ -86,6 +86,7 @@ public class Drivebase extends SubsystemBase {
                     var wheelSpeeds = kinematics.toWheelSpeeds(speeds);
                     driveVelocity(wheelSpeeds.leftMetersPerSecond, wheelSpeeds.rightMetersPerSecond);
                 },
+                0.02,
                 new ReplanningConfig(),
                 Util::shouldFlip,
                 this
