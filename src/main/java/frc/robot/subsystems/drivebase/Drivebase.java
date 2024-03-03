@@ -168,14 +168,17 @@ public class Drivebase extends SubsystemBase {
     private void driveVelocity(double leftMetersPerSec, double rightMetersPerSec) {
         Logger.recordOutput("Drivebase/DriveVelocity/LeftSetpointMetersPerSec", leftMetersPerSec);
         Logger.recordOutput("Drivebase/DriveVelocity/RightSetpointMetersPerSec", rightMetersPerSec);
+
         var leftPID = driveVelocityPID.calculate(getLeftVelocityMetersPerSec(), leftMetersPerSec);
         var rightPID = driveVelocityPID.calculate(getRightVelocityMetersPerSec(), rightMetersPerSec);
-        var leftFF = leftFeedforward.calculate(leftMetersPerSec);
-        var rightFF = rightFeedforward.calculate(rightMetersPerSec);
         Logger.recordOutput("Drivebase/DriveVelocity/LeftControlSignalPID", leftPID);
         Logger.recordOutput("Drivebase/DriveVelocity/RightControlSignalPID", rightPID);
+
+        var leftFF = leftFeedforward.calculate(leftMetersPerSec);
+        var rightFF = rightFeedforward.calculate(rightMetersPerSec);
         Logger.recordOutput("Drivebase/DriveVelocity/LeftControlSignalFF", leftFF);
         Logger.recordOutput("Drivebase/DriveVelocity/RightControlSignalFF", rightFF);
+
         io.setVoltage(leftFF, rightFF);
     }
 
