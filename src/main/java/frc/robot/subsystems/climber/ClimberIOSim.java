@@ -5,16 +5,16 @@ import edu.wpi.first.wpilibj.simulation.DCMotorSim;
 import frc.robot.constants.ClimberConstants;
 
 public class ClimberIOSim extends ClimberIO {
-    private final DCMotorSim motor = new DCMotorSim(DCMotor.getNEO(1), 1, 0.0001);
+    private final DCMotorSim motor = new DCMotorSim(DCMotor.getNEO(1), ClimberConstants.gearRatio, 0.0001);
     private double appliedVolts = 0.0;
 
     @Override
     public void updateInputs(ClimberIOInputs inputs) {
         motor.update(0.02);
 
+        inputs.positionRad = motor.getAngularPositionRad();
         inputs.appliedVolts = appliedVolts;
         inputs.currentAmps = motor.getCurrentDrawAmps();
-        inputs.positionRad = motor.getAngularPositionRad() / ClimberConstants.gearRatio;
     }
 
     @Override

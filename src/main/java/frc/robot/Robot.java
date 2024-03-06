@@ -16,6 +16,7 @@ import frc.robot.subsystems.climber.Climber;
 import frc.robot.subsystems.climber.ClimberIORealLeft;
 import frc.robot.subsystems.climber.ClimberIORealRight;
 import frc.robot.subsystems.drivebase.Drivebase;
+import frc.robot.subsystems.intake.Intake;
 import frc.robot.subsystems.launcher.Launcher;
 import frc.robot.util.CommandNintendoSwitchProController;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
@@ -33,7 +34,8 @@ public class Robot {
             DrivebaseConstants.class,
             GeneralConstants.class,
             LauncherConstants.class,
-            SimulationConstants.class
+            SimulationConstants.class,
+            IntakeConstants.class
     };
 
     /* Subsystems */
@@ -41,6 +43,7 @@ public class Robot {
     private final Launcher launcher = new Launcher();
     private final Climber leftClimber = new Climber(operatorController, "ClimberLeft", ClimberIORealLeft::new);
     private final Climber rightClimber = new Climber(operatorController, "ClimberRight", ClimberIORealRight::new);
+    private final Intake intake = new Intake();
 
     private final Actions actions = new Actions(driverController, operatorController, drivebase, launcher);
 
@@ -65,6 +68,7 @@ public class Robot {
         driverController.povRight().onTrue(drivebase.swerveMode.swerveAngleCommand(-90));
 
         driverController.b().toggleOnTrue(actions.doSelectedActionWithoutAutoAlignCommand());
+        driverController.a().toggleOnTrue(intake.moveDown());
 
 //        driverController.b().toggleOnTrue(actions.doSelectedActionCommand());
 //        driverController.x().toggleOnTrue(actions.doSelectedActionWithoutAutoAlignCommand());
