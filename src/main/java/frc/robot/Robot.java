@@ -1,5 +1,6 @@
 package frc.robot;
 
+import com.pathplanner.lib.auto.AutoBuilder;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
@@ -118,7 +119,7 @@ public class Robot {
         auto.addOption("Launch right and away", launcher.launchCommand().andThen(drivebase.followPathCommand("Right Away")));
         auto.addOption("Launch front and away", launcher.launchCommand().andThen(drivebase.followPathCommand("Front Away")));
         auto.addOption("Launch left and away", launcher.launchCommand().andThen(drivebase.followPathCommand("Left Away")));
-//        auto.addDefaultOption("Score Right and Corner", AutoBuilder.buildAuto("Score Right and Corner"));
+        auto.addDefaultOption("Score Right and Corner", AutoBuilder.buildAuto("Score Right and Corner"));
         return auto;
     });
 
