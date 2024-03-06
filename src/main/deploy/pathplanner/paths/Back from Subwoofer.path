@@ -12,7 +12,7 @@
         "y": 3.986900019744152
       },
       "isLocked": false,
-      "linkedName": "Right Subwoofer"
+      "linkedName": null
     },
     {
       "anchor": {
@@ -43,7 +43,7 @@
     "rotateFast": false
   },
   "reversed": true,
-  "folder": null,
+  "folder": "Old",
   "previewStartingState": {
     "rotation": 0,
     "velocity": 0
