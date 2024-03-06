@@ -4,7 +4,6 @@ import edu.wpi.first.math.controller.ArmFeedforward;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.smartdashboard.Mechanism2d;
 import edu.wpi.first.wpilibj.smartdashboard.MechanismLigament2d;
-import edu.wpi.first.wpilibj.smartdashboard.MechanismRoot2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj.util.Color8Bit;
@@ -26,22 +25,21 @@ public class Intake extends SubsystemBase {
     private final TunablePIDController pivotPID = new TunablePIDController("Intake: Pivot", 1, 0, 0);
     private final ArmFeedforward pivotFF = new ArmFeedforward(0, ifSimElse(0.01, 0.0), 0, 0);
 
-    private final LoggedDashboardNumber angle = new LoggedDashboardNumber("Intake: Angle", -IntakeConstants.pivotRadDown + Units.degreesToRadians(30));
+    private final LoggedDashboardNumber angle = new LoggedDashboardNumber("Intake: Angle", -IntakeConstants.pivotRadDown);
 
-    private final Mechanism2d mechanism = Util.make(() -> {
-        var m = new Mechanism2d(6, 6, new Color8Bit(Color.kGray));
-        SmartDashboard.putData("Intake", m);
-        return m;
+    private final MechanismLigament2d pivotMechanism = Util.make(() -> {
+        var mechanism = new Mechanism2d(6, 6, new Color8Bit(Color.kGray));
+        SmartDashboard.putData("Intake", mechanism);
+        var root = mechanism.getRoot("Root", 3, 3);
+        return root.append(new MechanismLigament2d("Pivot", 3, 0, 4, new Color8Bit(Color.kOrange)));
     });
-    private final MechanismRoot2d mechanismRoot = mechanism.getRoot("Root", 3, 3);
-    private final MechanismLigament2d mechanismLigament = mechanismRoot.append(new MechanismLigament2d("Pivot", 3, 0, 4, new Color8Bit(Color.kOrange)));
 
     @Override
     public void periodic() {
         io.updateInputs(inputs);
         Logger.processInputs("Inputs/Intake", inputs);
 
-        mechanismLigament.setAngle(Units.radiansToDegrees(inputs.pivotPositionRad + IntakeConstants.pivotRadDown));
+        pivotMechanism.setAngle(Units.radiansToDegrees(inputs.pivotPositionRad + IntakeConstants.pivotRadDown));
 
         io.setPivotVoltage(pivotPID.calculate(inputs.pivotPositionRad, angle.get()) + pivotFF.calculate(inputs.pivotPositionRad - IntakeConstants.pivotRadDown, 0));
     }
