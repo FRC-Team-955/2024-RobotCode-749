@@ -128,8 +128,11 @@ public class Drivebase extends SubsystemBase {
         double xyStdDev;
         double rotStdDev;
 
-        if (avgArea > 0.8 || odometryDifference < 0.5) {
+        if (avgArea > 0.8 && odometryDifference < 0.5) {
             xyStdDev = 1;
+            rotStdDev = 10;
+        } else if (avgArea > 0.8) {
+            xyStdDev = 1.5;
             rotStdDev = 10;
         } else if (avgArea > 0.5 && odometryDifference < 1) {
             xyStdDev = 2;
