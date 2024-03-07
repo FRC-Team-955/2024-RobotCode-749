@@ -24,6 +24,7 @@ public class SwerveMode {
     private final TunablePIDController swerveModePID = Util.make(() -> {
         var pid = new TunablePIDController("Swerve Mode", DrivebaseConstants.swerveModeP, 0, DrivebaseConstants.swerveModeD);
         pid.enableContinuousInput(-180, 180);
+        pid.setTolerance(3);
         return pid;
     });
     private double swerveModeSetpoint = 0;
@@ -34,6 +35,10 @@ public class SwerveMode {
 
     public Command swerveAngleCommand(double angle) {
         return Commands.runOnce(() -> swerveModeSetpoint = angle);
+    }
+
+    public Command swerveToAngleCommand(double angle) {
+        return swerveAngleCommand(angle).andThen(swerveDriveCommand()).until(swerveModePID::atSetpoint);
     }
 
     private class SwerveDriveCommand extends Command {
@@ -72,7 +77,7 @@ public class SwerveMode {
                 if (Math.abs(speed) < GeneralConstants.controllerDeadzone) speed = 0;
             }
 
-            drivebase.arcadeDrive(speed, rotation);
+//            drivebase.arcadeDrive(speed, rotation);
         }
     }
 }

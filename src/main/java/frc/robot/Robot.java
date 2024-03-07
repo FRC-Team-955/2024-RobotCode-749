@@ -1,8 +1,10 @@
 package frc.robot;
 
 import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.auto.NamedCommands;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
@@ -45,13 +47,19 @@ public class Robot {
     private final Climber rightClimber = new Climber(operatorController, "ClimberRight", ClimberIORealRight::new);
     private final Intake intake = new Intake();
 
-    private final Actions actions = new Actions(driverController, operatorController, drivebase, launcher);
+    private final Actions actions = new Actions(driverController, operatorController, drivebase, launcher, intake);
 
     public Robot() {
         setDefaultCommands();
         configureBindings();
         makeDebugTab();
         makeButtonsTab();
+    }
+
+    private void registerNamedCommands() {
+        NamedCommands.registerCommand("Launch", launcher.launchCommand());
+        NamedCommands.registerCommand("Intake", intake.intakeCommand().withTimeout(1.5));
+        NamedCommands.registerCommand("Handoff", intake.handoffCommand());
     }
 
     private void setDefaultCommands() {
@@ -68,7 +76,6 @@ public class Robot {
         driverController.povRight().onTrue(drivebase.swerveMode.swerveAngleCommand(-90));
 
         driverController.b().toggleOnTrue(actions.doSelectedActionWithoutAutoAlignCommand());
-        driverController.a().toggleOnTrue(intake.moveDown());
 
 //        driverController.b().toggleOnTrue(actions.doSelectedActionCommand());
 //        driverController.x().toggleOnTrue(actions.doSelectedActionWithoutAutoAlignCommand());
@@ -79,8 +86,13 @@ public class Robot {
 
         operatorController.y().toggleOnTrue(actions.selectActionCommand(Actions.Action.Source));
         operatorController.a().toggleOnTrue(actions.selectActionCommand(Actions.Action.FrontSubwoofer));
-        operatorController.x().toggleOnTrue(actions.selectActionCommand(Actions.Action.LeftSubwoofer));
-        operatorController.b().toggleOnTrue(actions.selectActionCommand(Actions.Action.RightSubwoofer));
+//        operatorController.x().toggleOnTrue(actions.selectActionCommand(Actions.Action.LeftSubwoofer));
+//        operatorController.b().toggleOnTrue(actions.selectActionCommand(Actions.Action.RightSubwoofer));
+
+        operatorController.b()
+                .onTrue(intake.intakeCommand())
+                .onFalse(intake.tuckCommand());
+        operatorController.povUp().onTrue(intake.resetPivotCommand());
 
         // note: right and left are switched here to make it easier for the operator to control
         operatorController.rightBumper().whileTrue(leftClimber.moveCommand(Climber.Direction.Up));
@@ -106,9 +118,10 @@ public class Robot {
     }
 
     private final LoggedDashboardChooser<Command> autoChooser = Util.make(() -> {
+        registerNamedCommands();
         var auto = new LoggedDashboardChooser<Command>("Auto");
         auto.addDefaultOption("None", null);
-        auto.addOption("Generate", AutoGenerator.generateAuto(drivebase, launcher));
+        auto.addOption("Generate", Commands.deferredProxy(() -> AutoGenerator.generateAuto(drivebase, launcher)));
         auto.addOption("Launch", launcher.launchCommand());
         auto.addOption("Launch and move", LaunchAndMove.get(drivebase, launcher));
         auto.addOption("Launch from front and move to corner", launcher.launchCommand()
@@ -120,10 +133,11 @@ public class Robot {
                         ).withTimeout(1.5)
                 )
         );
-        auto.addOption("Launch right and away", launcher.launchCommand().andThen(drivebase.followPathCommand("Right Away")));
-        auto.addOption("Launch front and away", launcher.launchCommand().andThen(drivebase.followPathCommand("Front Away")));
-        auto.addOption("Launch left and away", launcher.launchCommand().andThen(drivebase.followPathCommand("Left Away")));
-        auto.addDefaultOption("Score Right and Corner", AutoBuilder.buildAuto("Score Right and Corner"));
+        auto.addDefaultOption("SF-W2", Util.make(() -> {
+            var blue = AutoBuilder.buildAuto("B_SF-W2");
+            var red = AutoBuilder.buildAuto("R_SF-W2");
+            return Commands.deferredProxy(() -> DriverStation.getAlliance().orElse(DriverStation.Alliance.Red) == DriverStation.Alliance.Red ? red : blue);
+        }));
         return auto;
     });
 

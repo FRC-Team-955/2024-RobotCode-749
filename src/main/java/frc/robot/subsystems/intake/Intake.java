@@ -2,18 +2,19 @@ package frc.robot.subsystems.intake;
 
 import edu.wpi.first.math.controller.ArmFeedforward;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj.RobotState;
 import edu.wpi.first.wpilibj.smartdashboard.Mechanism2d;
 import edu.wpi.first.wpilibj.smartdashboard.MechanismLigament2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj.util.Color8Bit;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Util;
 import frc.robot.constants.IntakeConstants;
 import frc.robot.util.TunablePIDController;
 import org.littletonrobotics.junction.Logger;
-import org.littletonrobotics.junction.networktables.LoggedDashboardNumber;
 
 import static frc.robot.Util.ifSimElse;
 import static frc.robot.Util.switchMode;
@@ -22,10 +23,12 @@ public class Intake extends SubsystemBase {
     private final IntakeIO io = switchMode(IntakeIOReal::new, IntakeIOSim::new, IntakeIO::new);
     private final IntakeIOInputsAutoLogged inputs = new IntakeIOInputsAutoLogged();
 
-    private final TunablePIDController pivotPID = new TunablePIDController("Intake: Pivot", 1, 0, 0);
-    private final ArmFeedforward pivotFF = new ArmFeedforward(0, ifSimElse(0.01, 0.0), 0, 0);
-
-    private final LoggedDashboardNumber angle = new LoggedDashboardNumber("Intake: Angle", -IntakeConstants.pivotRadDown);
+    private final TunablePIDController pivotPID = Util.make(() -> {
+        var p = new TunablePIDController("Intake: Pivot", 2, 0, 0);
+        p.setTolerance(Units.degreesToRadians(3));
+        return p;
+    });
+    private final ArmFeedforward pivotFF = new ArmFeedforward(0, ifSimElse(0.01, 0.4), 0, 0);
 
     private final MechanismLigament2d pivotMechanism = Util.make(() -> {
         var mechanism = new Mechanism2d(6, 6, new Color8Bit(Color.kGray));
@@ -41,11 +44,41 @@ public class Intake extends SubsystemBase {
 
         pivotMechanism.setAngle(Units.radiansToDegrees(inputs.pivotPositionRad + IntakeConstants.pivotRadDown));
 
-        io.setPivotVoltage(pivotPID.calculate(inputs.pivotPositionRad, angle.get()) + pivotFF.calculate(inputs.pivotPositionRad - IntakeConstants.pivotRadDown, 0));
+        var pid = pivotPID.calculate(inputs.pivotPositionRad);
+        var ff = pivotFF.calculate(inputs.pivotPositionRad - IntakeConstants.pivotRadDown, 0);
+        Logger.recordOutput("Intake/PivotControlSignalPID", pid);
+        Logger.recordOutput("Intake/PivotControlSignalFF", ff);
+        if (RobotState.isEnabled()) io.setPivotVoltage(pid + ff);
     }
 
-    public Command moveDown() {
-        return run(() -> {
-        });
+    private Command pivotPIDToCommand(double setpoint) {
+        return startEnd(() -> pivotPID.setSetpoint(setpoint), () -> {
+        }).until(pivotPID::atSetpoint);
+    }
+
+    public Command intakeCommand() {
+        return pivotPIDToCommand(-IntakeConstants.pivotRadDown).andThen(
+                startEnd(
+                        () -> io.setDriverVoltage(IntakeConstants.intakeSpeed * 12),
+                        io::stopDriver
+                )
+        ).withName("Intake$intake");
+    }
+
+    public Command tuckCommand() {
+        return pivotPIDToCommand(0).withName("Intake$tuck");
+    }
+
+    public Command handoffCommand() {
+        return tuckCommand().andThen(
+                startEnd(
+                        () -> io.setDriverVoltage(IntakeConstants.handoffSpeed * 12),
+                        io::stopDriver
+                ).withTimeout(IntakeConstants.handoffTimeout)
+        ).withName("Intake$handoff");
+    }
+
+    public Command resetPivotCommand() {
+        return runOnce(io::resetPivotPosition);
     }
 }

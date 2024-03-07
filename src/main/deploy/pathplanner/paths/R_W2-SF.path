@@ -3,29 +3,29 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 1.0564204508038648,
-        "y": 4.45
+        "x": 2.2842520794211896,
+        "y": 5.203370826137577
       },
       "prevControl": null,
       "nextControl": {
-        "x": 1.2449367850750175,
-        "y": 3.986900019744152
+        "x": 1.995334820363964,
+        "y": 5.0227975392268105
       },
       "isLocked": false,
-      "linkedName": null
+      "linkedName": "R_W2r-SF"
     },
     {
       "anchor": {
-        "x": 1.5580996763845383,
-        "y": 3.268813088552103
+        "x": 1.4,
+        "y": 5.03
       },
       "prevControl": {
-        "x": 1.369700611783572,
-        "y": 3.731960789029479
+        "x": 1.65,
+        "y": 5.03
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": null
+      "linkedName": "R_SFr"
     }
   ],
   "rotationTargets": [],
@@ -38,12 +38,12 @@
     "maxAngularAcceleration": 720.0
   },
   "goalEndState": {
-    "velocity": 3.0,
-    "rotation": 0,
+    "velocity": 0,
+    "rotation": 1.3162424220159792,
     "rotateFast": false
   },
   "reversed": true,
-  "folder": "Old",
+  "folder": "Red",
   "previewStartingState": {
     "rotation": 0,
     "velocity": 0

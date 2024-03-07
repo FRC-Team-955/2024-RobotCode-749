@@ -23,9 +23,6 @@ public class IntakeIOReal extends IntakeIO {
         pivot.setCANTimeout(250);
         driver.setCANTimeout(250);
 
-//        pivot.setInverted(false);
-//        driver.setInverted(false);
-
         pivot.enableVoltageCompensation(12.0);
         driver.enableVoltageCompensation(12.0);
         pivot.setSmartCurrentLimit(40);

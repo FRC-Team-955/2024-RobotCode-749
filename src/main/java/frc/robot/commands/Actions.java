@@ -4,6 +4,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.subsystems.drivebase.Drivebase;
+import frc.robot.subsystems.intake.Intake;
 import frc.robot.subsystems.launcher.Launcher;
 import org.littletonrobotics.junction.AutoLogOutput;
 
@@ -15,6 +16,7 @@ public class Actions {
 
     private final Drivebase drivebase;
     private final Launcher launcher;
+    private final Intake intake;
 
     @AutoLogOutput(key = "SelectedAction")
     private Action selectedAction = Action.None;
@@ -22,12 +24,13 @@ public class Actions {
     @AutoLogOutput(key = "PrevSelectedAction")
     private Action prevSelectedAction = Action.None;
 
-    public Actions(CommandXboxController driverController, CommandXboxController operatorController, Drivebase drivebase, Launcher launcher) {
+    public Actions(CommandXboxController driverController, CommandXboxController operatorController, Drivebase drivebase, Launcher launcher, Intake intake) {
         this.driverController = driverController;
         this.operatorController = operatorController;
 
         this.drivebase = drivebase;
         this.launcher = launcher;
+        this.intake = intake;
     }
 
     private Command commandForAction() {
@@ -37,7 +40,7 @@ public class Actions {
                 selectedAction == Action.LeftSubwoofer ||
                 selectedAction == Action.RightSubwoofer
         ) {
-            return launcher.launchCommand();
+            return intake.handoffCommand().andThen(launcher.launchCommand());
         } else {
             return Commands.none();
         }
