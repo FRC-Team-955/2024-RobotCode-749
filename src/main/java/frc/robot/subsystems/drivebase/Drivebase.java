@@ -243,11 +243,8 @@ public class Drivebase extends SubsystemBase {
         return reverseMode;
     }
 
-    public Command enableReverseModeCommand() {
-        return Commands.startEnd(
-                () -> this.reverseMode = true,
-                () -> this.reverseMode = false
-        ).withName("Drivebase$enableReverseMode");
+    public Command toggleReverseModeCommand() {
+        return Commands.runOnce(() -> reverseMode = !reverseMode);
     }
 
     public Command toggleArcadeDrive() {
