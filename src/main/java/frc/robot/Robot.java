@@ -1,17 +1,13 @@
 package frc.robot;
 
-import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
-import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
-import frc.robot.auto.AutoGenerator;
 import frc.robot.auto.LaunchAndMove;
 import frc.robot.commands.Actions;
 import frc.robot.constants.*;
@@ -122,24 +118,13 @@ public class Robot {
     private final LoggedDashboardChooser<Command> autoChooser = Util.make(() -> {
         registerNamedCommands();
         var auto = new LoggedDashboardChooser<Command>("Auto");
-        auto.addDefaultOption("None", null);
-        auto.addOption("Generate", Commands.deferredProxy(() -> AutoGenerator.generateAuto(drivebase, launcher)));
+        auto.addOption("None", null);
+        // BROKEN
+//        auto.addOption("Generate", Commands.deferredProxy(() -> AutoGenerator.generateAuto(drivebase, launcher)));
         auto.addOption("Launch", launcher.launchCommand());
-        auto.addOption("Launch and move", LaunchAndMove.get(drivebase, launcher));
-//        auto.addOption("Launch from front and move to corner", launcher.launchCommand()
-//                .andThen(
-//                        drivebase.followPathCommand("Front Subwoofer to Corner"),
-//                        Commands.parallel(
-//                                drivebase.swerveMode.swerveDriveCommand(),
-//                                Commands.deferredProxy(() -> drivebase.swerveMode.swerveAngleCommand(Util.shouldFlip() ? 180 : 0))
-//                        ).withTimeout(1.5)
-//                )
-//        );
-        auto.addDefaultOption("SF-W2", Util.make(() -> {
-            var blue = AutoBuilder.buildAuto("B_SF-W2");
-            var red = AutoBuilder.buildAuto("R_SF-W2");
-            return Commands.deferredProxy(() -> DriverStation.getAlliance().orElse(DriverStation.Alliance.Red) == DriverStation.Alliance.Red ? red : blue);
-        }));
+        auto.addDefaultOption("Launch and move", LaunchAndMove.get(drivebase, launcher));
+        auto.addOption("S2-W2", Util.buildAllianceAuto("S2-W2"));
+        auto.addOption("S3-M5", Util.buildAllianceAuto("S3-M5"));
         return auto;
     });
 
