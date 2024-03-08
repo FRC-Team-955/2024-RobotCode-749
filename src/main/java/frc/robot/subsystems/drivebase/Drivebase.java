@@ -16,6 +16,7 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.DifferentialDriveKinematics;
 import edu.wpi.first.math.kinematics.DifferentialDriveWheelSpeeds;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -60,6 +61,7 @@ public class Drivebase extends SubsystemBase {
     private final SimpleMotorFeedforward leftFeedforward = new SimpleMotorFeedforward(DrivebaseConstants.feedforwardLeftS, DrivebaseConstants.feedforwardLeftV);
     private final SimpleMotorFeedforward rightFeedforward = new SimpleMotorFeedforward(DrivebaseConstants.feedforwardRightS, DrivebaseConstants.feedforwardRightV);
     private final TunablePIDController driveVelocityPID = new TunablePIDController("Drivebase driveVelocity", DrivebaseConstants.velocityP, 0, DrivebaseConstants.velocityD);
+    private final LoggedDashboardBoolean disableDriving = new LoggedDashboardBoolean("Disable Driving", false);
 
     private final LoggedDashboardBoolean arcadeDriveToggle = new LoggedDashboardBoolean("Arcade Drive", false);
     private boolean arcadeDrive = arcadeDriveToggle.get();
@@ -126,23 +128,23 @@ public class Drivebase extends SubsystemBase {
         double odometryDifference = odometry.getEstimatedPosition().getTranslation().getDistance(botpose.getTranslation());
 
         double xyStdDev;
-        double rotStdDev;
+        double rotStdDev = 90;
 
         if (avgArea > 0.8 && odometryDifference < 0.5) {
             xyStdDev = 1;
-            rotStdDev = 10;
+//            rotStdDev = 10;
         } else if (avgArea > 0.8) {
             xyStdDev = 1.5;
-            rotStdDev = 10;
+//            rotStdDev = 10;
         } else if (avgArea > 0.5 && odometryDifference < 1) {
             xyStdDev = 2;
-            rotStdDev = 15;
+//            rotStdDev = 15;
         } else if (avgArea > 0.2 && odometryDifference < 2) {
             xyStdDev = 4;
-            rotStdDev = 30;
+//            rotStdDev = 30;
         } else if (avgArea > 0.05 && odometryDifference < 5) {
             xyStdDev = 10;
-            rotStdDev = 30;
+//            rotStdDev = 30;
         } else return;
 
         if (tagCount >= 2) {
@@ -150,11 +152,12 @@ public class Drivebase extends SubsystemBase {
             rotStdDev -= 8;
         }
 
-        odometry.addVisionMeasurement(
-                botpose,
-                timestamp,
-                VecBuilder.fill(xyStdDev, xyStdDev, Units.degreesToRadians(rotStdDev))
-        );
+//        if (DriverStation.isAutonomousEnabled())
+//            odometry.addVisionMeasurement(
+//                    botpose,
+//                    timestamp,
+//                    VecBuilder.fill(xyStdDev, xyStdDev, Units.degreesToRadians(rotStdDev))
+//            );
     }
 
     /**
@@ -165,7 +168,7 @@ public class Drivebase extends SubsystemBase {
         Logger.recordOutput("Drivebase/ArcadeDrive/Speed", speed);
         Logger.recordOutput("Drivebase/ArcadeDrive/Rotation", rotation);
         var speeds = DifferentialDrive.arcadeDriveIK(speed, rotation, true);
-        io.setVoltage(speeds.left * 12, speeds.right * 12);
+        if (!disableDriving.get()) io.setVoltage(speeds.left * 12, speeds.right * 12);
     }
 
     private void driveVelocity(double leftMetersPerSec, double rightMetersPerSec) {

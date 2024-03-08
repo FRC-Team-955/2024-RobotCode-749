@@ -7,7 +7,7 @@ public class IntakeConstants {
     public static final int driverMotorId = 10;
 
     public static final double pivotGearRatio = 25;
-    public static final double pivotRadDown = Units.degreesToRadians(190);
+    public static final double pivotRadDown = Units.degreesToRadians(195);
     public static final double pivotRadEject = pivotRadDown - Units.degreesToRadians(80);
 
     public static final double intakeSpeed = 1;

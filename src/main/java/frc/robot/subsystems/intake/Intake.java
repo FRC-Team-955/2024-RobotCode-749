@@ -9,7 +9,6 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj.util.Color8Bit;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Util;
 import frc.robot.constants.IntakeConstants;
@@ -28,14 +27,14 @@ public class Intake extends SubsystemBase {
         p.setTolerance(Units.degreesToRadians(15));
         return p;
     });
-    private final ArmFeedforward pivotFF = new ArmFeedforward(0, ifSimElse(0.01, 0.4), 0, 0);
-
+    private final ArmFeedforward pivotFF = new ArmFeedforward(0, ifSimElse(0.01, 0.35), 0, 0);
     private final MechanismLigament2d pivotMechanism = Util.make(() -> {
         var mechanism = new Mechanism2d(6, 6, new Color8Bit(Color.kGray));
         SmartDashboard.putData("Intake", mechanism);
         var root = mechanism.getRoot("Root", 3, 3);
         return root.append(new MechanismLigament2d("Pivot", 3, 0, 4, new Color8Bit(Color.kOrange)));
     });
+    private boolean usePivotPID = true;
 
     @Override
     public void periodic() {
@@ -48,7 +47,7 @@ public class Intake extends SubsystemBase {
         var ff = pivotFF.calculate(inputs.pivotPositionRad - IntakeConstants.pivotRadDown, inputs.pivotVelocityRadPerSec);
         Logger.recordOutput("Intake/PivotControlSignalPID", pid);
         Logger.recordOutput("Intake/PivotControlSignalFF", ff);
-        if (RobotState.isEnabled()) io.setPivotVoltage(pid + ff);
+        if (RobotState.isEnabled() && usePivotPID) io.setPivotVoltage(pid + ff);
     }
 
     private Command pivotPIDToCommand(double setpoint) {
@@ -88,17 +87,19 @@ public class Intake extends SubsystemBase {
         ).withName("Intake$eject");
     }
 
-    public Command resetPivotAsTuckedCommand() {
-        return runOnce(() -> {
-            io.resetPivotPosition();
-            pivotPID.setSetpoint(0);
-        });
+    public Command pivotSlightlyDownCommand() {
+        return startEnd(
+                () -> {
+                    usePivotPID = false;
+                    io.setPivotVoltage(1);
+                },
+                () -> {
+                    usePivotPID = true;
+                }
+        ).withName("Intake$pivotSlightlyDown");
     }
 
-    public Command resetPivotAsDownCommand() {
-        return pivotPIDToCommand(IntakeConstants.pivotRadDown).andThen(runOnce(() -> {
-            io.resetPivotPosition();
-            pivotPID.setSetpoint(0);
-        }));
+    public Command resetPivotCommand() {
+        return runOnce(io::resetPivotPosition);
     }
 }
