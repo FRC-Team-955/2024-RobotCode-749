@@ -165,7 +165,7 @@ public class Drivebase extends SubsystemBase {
         Logger.recordOutput("Drivebase/ArcadeDrive/Speed", speed);
         Logger.recordOutput("Drivebase/ArcadeDrive/Rotation", rotation);
         var speeds = DifferentialDrive.arcadeDriveIK(speed, rotation, true);
-//        io.setVoltage(speeds.left * 12, speeds.right * 12);
+        io.setVoltage(speeds.left * 12, speeds.right * 12);
     }
 
     private void driveVelocity(double leftMetersPerSec, double rightMetersPerSec) {
