@@ -90,7 +90,7 @@ public class Robot {
         new Trigger(() -> operatorController.getLeftY() < -0.4)
                 .onTrue(intake.intakeCommand())
                 .onFalse(intake.tuckCommand());
-        operatorController.povUp().onTrue(intake.resetPivotCommand());
+        operatorController.povUp().onTrue(intake.resetPivotAsTuckedCommand());
 
         // note: right and left are switched here to make it easier for the operator to control
         operatorController.rightBumper().whileTrue(leftClimber.moveCommand(Climber.Direction.Up));
@@ -113,6 +113,7 @@ public class Robot {
     private void makeButtonsTab() {
         var tab = Shuffleboard.getTab("Buttons");
         tab.add("Zero pose to front of subwoofer", drivebase.setPoseCommand(Util.flipIfNeeded(new Pose2d(1.33, 5.5, Rotation2d.fromDegrees(180)))));
+        tab.add("Zero intake as down", intake.resetPivotAsDownCommand());
     }
 
     private final LoggedDashboardChooser<Command> autoChooser = Util.make(() -> {

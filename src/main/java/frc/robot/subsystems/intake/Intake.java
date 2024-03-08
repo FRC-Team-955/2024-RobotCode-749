@@ -87,7 +87,14 @@ public class Intake extends SubsystemBase {
         ).withName("Intake$eject");
     }
 
-    public Command resetPivotCommand() {
+    public Command resetPivotAsTuckedCommand() {
         return runOnce(io::resetPivotPosition);
+    }
+
+    public Command resetPivotAsDownCommand() {
+        return pivotPIDToCommand(IntakeConstants.pivotRadEject).andThen(runOnce(() -> {
+            io.resetPivotPosition();
+            pivotPID.setSetpoint(0);
+        }));
     }
 }
