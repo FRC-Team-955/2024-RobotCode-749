@@ -67,8 +67,6 @@ public class Drivebase extends SubsystemBase {
     private boolean arcadeDrive = arcadeDriveToggle.get();
     @AutoLogOutput
     private boolean reverseMode = false;
-    @AutoLogOutput
-    private boolean preciseMode = false;
 
     /* Command Groups */
     public final AutoAlign autoAlign = new AutoAlign(this);
@@ -194,11 +192,10 @@ public class Drivebase extends SubsystemBase {
 
     private Command arcadeDriveCommand() {
         return run(() -> {
-            var precise = preciseMode ? DrivebaseConstants.preciseModeMultiplier : 1;
             var reverse = reverseMode ? -1 : 1;
 
-            var speed = precise * reverse * Util.speed(driverController);
-            var rotation = precise * -driverController.getLeftX();
+            var speed = reverse * Util.speed(driverController);
+            var rotation = -driverController.getLeftX();
 
             if (GeneralConstants.useControllerDeadzone) {
                 if (Math.abs(speed) < GeneralConstants.controllerDeadzone) speed = 0;
@@ -251,17 +248,6 @@ public class Drivebase extends SubsystemBase {
                 () -> this.reverseMode = true,
                 () -> this.reverseMode = false
         ).withName("Drivebase$enableReverseMode");
-    }
-
-    public boolean getPreciseMode() {
-        return preciseMode;
-    }
-
-    public Command enablePreciseModeCommand() {
-        return Commands.startEnd(
-                () -> this.preciseMode = true,
-                () -> this.preciseMode = false
-        ).withName("Drivebase$enablePreciseMode");
     }
 
     public Command toggleArcadeDrive() {

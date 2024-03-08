@@ -55,7 +55,6 @@ public class SwerveMode {
         @Override
         public void execute() {
             var reverse = drivebase.getReverseMode() ? -1 : 1;
-            var precise = drivebase.getPreciseMode() ? DrivebaseConstants.preciseModeMultiplier : 1;
 
             var x = reverse * driverController.getLeftX();
             var y = reverse * -driverController.getLeftY();
@@ -70,8 +69,8 @@ public class SwerveMode {
             var robotAngle = drivebase.getPose().getRotation().getDegrees();
             Logger.recordOutput("Drivebase/SwerveMode/Measurement", robotAngle);
 
-            var speed = precise * reverse * Util.speed(driverController);
-            var rotation = precise * swerveModePID.calculate(robotAngle);
+            var speed = reverse * Util.speed(driverController);
+            var rotation = swerveModePID.calculate(robotAngle);
 
             if (GeneralConstants.useControllerDeadzone) {
                 if (Math.abs(speed) < GeneralConstants.controllerDeadzone) speed = 0;

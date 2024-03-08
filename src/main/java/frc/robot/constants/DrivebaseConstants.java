@@ -38,8 +38,6 @@ public final class DrivebaseConstants {
     public static final double swerveModeP = ifSimElse(0.08, 0.05);
     public static final double swerveModeD = ifSimElse(0.006, 0.008);
 
-    public static final double preciseModeMultiplier = 0.6;
-
     public static final double pathfindMaxSpeed = 1.0;//2.5;
     public static final double pathfindMaxAccel = pathfindMaxSpeed;
     public static final double pathfindEndSpeed = 0.7;
