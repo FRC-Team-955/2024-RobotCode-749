@@ -77,7 +77,7 @@ public class SwerveMode {
                 if (Math.abs(speed) < GeneralConstants.controllerDeadzone) speed = 0;
             }
 
-//            drivebase.arcadeDrive(speed, rotation);
+            drivebase.arcadeDrive(speed, rotation);
         }
     }
 }
