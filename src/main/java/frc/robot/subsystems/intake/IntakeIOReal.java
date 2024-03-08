@@ -37,6 +37,7 @@ public class IntakeIOReal extends IntakeIO {
     @Override
     public void updateInputs(IntakeIOInputs inputs) {
         inputs.pivotPositionRad = Units.rotationsToRadians(pivotEncoder.getPosition() / IntakeConstants.pivotGearRatio);
+        inputs.pivotVelocityRadPerSec = Units.rotationsPerMinuteToRadiansPerSecond(pivotEncoder.getVelocity());
         inputs.pivotAppliedVolts = pivot.getAppliedOutput() * pivot.getBusVoltage();
         inputs.pivotCurrentAmps = pivot.getOutputCurrent();
 

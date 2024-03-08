@@ -18,6 +18,7 @@ public class IntakeIOSim extends IntakeIO {
         driver.update(0.02);
 
         inputs.pivotPositionRad = pivot.getAngleRads();
+        inputs.pivotVelocityRadPerSec = pivot.getVelocityRadPerSec();
         inputs.pivotAppliedVolts = pivotAppliedVolts;
         inputs.pivotCurrentAmps = pivot.getCurrentDrawAmps();
 

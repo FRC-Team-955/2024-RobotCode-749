@@ -44,7 +44,7 @@ public class Intake extends SubsystemBase {
         pivotMechanism.setAngle(Units.radiansToDegrees(inputs.pivotPositionRad + IntakeConstants.pivotRadDown));
 
         var pid = pivotPID.calculate(inputs.pivotPositionRad);
-        var ff = pivotFF.calculate(inputs.pivotPositionRad - IntakeConstants.pivotRadDown, 0);
+        var ff = pivotFF.calculate(inputs.pivotPositionRad - IntakeConstants.pivotRadDown, inputs.pivotVelocityRadPerSec);
         Logger.recordOutput("Intake/PivotControlSignalPID", pid);
         Logger.recordOutput("Intake/PivotControlSignalFF", ff);
         if (RobotState.isEnabled()) io.setPivotVoltage(pid + ff);
