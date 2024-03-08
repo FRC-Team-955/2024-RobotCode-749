@@ -73,11 +73,10 @@ public class Robot {
         driverController.povRight().onTrue(drivebase.swerveMode.swerveAngleCommand(-90));
 
         driverController.b().toggleOnTrue(actions.doSelectedActionWithoutAutoAlignCommand());
-
 //        driverController.b().toggleOnTrue(actions.doSelectedActionCommand());
 //        driverController.x().toggleOnTrue(actions.doSelectedActionWithoutAutoAlignCommand());
-//        driverController.a().toggleOnTrue(launcher.intakeCommand());
 //        driverController.b().toggleOnTrue(launcher.launchCommand());
+//        driverController.a().toggleOnTrue(intake.handoffCommand());
 //        driverController.x().onTrue(drivebase.setPoseCommand(new Pose2d(1.41, 5.58, new Rotation2d()))); // subwoofer
 //        driverController.x().onTrue(drivebase.setPoseCommand(new Pose2d(15.38, 0.958, Rotation2d.fromRadians(-0.9)))); // source
 

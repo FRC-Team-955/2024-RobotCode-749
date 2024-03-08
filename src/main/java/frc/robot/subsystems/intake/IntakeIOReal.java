@@ -18,7 +18,7 @@ public class IntakeIOReal extends IntakeIO {
         driver.restoreFactoryDefaults();
 
         pivot.setIdleMode(CANSparkBase.IdleMode.kBrake);
-        driver.setIdleMode(CANSparkBase.IdleMode.kBrake);
+        driver.setIdleMode(CANSparkBase.IdleMode.kCoast);
 
         pivot.setCANTimeout(250);
         driver.setCANTimeout(250);

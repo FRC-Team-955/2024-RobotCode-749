@@ -9,6 +9,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj.util.Color8Bit;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Util;
 import frc.robot.constants.IntakeConstants;
@@ -23,8 +24,8 @@ public class Intake extends SubsystemBase {
     private final IntakeIOInputsAutoLogged inputs = new IntakeIOInputsAutoLogged();
 
     private final TunablePIDController pivotPID = Util.make(() -> {
-        var p = new TunablePIDController("Intake: Pivot", 2, 0, 0);
-        p.setTolerance(Units.degreesToRadians(3));
+        var p = new TunablePIDController("Intake: Pivot", 2.5, 0, 0);
+        p.setTolerance(Units.degreesToRadians(15));
         return p;
     });
     private final ArmFeedforward pivotFF = new ArmFeedforward(0, ifSimElse(0.01, 0.4), 0, 0);
@@ -88,11 +89,14 @@ public class Intake extends SubsystemBase {
     }
 
     public Command resetPivotAsTuckedCommand() {
-        return runOnce(io::resetPivotPosition);
+        return runOnce(() -> {
+            io.resetPivotPosition();
+            pivotPID.setSetpoint(0);
+        });
     }
 
     public Command resetPivotAsDownCommand() {
-        return pivotPIDToCommand(IntakeConstants.pivotRadEject).andThen(runOnce(() -> {
+        return pivotPIDToCommand(IntakeConstants.pivotRadDown).andThen(runOnce(() -> {
             io.resetPivotPosition();
             pivotPID.setSetpoint(0);
         }));
