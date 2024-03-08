@@ -154,7 +154,7 @@ public class Drivebase extends SubsystemBase {
 
 //        if (DriverStation.isAutonomousEnabled())
 //            odometry.addVisionMeasurement(
-//                    botpose,
+//                    DriverStation.isAutonomous() ? botpose : new Pose2d(botpose.getX(), botpose.getY(), gyroInputs.yaw),
 //                    timestamp,
 //                    VecBuilder.fill(xyStdDev, xyStdDev, Units.degreesToRadians(rotStdDev))
 //            );
