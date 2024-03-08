@@ -10,6 +10,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.auto.AutoGenerator;
 import frc.robot.auto.LaunchAndMove;
 import frc.robot.commands.Actions;
@@ -89,7 +90,8 @@ public class Robot {
 //        operatorController.x().toggleOnTrue(actions.selectActionCommand(Actions.Action.LeftSubwoofer));
 //        operatorController.b().toggleOnTrue(actions.selectActionCommand(Actions.Action.RightSubwoofer));
 
-        operatorController.b()
+        operatorController.b().toggleOnTrue(intake.ejectCommand());
+        new Trigger(() -> operatorController.getLeftY() < -0.4)
                 .onTrue(intake.intakeCommand())
                 .onFalse(intake.tuckCommand());
         operatorController.povUp().onTrue(intake.resetPivotCommand());
@@ -124,15 +126,15 @@ public class Robot {
         auto.addOption("Generate", Commands.deferredProxy(() -> AutoGenerator.generateAuto(drivebase, launcher)));
         auto.addOption("Launch", launcher.launchCommand());
         auto.addOption("Launch and move", LaunchAndMove.get(drivebase, launcher));
-        auto.addOption("Launch from front and move to corner", launcher.launchCommand()
-                .andThen(
-                        drivebase.followPathCommand("Front Subwoofer to Corner"),
-                        Commands.parallel(
-                                drivebase.swerveMode.swerveDriveCommand(),
-                                Commands.deferredProxy(() -> drivebase.swerveMode.swerveAngleCommand(Util.shouldFlip() ? 180 : 0))
-                        ).withTimeout(1.5)
-                )
-        );
+//        auto.addOption("Launch from front and move to corner", launcher.launchCommand()
+//                .andThen(
+//                        drivebase.followPathCommand("Front Subwoofer to Corner"),
+//                        Commands.parallel(
+//                                drivebase.swerveMode.swerveDriveCommand(),
+//                                Commands.deferredProxy(() -> drivebase.swerveMode.swerveAngleCommand(Util.shouldFlip() ? 180 : 0))
+//                        ).withTimeout(1.5)
+//                )
+//        );
         auto.addDefaultOption("SF-W2", Util.make(() -> {
             var blue = AutoBuilder.buildAuto("B_SF-W2");
             var red = AutoBuilder.buildAuto("R_SF-W2");
