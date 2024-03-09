@@ -15,7 +15,6 @@ import frc.robot.constants.IntakeConstants;
 import frc.robot.util.TunablePIDController;
 import org.littletonrobotics.junction.Logger;
 
-import static frc.robot.Util.ifSimElse;
 import static frc.robot.Util.switchMode;
 
 public class Intake extends SubsystemBase {
@@ -23,11 +22,11 @@ public class Intake extends SubsystemBase {
     private final IntakeIOInputsAutoLogged inputs = new IntakeIOInputsAutoLogged();
 
     private final TunablePIDController pivotPID = Util.make(() -> {
-        var p = new TunablePIDController("Intake: Pivot", 2.5, 0, 0);
+        var p = new TunablePIDController("Intake: Pivot", IntakeConstants.pivotP, 0, IntakeConstants.pivotD);
         p.setTolerance(Units.degreesToRadians(15));
         return p;
     });
-    private final ArmFeedforward pivotFF = new ArmFeedforward(0, ifSimElse(0.01, 0.35), 0, 0);
+    private final ArmFeedforward pivotFF = new ArmFeedforward(0, IntakeConstants.pivotFFg, 0, 0);
     private final MechanismLigament2d pivotMechanism = Util.make(() -> {
         var mechanism = new Mechanism2d(6, 6, new Color8Bit(Color.kGray));
         SmartDashboard.putData("Intake", mechanism);

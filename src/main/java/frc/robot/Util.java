@@ -6,7 +6,6 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.constants.GeneralConstants;
 import frc.robot.util.Rect2d;
@@ -87,7 +86,8 @@ public final class Util {
 
     public static Command buildAllianceAuto(String name) {
         var blue = AutoBuilder.buildAuto("B_" + name);
-        var red = AutoBuilder.buildAuto("R_" + name);
-        return Commands.deferredProxy(() -> shouldFlip() ? red : blue);
+        return blue;
+//        var red = AutoBuilder.buildAuto("R_" + name);
+//        return Commands.deferredProxy(() -> shouldFlip() ? red : blue);
     }
 }
