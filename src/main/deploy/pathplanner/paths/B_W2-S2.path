@@ -16,16 +16,16 @@
     },
     {
       "anchor": {
-        "x": 1.421278069407991,
+        "x": 1.5888098033474087,
         "y": 6.0
       },
       "prevControl": {
-        "x": 1.6797188825859137,
-        "y": 5.974543504642566
+        "x": 1.8485013262586294,
+        "y": 6.0
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "B_S2"
+      "linkedName": "Aligned B_S2"
     }
   ],
   "rotationTargets": [],
@@ -43,7 +43,7 @@
     "rotateFast": false
   },
   "reversed": false,
-  "folder": "Blue",
+  "folder": "W2",
   "previewStartingState": {
     "rotation": 0,
     "velocity": 0

@@ -189,7 +189,7 @@ public class Drivebase extends SubsystemBase {
         Logger.recordOutput("Drivebase/DriveVelocity/LeftControlSignalFF", leftFF);
         Logger.recordOutput("Drivebase/DriveVelocity/RightControlSignalFF", rightFF);
 
-        io.setVoltage(leftFF, rightFF);
+        io.setVoltage(leftPID + leftFF, rightPID + rightFF);
     }
 
     public Command driveVelocityCommand(double leftMetersPerSec, double rightMetersPerSec) {

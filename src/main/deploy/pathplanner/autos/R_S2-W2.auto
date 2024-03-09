@@ -12,6 +12,12 @@
     "data": {
       "commands": [
         {
+          "type": "path",
+          "data": {
+            "pathName": "Align R_S2"
+          }
+        },
+        {
           "type": "named",
           "data": {
             "name": "Launch"
@@ -64,6 +70,6 @@
       ]
     }
   },
-  "folder": "Red",
+  "folder": "S2",
   "choreoAuto": false
 }

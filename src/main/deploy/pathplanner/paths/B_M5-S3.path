@@ -3,16 +3,32 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 7.563047982577446,
-        "y": 0.7449176379834244
+        "x": 7.8486837495872965,
+        "y": 1.0170801245896506
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.3624046651417947,
-        "y": 0.744917637983425
+        "x": 6.543509560392119,
+        "y": 1.5465257692394243
+      },
+      "isLocked": true,
+      "linkedName": "M5"
+    },
+    {
+      "anchor": {
+        "x": 3.213969385544303,
+        "y": 2.54593395376747
+      },
+      "prevControl": {
+        "x": 5.359956988567719,
+        "y": 1.8408237413454904
+      },
+      "nextControl": {
+        "x": 1.528618707710487,
+        "y": 3.0996920336271527
       },
       "isLocked": false,
-      "linkedName": "M5"
+      "linkedName": null
     },
     {
       "anchor": {
@@ -43,7 +59,7 @@
     "rotateFast": false
   },
   "reversed": false,
-  "folder": "Blue",
+  "folder": "M5",
   "previewStartingState": {
     "rotation": 0,
     "velocity": 0

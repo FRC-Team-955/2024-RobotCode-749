@@ -16,12 +16,28 @@
     },
     {
       "anchor": {
-        "x": 7.563047982577446,
-        "y": 0.7449176379834244
+        "x": 4.020530067079057,
+        "y": 2.4014753242388576
       },
       "prevControl": {
-        "x": 1.6454854096802078,
-        "y": 0.7449176379834244
+        "x": 1.5020271884041287,
+        "y": 3.2829513317750836
+      },
+      "nextControl": {
+        "x": 4.742823214722121,
+        "y": 2.1486727225637847
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 7.8486837495872965,
+        "y": 1.0170801245896506
+      },
+      "prevControl": {
+        "x": 6.572628500220449,
+        "y": 1.5347136325939426
       },
       "nextControl": null,
       "isLocked": false,
@@ -43,7 +59,7 @@
     "rotateFast": false
   },
   "reversed": true,
-  "folder": "Blue",
+  "folder": "M5",
   "previewStartingState": {
     "rotation": 0,
     "velocity": 0

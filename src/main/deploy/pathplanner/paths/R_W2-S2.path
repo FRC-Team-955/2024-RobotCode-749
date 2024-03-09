@@ -16,16 +16,16 @@
     },
     {
       "anchor": {
-        "x": 1.4,
+        "x": 1.5888098033474087,
         "y": 5.03
       },
       "prevControl": {
-        "x": 1.65,
+        "x": 1.8388098033474087,
         "y": 5.03
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "R_S2"
+      "linkedName": "Aligned R_S2"
     }
   ],
   "rotationTargets": [],
@@ -43,7 +43,7 @@
     "rotateFast": false
   },
   "reversed": false,
-  "folder": "Red",
+  "folder": "W2",
   "previewStartingState": {
     "rotation": 0,
     "velocity": 0
