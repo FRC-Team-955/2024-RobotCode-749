@@ -20,4 +20,5 @@ public class IntakeConstants {
     public static final double handoffTimeout = 0.15;
     public static final double ejectSpeed = -1;
     public static final double ejectTimeout = 0.5;
+    public static final double ejectIntakeTimeout = 0.15;
 }
