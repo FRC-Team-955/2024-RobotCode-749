@@ -55,7 +55,7 @@ public class Robot {
 
     private void registerNamedCommands() {
         NamedCommands.registerCommand("Launch", launcher.launchCommand());
-        NamedCommands.registerCommand("Intake", intake.intakeCommand().withTimeout(1.5));
+        NamedCommands.registerCommand("Intake", intake.intakeCommand());
         NamedCommands.registerCommand("Handoff", intake.handoffCommand());
     }
 
@@ -127,7 +127,7 @@ public class Robot {
         auto.addOption("Launch", launcher.launchCommand());
         auto.addDefaultOption("Launch and move", LaunchAndMove.get(drivebase, launcher));
         auto.addOption("S2-W2", Util.buildAllianceAuto("S2-W2"));
-        auto.addOption("S3-M5", Util.buildAllianceAuto("S3-M5"));
+        auto.addOption("S3-M5-M4", Util.buildAllianceAuto("S3-M5-M4"));
         return auto;
     });
 

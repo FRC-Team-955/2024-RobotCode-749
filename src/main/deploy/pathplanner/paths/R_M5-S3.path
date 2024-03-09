@@ -1,0 +1,68 @@
+{
+  "version": 1.0,
+  "waypoints": [
+    {
+      "anchor": {
+        "x": 7.8486837495872965,
+        "y": 1.0170801245896506
+      },
+      "prevControl": null,
+      "nextControl": {
+        "x": 6.543509560392119,
+        "y": 1.5465257692394243
+      },
+      "isLocked": false,
+      "linkedName": "M5"
+    },
+    {
+      "anchor": {
+        "x": 3.213969385544303,
+        "y": 2.54593395376747
+      },
+      "prevControl": {
+        "x": 5.344924187287036,
+        "y": 1.796617707499217
+      },
+      "nextControl": {
+        "x": 2.058535470782732,
+        "y": 2.9522238493166943
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 1.2519747892479773,
+        "y": 4.520201890658512
+      },
+      "prevControl": {
+        "x": 1.9020430127930612,
+        "y": 4.411884265802567
+      },
+      "nextControl": null,
+      "isLocked": false,
+      "linkedName": "R_S3"
+    }
+  ],
+  "rotationTargets": [],
+  "constraintZones": [],
+  "eventMarkers": [],
+  "globalConstraints": {
+    "maxVelocity": 1.5,
+    "maxAcceleration": 1.5,
+    "maxAngularVelocity": 540.0,
+    "maxAngularAcceleration": 720.0
+  },
+  "goalEndState": {
+    "velocity": 0,
+    "rotation": 0,
+    "rotateFast": false
+  },
+  "reversed": false,
+  "folder": "M5",
+  "previewStartingState": {
+    "rotation": 0,
+    "velocity": 0
+  },
+  "useDefaultConstraints": true
+}

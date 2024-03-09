@@ -2,19 +2,57 @@
   "version": 1.0,
   "startingPose": {
     "position": {
-      "x": 1.421278069407991,
-      "y": 6.0
+      "x": 1.2519747892479773,
+      "y": 4.520201890658512
     },
-    "rotation": 180.0
+    "rotation": 170.54
   },
   "command": {
     "type": "sequential",
     "data": {
       "commands": [
         {
-          "type": "path",
+          "type": "named",
           "data": {
-            "pathName": "Align B_S2"
+            "name": "Launch"
+          }
+        },
+        {
+          "type": "race",
+          "data": {
+            "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "Intake"
+                }
+              },
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "R_S3-M5"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "parallel",
+          "data": {
+            "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "Handoff"
+                }
+              },
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "R_M5-S3"
+                }
+              }
+            ]
           }
         },
         {
@@ -36,7 +74,7 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "B_S2-W2"
+                  "pathName": "R_S3-M4"
                 }
               }
             ]
@@ -55,7 +93,7 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "B_W2-S2"
+                  "pathName": "R_M4-S3"
                 }
               }
             ]
@@ -70,6 +108,6 @@
       ]
     }
   },
-  "folder": "S2",
+  "folder": "S3",
   "choreoAuto": false
 }

@@ -1,0 +1,68 @@
+{
+  "version": 1.0,
+  "waypoints": [
+    {
+      "anchor": {
+        "x": 1.1020276531293807,
+        "y": 4.469505827900545
+      },
+      "prevControl": null,
+      "nextControl": {
+        "x": 1.1651294374053416,
+        "y": 4.2276005472198825
+      },
+      "isLocked": false,
+      "linkedName": "B_S3"
+    },
+    {
+      "anchor": {
+        "x": 4.020530067079057,
+        "y": 2.4014753242388576
+      },
+      "prevControl": {
+        "x": 1.5766055898804323,
+        "y": 3.472498130487784
+      },
+      "nextControl": {
+        "x": 4.8995551848454495,
+        "y": 2.016252312162556
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 7.740574898908168,
+        "y": 2.2570166947102446
+      },
+      "prevControl": {
+        "x": 5.561642480657753,
+        "y": 1.7755547062482613
+      },
+      "nextControl": null,
+      "isLocked": false,
+      "linkedName": "M4"
+    }
+  ],
+  "rotationTargets": [],
+  "constraintZones": [],
+  "eventMarkers": [],
+  "globalConstraints": {
+    "maxVelocity": 1.5,
+    "maxAcceleration": 1.5,
+    "maxAngularVelocity": 540.0,
+    "maxAngularAcceleration": 720.0
+  },
+  "goalEndState": {
+    "velocity": 0,
+    "rotation": 0,
+    "rotateFast": false
+  },
+  "reversed": true,
+  "folder": "M4",
+  "previewStartingState": {
+    "rotation": 0,
+    "velocity": 0
+  },
+  "useDefaultConstraints": true
+}
