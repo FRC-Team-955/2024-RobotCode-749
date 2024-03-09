@@ -12,6 +12,6 @@ public class GyroIO {
     public void updateInputs(GyroIOInputs inputs) {
     }
 
-    public void setYaw(double degrees) {
+    public void setYaw(Rotation2d yaw) {
     }
 }

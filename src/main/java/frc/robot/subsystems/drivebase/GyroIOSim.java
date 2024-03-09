@@ -12,7 +12,7 @@ public class GyroIOSim extends GyroIO {
     }
 
     @Override
-    public void setYaw(double degrees) {
-        rotationOffset = DrivebaseIOSim.getHeading().plus(Rotation2d.fromDegrees(degrees));
+    public void setYaw(Rotation2d yaw) {
+        rotationOffset = DrivebaseIOSim.getHeading().minus(yaw);
     }
 }

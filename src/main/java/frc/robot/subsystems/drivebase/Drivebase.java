@@ -53,7 +53,6 @@ public class Drivebase extends SubsystemBase {
 
     private final LimelightIO limelightIO = ifRealElse(LimelightIOReal::new, LimelightIO::new);
     private final LimelightIOInputsAutoLogged limelightInputs = new LimelightIOInputsAutoLogged();
-    private final LoggedDashboardBoolean usePoseEstimation = new LoggedDashboardBoolean("Use Pose Estimation", true);
 
     private final DifferentialDriveKinematics kinematics = new DifferentialDriveKinematics(DrivebaseConstants.trackWidth);
     private final DifferentialDrivePoseEstimator odometry = new DifferentialDrivePoseEstimator(kinematics, new Rotation2d(), 0.0, 0.0, new Pose2d());
@@ -61,9 +60,12 @@ public class Drivebase extends SubsystemBase {
     private final SimpleMotorFeedforward leftFeedforward = new SimpleMotorFeedforward(DrivebaseConstants.feedforwardLeftS, DrivebaseConstants.feedforwardLeftV);
     private final SimpleMotorFeedforward rightFeedforward = new SimpleMotorFeedforward(DrivebaseConstants.feedforwardRightS, DrivebaseConstants.feedforwardRightV);
     private final TunablePIDController driveVelocityPID = new TunablePIDController("Drivebase driveVelocity", DrivebaseConstants.velocityP, 0, DrivebaseConstants.velocityD);
-    private final LoggedDashboardBoolean disableDriving = new LoggedDashboardBoolean("Disable Driving", false);
 
+    private final LoggedDashboardBoolean usePoseEstimation = new LoggedDashboardBoolean("Use Pose Estimation", true);
+    private final LoggedDashboardBoolean fallbackRotationRevert = new LoggedDashboardBoolean("Fallback to rotation reverting", false);
+    private final LoggedDashboardBoolean disableDriving = new LoggedDashboardBoolean("Disable Driving", false);
     private final LoggedDashboardBoolean arcadeDriveToggle = new LoggedDashboardBoolean("Arcade Drive", false);
+
     private boolean arcadeDrive = arcadeDriveToggle.get();
     @AutoLogOutput
     private boolean reverseMode = false;
@@ -114,7 +116,7 @@ public class Drivebase extends SubsystemBase {
                 addVisionMeasurement(limelightInputs.leftBotpose, limelightInputs.leftBotposeTimestamp, limelightInputs.leftTagCount, limelightInputs.leftAvgArea);
             if (limelightInputs.rightTv == 1)
                 addVisionMeasurement(limelightInputs.rightBotpose, limelightInputs.rightBotposeTimestamp, limelightInputs.leftTagCount, limelightInputs.leftAvgArea);
-        } else {
+        } else if (fallbackRotationRevert.get()) {
             // Revert rotation changes
             odometry.addVisionMeasurement(
                     new Pose2d(getPose().getX(), getPose().getY(), gyroInputs.yaw),
@@ -132,8 +134,14 @@ public class Drivebase extends SubsystemBase {
     public Command teleopInitCommand() {
         return runOnce(() -> {
             usePoseEstimation.set(false);
-            gyroIO.setYaw(getPose().getRotation().getDegrees());
-            odometry.addVisionMeasurement(getPose(), Timer.getFPGATimestamp(), VecBuilder.fill(0, 0, 0));
+            gyroIO.setYaw(getPose().getRotation());
+            odometry.addVisionMeasurement(
+                    // Rotation must be zero because gyro will take over
+                    // if we use the real rotation it will be doubled due to setting gyro to it
+                    new Pose2d(getPose().getX(), getPose().getY(), new Rotation2d()),
+                    Timer.getFPGATimestamp(),
+                    VecBuilder.fill(0, 0, 0)
+            );
         });
     }
 
@@ -179,7 +187,7 @@ public class Drivebase extends SubsystemBase {
     public void arcadeDrive(double speed, double rotation) {
         Logger.recordOutput("Drivebase/ArcadeDrive/Speed", speed);
         Logger.recordOutput("Drivebase/ArcadeDrive/Rotation", rotation);
-        var speeds = DifferentialDrive.arcadeDriveIK(speed, rotation, true);
+        var speeds = DifferentialDrive.arcadeDriveIK(speed, rotation, false);
         if (!disableDriving.get()) io.setVoltage(speeds.left * 12, speeds.right * 12);
     }
 
@@ -307,7 +315,7 @@ public class Drivebase extends SubsystemBase {
     }
 
     public Command resetGyroCommand() {
-        return runOnce(() -> gyroIO.setYaw(0)).andThen(swerveMode.swerveAngleCommand(0));
+        return runOnce(() -> gyroIO.setYaw(new Rotation2d())).andThen(swerveMode.swerveAngleCommand(0));
     }
 
     @AutoLogOutput
