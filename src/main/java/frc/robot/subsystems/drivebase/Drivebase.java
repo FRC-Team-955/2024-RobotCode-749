@@ -116,9 +116,9 @@ public class Drivebase extends SubsystemBase {
             if (limelightInputs.rightTv == 1)
                 addVisionMeasurement(limelightInputs.rightBotpose, limelightInputs.rightBotposeTimestamp, limelightInputs.leftTagCount, limelightInputs.leftAvgArea);
         } else {
-            var pose = getPose();
+            // Revert rotation changes
             odometry.addVisionMeasurement(
-                    new Pose2d(pose.getX(), pose.getY(), gyroInputs.yaw),
+                    new Pose2d(getPose().getX(), getPose().getY(), gyroInputs.yaw),
                     Timer.getFPGATimestamp(),
                     VecBuilder.fill(0, 0, 0)
             );
