@@ -110,7 +110,7 @@ public class Drivebase extends SubsystemBase {
 
         field.setRobotPose(odometry.update(gyroInputs.yaw, getLeftPositionMeters(), getRightPositionMeters()));
 
-        if (usePoseEstimation.get() && DriverStation.isAutonomousEnabled()) {
+        if (usePoseEstimation.get()) {
             if (limelightInputs.leftTv == 1)
                 addVisionMeasurement(limelightInputs.leftBotpose, limelightInputs.leftBotposeTimestamp, limelightInputs.leftTagCount, limelightInputs.leftAvgArea);
             if (limelightInputs.rightTv == 1)
@@ -159,7 +159,7 @@ public class Drivebase extends SubsystemBase {
         }
 
         odometry.addVisionMeasurement(
-                DriverStation.isAutonomous() ? botpose : new Pose2d(botpose.getX(), botpose.getY(), gyroInputs.yaw),
+                botpose,
                 timestamp,
                 VecBuilder.fill(xyStdDev, xyStdDev, Units.degreesToRadians(rotStdDev))
         );
