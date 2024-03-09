@@ -132,7 +132,10 @@ public class Robot {
     });
 
     public Command getAutonomousCommand() {
-        // Return null to do nothing during autonomous.
         return autoChooser.get();
+    }
+
+    public Command getTeleopInitCommand() {
+        return drivebase.teleopInitCommand();
     }
 }

@@ -129,6 +129,14 @@ public class Drivebase extends SubsystemBase {
         }
     }
 
+    public Command teleopInitCommand() {
+        return runOnce(() -> {
+            usePoseEstimation.set(false);
+            gyroIO.setYaw(getPose().getRotation().getDegrees());
+            odometry.addVisionMeasurement(getPose(), Timer.getFPGATimestamp(), VecBuilder.fill(0, 0, 0));
+        });
+    }
+
     private void addVisionMeasurement(Pose2d botpose, double timestamp, double tagCount, double avgArea) {
         double odometryDifference = odometry.getEstimatedPosition().getTranslation().getDistance(botpose.getTranslation());
 
@@ -294,8 +302,12 @@ public class Drivebase extends SubsystemBase {
         return Commands.runOnce(() -> odometry.resetPosition(gyroInputs.yaw, getLeftPositionMeters(), getRightPositionMeters(), newPose.get()));
     }
 
+    public Rotation2d getGyro() {
+        return gyroInputs.yaw;
+    }
+
     public Command resetGyroCommand() {
-        return runOnce(gyroIO::resetYaw).andThen(swerveMode.swerveAngleCommand(0));
+        return runOnce(() -> gyroIO.setYaw(0)).andThen(swerveMode.swerveAngleCommand(0));
     }
 
     @AutoLogOutput

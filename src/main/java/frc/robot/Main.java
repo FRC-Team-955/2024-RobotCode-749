@@ -22,6 +22,7 @@ public final class Main {
     private static class CommandRobot extends LoggedRobot {
         private Robot container;
         private Command autonomousCommand;
+        private Command teleopInitCommand;
 
         public CommandRobot() {
         }
@@ -85,11 +86,23 @@ public final class Main {
         }
 
         @Override
+        public void teleopInit() {
+            teleopInitCommand = container.getTeleopInitCommand();
+            if (teleopInitCommand != null) teleopInitCommand.schedule();
+        }
+
+        @Override
+        public void teleopExit() {
+            if (teleopInitCommand != null) {
+                teleopInitCommand.cancel();
+                teleopInitCommand = null;
+            }
+        }
+
+        @Override
         public void autonomousInit() {
             autonomousCommand = container.getAutonomousCommand();
-            if (autonomousCommand != null) {
-                autonomousCommand.schedule();
-            }
+            if (autonomousCommand != null) autonomousCommand.schedule();
         }
 
         @Override

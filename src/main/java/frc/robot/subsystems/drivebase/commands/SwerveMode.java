@@ -49,7 +49,7 @@ public class SwerveMode {
 
         @Override
         public void initialize() {
-            swerveModeSetpoint = drivebase.getPose().getRotation().getDegrees();
+            swerveModeSetpoint = drivebase.getGyro().getDegrees();
         }
 
         @Override
@@ -66,7 +66,7 @@ public class SwerveMode {
             swerveModePID.setSetpoint(swerveModeSetpoint);
             Logger.recordOutput("Drivebase/SwerveMode/Setpoint", swerveModeSetpoint);
 
-            var robotAngle = drivebase.getPose().getRotation().getDegrees();
+            var robotAngle = drivebase.getGyro().getDegrees();
             Logger.recordOutput("Drivebase/SwerveMode/Measurement", robotAngle);
 
             var speed = reverse * Util.speed(driverController);

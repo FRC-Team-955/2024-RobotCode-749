@@ -26,7 +26,7 @@ public final class DrivebaseConstants {
     public static final int rightEncoderChannelB = 1;
     public static final double encoderDistancePerPulse = 1 / 2048.0; // AKA divide encoder reading by 2048
 
-    public static final double velocityP = 0.1;//ifSimElse(1.0, 6.0);
+    public static final double velocityP = 0.5;
     public static final double velocityD = 0;
 
     public static final double feedforwardLeftS = ifSimElse(0.7, 1.0);

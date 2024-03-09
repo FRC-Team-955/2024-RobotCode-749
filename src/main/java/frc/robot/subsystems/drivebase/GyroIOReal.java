@@ -23,7 +23,7 @@ public class GyroIOReal extends GyroIO {
     }
 
     @Override
-    public void resetYaw() {
-        pigeon.setYaw(0);
+    public void setYaw(double degrees) {
+        pigeon.setYaw(degrees);
     }
 }
