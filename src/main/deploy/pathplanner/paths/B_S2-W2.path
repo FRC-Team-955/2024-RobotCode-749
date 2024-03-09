@@ -8,20 +8,20 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 1.671278069407991,
-        "y": 6.0
+        "x": 1.7861356880121169,
+        "y": 5.9441387030922215
       },
       "isLocked": false,
       "linkedName": "B_S2"
     },
     {
       "anchor": {
-        "x": 2.27498829360832,
-        "y": 5.880285530585617
+        "x": 2.3942317190189937,
+        "y": 5.792114695340502
       },
       "prevControl": {
-        "x": 2.0583003493154,
-        "y": 5.988629502732077
+        "x": 2.1205885050658995,
+        "y": 5.868126699216361
       },
       "nextControl": null,
       "isLocked": false,
@@ -32,8 +32,8 @@
   "constraintZones": [],
   "eventMarkers": [],
   "globalConstraints": {
-    "maxVelocity": 1.0,
-    "maxAcceleration": 1.0,
+    "maxVelocity": 1.5,
+    "maxAcceleration": 1.5,
     "maxAngularVelocity": 540.0,
     "maxAngularAcceleration": 720.0
   },

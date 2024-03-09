@@ -29,10 +29,10 @@ public final class DrivebaseConstants {
     public static final double velocityP = 1.2;//ifSimElse(1.0, 6.0);
     public static final double velocityD = 0;
 
-    public static final double feedforwardLeftS = ifSimElse(0.7, 0.4);
-    public static final double feedforwardLeftV = ifSimElse(2.0, 1.0);
-    public static final double feedforwardRightS = ifSimElse(feedforwardLeftS, 0.4);
-    public static final double feedforwardRightV = ifSimElse(feedforwardLeftV, 1.0);
+    public static final double feedforwardLeftS = ifSimElse(0.7, 1.0);
+    public static final double feedforwardLeftV = ifSimElse(2.0, 2.2);
+    public static final double feedforwardRightS = ifSimElse(feedforwardLeftS, 1.0);
+    public static final double feedforwardRightV = ifSimElse(feedforwardLeftV, 2.2);
 
     public static final double swerveModeDeadzone = SimulationConstants.useNintendoSwitchProController ? 0.5 : 0.8;
     public static final double swerveModeP = ifSimElse(0.08, 0.05);
