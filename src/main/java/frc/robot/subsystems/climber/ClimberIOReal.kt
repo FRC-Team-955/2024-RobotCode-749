@@ -1,16 +1,22 @@
 package frc.robot.subsystems.climber
 
 import com.revrobotics.CANSparkBase
+import com.revrobotics.CANSparkLowLevel
 import com.revrobotics.CANSparkMax
 import com.revrobotics.RelativeEncoder
 import edu.wpi.first.math.util.Units
 import frc.robot.Constants
 
-abstract class ClimberIOReal : ClimberIO() {
-    private val motor = getMotor()
-    private val encoder: RelativeEncoder = motor.encoder
+class ClimberIORealLeft :
+    ClimberIOReal(CANSparkMax(Constants.Climber.leftMotorId, CANSparkLowLevel.MotorType.kBrushless)) {
+}
 
-    protected abstract fun getMotor(): CANSparkMax
+class ClimberIORealRight :
+    ClimberIOReal(CANSparkMax(Constants.Climber.rightMotorId, CANSparkLowLevel.MotorType.kBrushless)) {
+}
+
+abstract class ClimberIOReal(private val motor: CANSparkMax) : ClimberIO() {
+    private val encoder: RelativeEncoder = motor.encoder
 
     init {
         motor.restoreFactoryDefaults()
