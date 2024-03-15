@@ -3,13 +3,13 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 2.2842520794211896,
-        "y": 5.203370826137577
+        "x": 2.4194469231369324,
+        "y": 5.302686133938498
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.082376787570169,
-        "y": 5.06192175139081
+        "x": 2.142803004674423,
+        "y": 5.0980364087729635
       },
       "isLocked": false,
       "linkedName": "R_W2-S2"
@@ -20,7 +20,7 @@
         "y": 5.03
       },
       "prevControl": {
-        "x": 1.8388098033474087,
+        "x": 1.8058746908742234,
         "y": 5.03
       },
       "nextControl": null,
@@ -32,8 +32,8 @@
   "constraintZones": [],
   "eventMarkers": [],
   "globalConstraints": {
-    "maxVelocity": 1.5,
-    "maxAcceleration": 1.5,
+    "maxVelocity": 2.5,
+    "maxAcceleration": 2.5,
     "maxAngularVelocity": 540.0,
     "maxAngularAcceleration": 720.0
   },

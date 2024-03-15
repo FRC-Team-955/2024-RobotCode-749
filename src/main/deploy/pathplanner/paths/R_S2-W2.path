@@ -8,20 +8,20 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 1.8388098033474087,
-        "y": 5.03
+        "x": 1.8363768205328013,
+        "y": 5.064793275240016
       },
       "isLocked": false,
       "linkedName": "Aligned R_S2"
     },
     {
       "anchor": {
-        "x": 2.2842520794211896,
-        "y": 5.203370826137577
+        "x": 2.4194469231369324,
+        "y": 5.302686133938498
       },
       "prevControl": {
-        "x": 2.058535470782732,
-        "y": 5.0829886348637325
+        "x": 2.070338568442785,
+        "y": 5.134151066155117
       },
       "nextControl": null,
       "isLocked": false,
@@ -32,8 +32,8 @@
   "constraintZones": [],
   "eventMarkers": [],
   "globalConstraints": {
-    "maxVelocity": 1.5,
-    "maxAcceleration": 1.5,
+    "maxVelocity": 2.5,
+    "maxAcceleration": 2.5,
     "maxAngularVelocity": 540.0,
     "maxAngularAcceleration": 720.0
   },

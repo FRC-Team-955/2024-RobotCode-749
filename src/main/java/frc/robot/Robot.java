@@ -126,7 +126,7 @@ public class Robot {
 //        auto.addOption("Generate", Commands.deferredProxy(() -> AutoGenerator.generateAuto(drivebase, launcher)));
         auto.addOption("Launch", launcher.launchCommand());
         auto.addDefaultOption("Launch and move", LaunchAndMove.get(drivebase, launcher));
-        auto.addOption("S2-W2", Util.buildAllianceAuto("S2-W2"));
+        auto.addOption("S2-W2-W1-W3", Util.buildAllianceAuto("S2-W2-W1-W3"));
         auto.addOption("S3-M5-M4", Util.buildAllianceAuto("S3-M5-M4"));
         return auto;
     });

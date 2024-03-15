@@ -3,45 +3,45 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 7.740574898908168,
-        "y": 2.2570166947102446
+        "x": 1.0591281617424952,
+        "y": 6.638693335610834
       },
       "prevControl": null,
       "nextControl": {
-        "x": 5.441264346167708,
-        "y": 1.7033030425473807
+        "x": 1.2136360225298766,
+        "y": 7.372605674350896
       },
       "isLocked": false,
-      "linkedName": "M4"
+      "linkedName": "R_S1"
     },
     {
       "anchor": {
-        "x": 3.213969385544303,
-        "y": 2.54593395376747
+        "x": 2.9250521264870772,
+        "y": 7.67
       },
       "prevControl": {
-        "x": 5.359956988567719,
-        "y": 1.8408237413454904
+        "x": 1.9859369098466129,
+        "y": 7.67
       },
       "nextControl": {
-        "x": 1.528618707710487,
-        "y": 3.0996920336271527
+        "x": 4.706749226535016,
+        "y": 7.67
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 1.1020276531293807,
-        "y": 4.469505827900545
+        "x": 7.7766895562903215,
+        "y": 7.385062921508666
       },
       "prevControl": {
-        "x": 1.3544347902332246,
-        "y": 3.501884705177895
+        "x": 6.7766895562903215,
+        "y": 7.385062921508666
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "B_S3"
+      "linkedName": "M1"
     }
   ],
   "rotationTargets": [],
@@ -58,8 +58,8 @@
     "rotation": 0,
     "rotateFast": false
   },
-  "reversed": false,
-  "folder": "M4",
+  "reversed": true,
+  "folder": "M1",
   "previewStartingState": {
     "rotation": 0,
     "velocity": 0
