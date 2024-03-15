@@ -5,7 +5,7 @@ import org.littletonrobotics.junction.inputs.LoggableInputs;
 
 public class IntakeIO {
     public static IntakeIOInputs inputs() {
-        // Kotlin compiles before Java, so the generated class doesn't always exist. To make this work we also have to make the inputs class abstract and implement LoggableInputs, otherwise kotlin will complain when we try to call Logger.processInputs()
+        // Kotlin compiles before Java, so the generated class doesn't always exist if we use it in Kotlin code. We also have to make the inputs class abstract and implement LoggableInputs, otherwise kotlin will complain when we try to call Logger.processInputs()
         return new IntakeIOInputsAutoLogged();
     }
 
