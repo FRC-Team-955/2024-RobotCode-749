@@ -60,6 +60,9 @@ public class Drivebase extends SubsystemBase {
     private final SimpleMotorFeedforward leftFeedforward = new SimpleMotorFeedforward(DrivebaseConstants.feedforwardLeftS, DrivebaseConstants.feedforwardLeftV);
     private final SimpleMotorFeedforward rightFeedforward = new SimpleMotorFeedforward(DrivebaseConstants.feedforwardRightS, DrivebaseConstants.feedforwardRightV);
     private final TunablePIDController driveVelocityPID = new TunablePIDController("Drivebase driveVelocity", DrivebaseConstants.velocityP, 0, DrivebaseConstants.velocityD);
+    private double lastLeftPositionMeters = 0.0;
+    private double lastRightPositionMeters = 0.0;
+    private Rotation2d yaw = new Rotation2d();
 
     private final LoggedDashboardBoolean usePoseEstimation = new LoggedDashboardBoolean("Use Pose Estimation", true);
     private final LoggedDashboardBoolean fallbackRotationRevert = new LoggedDashboardBoolean("Fallback to rotation reverting", false);
@@ -82,7 +85,7 @@ public class Drivebase extends SubsystemBase {
 
         AutoBuilder.configureLTV(
                 this::getPose,
-                (pose) -> odometry.resetPosition(gyroInputs.yaw, getLeftPositionMeters(), getRightPositionMeters(), pose),
+                (pose) -> odometry.resetPosition(yaw, getLeftPositionMeters(), getRightPositionMeters(), pose),
                 () -> kinematics.toChassisSpeeds(new DifferentialDriveWheelSpeeds(getLeftVelocityMetersPerSec(), getRightVelocityMetersPerSec())),
                 (speeds) -> {
                     var wheelSpeeds = kinematics.toWheelSpeeds(speeds);
@@ -109,7 +112,23 @@ public class Drivebase extends SubsystemBase {
         limelightIO.updateInputs(limelightInputs);
         Logger.processInputs("Inputs/Limelight", limelightInputs);
 
-        field.setRobotPose(odometry.update(gyroInputs.yaw, getLeftPositionMeters(), getRightPositionMeters()));
+        var leftPositionMeters = getLeftPositionMeters();
+        var rightPositionMeters = getRightPositionMeters();
+
+        if (gyroInputs.connected) {
+            yaw = gyroInputs.yaw;
+        } else {
+            var twist2d = kinematics.toTwist2d(
+                    leftPositionMeters - lastLeftPositionMeters,
+                    rightPositionMeters - lastRightPositionMeters
+            );
+            yaw = yaw.plus(new Rotation2d(twist2d.dtheta));
+        }
+
+        lastLeftPositionMeters = leftPositionMeters;
+        lastRightPositionMeters = rightPositionMeters;
+
+        field.setRobotPose(odometry.update(yaw, leftPositionMeters, rightPositionMeters));
 
         if (usePoseEstimation.get()) {
             if (limelightInputs.leftTv == 1)
@@ -307,7 +326,7 @@ public class Drivebase extends SubsystemBase {
     }
 
     public Command setPoseCommand(Supplier<Pose2d> newPose) {
-        return Commands.runOnce(() -> odometry.resetPosition(gyroInputs.yaw, getLeftPositionMeters(), getRightPositionMeters(), newPose.get()));
+        return Commands.runOnce(() -> odometry.resetPosition(yaw, getLeftPositionMeters(), getRightPositionMeters(), newPose.get()));
     }
 
     public Rotation2d getGyro() {
@@ -315,7 +334,10 @@ public class Drivebase extends SubsystemBase {
     }
 
     public Command resetGyroCommand() {
-        return runOnce(() -> gyroIO.setYaw(new Rotation2d())).andThen(swerveMode.swerveAngleCommand(0));
+        return runOnce(() -> {
+            gyroIO.setYaw(new Rotation2d());
+            yaw = new Rotation2d();
+        }).andThen(swerveMode.swerveAngleCommand(0));
     }
 
     @AutoLogOutput

@@ -1,5 +1,7 @@
 package frc.robot.subsystems.drivebase;
 
+import com.ctre.phoenix6.BaseStatusSignal;
+import com.ctre.phoenix6.StatusCode;
 import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.configs.Pigeon2Configuration;
 import com.ctre.phoenix6.hardware.Pigeon2;
@@ -19,6 +21,7 @@ public class GyroIOReal extends GyroIO {
 
     @Override
     public void updateInputs(GyroIOInputs inputs) {
+        inputs.connected = BaseStatusSignal.refreshAll(yaw).equals(StatusCode.OK);
         inputs.yaw = Rotation2d.fromDegrees(yaw.refresh().getValueAsDouble());
     }
 

@@ -6,6 +6,7 @@ import org.littletonrobotics.junction.AutoLog;
 public class GyroIO {
     @AutoLog
     public static class GyroIOInputs {
+        public boolean connected = true;
         public Rotation2d yaw = new Rotation2d();
     }
 
