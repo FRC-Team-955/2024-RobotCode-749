@@ -43,9 +43,7 @@ object CommandRobot : LoggedRobot() {
                 } else {
                     Logger.recordMetadata(key, value.toString())
                 }
-            } catch (e: IllegalAccessException) {
-                Logger.recordMetadata(key, "Unknown")
-            } catch (e: IllegalArgumentException) {
+            } catch (e: Exception) {
                 Logger.recordMetadata(key, "Unknown")
             }
         }
