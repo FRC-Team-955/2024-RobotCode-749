@@ -180,6 +180,6 @@ ctre_sim/
 .run/
 simgui*.json
 networktables.json
-src/main/java/frc/robot/constants/BuildConstants.java
+src/main/java/frc/robot/BuildConstants.java
 
 src/main/deploy/config/

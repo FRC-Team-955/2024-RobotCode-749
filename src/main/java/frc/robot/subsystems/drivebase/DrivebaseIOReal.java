@@ -6,23 +6,23 @@ import com.revrobotics.CANSparkMax;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import frc.robot.Constants;
 import frc.robot.Util;
-import frc.robot.constants.DrivebaseConstants;
 
 public class DrivebaseIOReal extends DrivebaseIO {
-    private final CANSparkMax leftLeader = new CANSparkMax(DrivebaseConstants.leftLeaderMotorId, CANSparkLowLevel.MotorType.kBrushed);
-    private final CANSparkMax leftFollower = new CANSparkMax(DrivebaseConstants.leftFollowerMotorId, CANSparkLowLevel.MotorType.kBrushed);
-    private final CANSparkMax rightLeader = new CANSparkMax(DrivebaseConstants.rightLeaderMotorId, CANSparkLowLevel.MotorType.kBrushed);
-    private final CANSparkMax rightFollower = new CANSparkMax(DrivebaseConstants.rightFollowerMotorId, CANSparkLowLevel.MotorType.kBrushed);
+    private final CANSparkMax leftLeader = new CANSparkMax(Constants.Drivebase.leftLeaderMotorId, CANSparkLowLevel.MotorType.kBrushed);
+    private final CANSparkMax leftFollower = new CANSparkMax(Constants.Drivebase.leftFollowerMotorId, CANSparkLowLevel.MotorType.kBrushed);
+    private final CANSparkMax rightLeader = new CANSparkMax(Constants.Drivebase.rightLeaderMotorId, CANSparkLowLevel.MotorType.kBrushed);
+    private final CANSparkMax rightFollower = new CANSparkMax(Constants.Drivebase.rightFollowerMotorId, CANSparkLowLevel.MotorType.kBrushed);
 
     private final Encoder leftEncoder = Util.make(() -> {
-        var encoder = new Encoder(DrivebaseConstants.leftEncoderChannelA, DrivebaseConstants.leftEncoderChannelB);
-        encoder.setDistancePerPulse(DrivebaseConstants.encoderDistancePerPulse);
+        var encoder = new Encoder(Constants.Drivebase.leftEncoderChannelA, Constants.Drivebase.leftEncoderChannelB);
+        encoder.setDistancePerPulse(Constants.Drivebase.encoderDistancePerPulse);
         return encoder;
     });
     private final Encoder rightEncoder = Util.make(() -> {
-        var encoder = new Encoder(DrivebaseConstants.rightEncoderChannelA, DrivebaseConstants.rightEncoderChannelB);
-        encoder.setDistancePerPulse(DrivebaseConstants.encoderDistancePerPulse);
+        var encoder = new Encoder(Constants.Drivebase.rightEncoderChannelA, Constants.Drivebase.rightEncoderChannelB);
+        encoder.setDistancePerPulse(Constants.Drivebase.encoderDistancePerPulse);
         encoder.setReverseDirection(true);
         return encoder;
     });

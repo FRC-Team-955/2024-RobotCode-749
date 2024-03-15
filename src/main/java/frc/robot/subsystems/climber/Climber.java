@@ -3,8 +3,8 @@ package frc.robot.subsystems.climber;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import frc.robot.Constants;
 import frc.robot.commands.Controller;
-import frc.robot.constants.ClimberConstants;
 import org.littletonrobotics.junction.Logger;
 
 import java.util.function.Supplier;
@@ -18,7 +18,7 @@ public class Climber extends SubsystemBase {
     private final ClimberIO io;
     private final ClimberIOInputsAutoLogged inputs = new ClimberIOInputsAutoLogged();
 
-    private double ropeLeft = ClimberConstants.ropeLength;
+    private double ropeLeft = Constants.Climber.ropeLength;
 
     public Climber(CommandXboxController operatorController, String name, Supplier<ClimberIO> realIO) {
         this.operatorController = operatorController;
@@ -31,7 +31,7 @@ public class Climber extends SubsystemBase {
         io.updateInputs(inputs);
         Logger.processInputs("Inputs/" + name, inputs);
 
-        ropeLeft = ClimberConstants.ropeLength - (Math.abs(inputs.positionRad) / ClimberConstants.spoolDiameter);
+        ropeLeft = Constants.Climber.ropeLength - (Math.abs(inputs.positionRad) / Constants.Climber.spoolDiameter);
         Logger.recordOutput(name + "/RopeLeft", ropeLeft);
     }
 
@@ -64,7 +64,7 @@ public class Climber extends SubsystemBase {
 
         @Override
         public void initialize() {
-            if (direction == limitDirection() && ropeLeft <= ClimberConstants.ropeLeftThreshold)
+            if (direction == limitDirection() && ropeLeft <= Constants.Climber.ropeLeftThreshold)
                 error();
             else
                 io.set(direction.speed * 12.0);
@@ -72,7 +72,7 @@ public class Climber extends SubsystemBase {
 
         @Override
         public void execute() {
-            if (direction == limitDirection() && ropeLeft <= ClimberConstants.ropeLeftThreshold)
+            if (direction == limitDirection() && ropeLeft <= Constants.Climber.ropeLeftThreshold)
                 error();
         }
 

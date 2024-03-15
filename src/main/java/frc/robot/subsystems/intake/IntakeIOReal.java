@@ -5,11 +5,11 @@ import com.revrobotics.CANSparkLowLevel;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
 import edu.wpi.first.math.util.Units;
-import frc.robot.constants.IntakeConstants;
+import frc.robot.Constants;
 
 public class IntakeIOReal extends IntakeIO {
-    private final CANSparkMax pivot = new CANSparkMax(IntakeConstants.pivotMotorId, CANSparkLowLevel.MotorType.kBrushless);
-    private final CANSparkMax driver = new CANSparkMax(IntakeConstants.driverMotorId, CANSparkLowLevel.MotorType.kBrushless);
+    private final CANSparkMax pivot = new CANSparkMax(Constants.Intake.pivotMotorId, CANSparkLowLevel.MotorType.kBrushless);
+    private final CANSparkMax driver = new CANSparkMax(Constants.Intake.driverMotorId, CANSparkLowLevel.MotorType.kBrushless);
 
     private final RelativeEncoder pivotEncoder = pivot.getEncoder();
 
@@ -36,7 +36,7 @@ public class IntakeIOReal extends IntakeIO {
 
     @Override
     public void updateInputs(IntakeIOInputs inputs) {
-        inputs.pivotPositionRad = Units.rotationsToRadians(pivotEncoder.getPosition() / IntakeConstants.pivotGearRatio);
+        inputs.pivotPositionRad = Units.rotationsToRadians(pivotEncoder.getPosition() / Constants.Intake.pivotGearRatio);
         inputs.pivotVelocityRadPerSec = Units.rotationsPerMinuteToRadiansPerSecond(pivotEncoder.getVelocity());
         inputs.pivotAppliedVolts = pivot.getAppliedOutput() * pivot.getBusVoltage();
         inputs.pivotCurrentAmps = pivot.getOutputCurrent();

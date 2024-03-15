@@ -3,11 +3,11 @@ package frc.robot.subsystems.launcher;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.TalonSRXConfiguration;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
-import frc.robot.constants.LauncherConstants;
+import frc.robot.Constants;
 
 public class LauncherIOReal extends LauncherIO {
-    private final WPI_TalonSRX top = new WPI_TalonSRX(LauncherConstants.topMotorId);
-    private final WPI_TalonSRX bottom = new WPI_TalonSRX(LauncherConstants.bottomMotorId);
+    private final WPI_TalonSRX top = new WPI_TalonSRX(Constants.Launcher.topMotorId);
+    private final WPI_TalonSRX bottom = new WPI_TalonSRX(Constants.Launcher.bottomMotorId);
 
     public LauncherIOReal() {
         var config = new TalonSRXConfiguration();

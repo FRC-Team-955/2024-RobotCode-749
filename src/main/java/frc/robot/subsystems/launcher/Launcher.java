@@ -4,7 +4,7 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.constants.LauncherConstants;
+import frc.robot.Constants;
 import org.littletonrobotics.junction.Logger;
 
 import static frc.robot.Util.switchMode;
@@ -26,13 +26,13 @@ public class Launcher extends SubsystemBase {
     public Command launchCommand() {
         return Commands.sequence(
                         runOnce(() -> {
-                            io.setTopVoltage(LauncherConstants.launchingSpeed * 12);
+                            io.setTopVoltage(Constants.Launcher.launchingSpeed * 12);
                             spinUpTimer.stop();
                         }),
-//                        spinUpTimer.hasElapsed(LauncherConstants.spinUpTime) ? Commands.none() : Commands.waitSeconds(LauncherConstants.spinUpTime - spinUpTimer.get()),
-                        Commands.waitSeconds(LauncherConstants.spinUpTime),
+//                        spinUpTimer.hasElapsed(Launcher.spinUpTime) ? Commands.none() : Commands.waitSeconds(Launcher.spinUpTime - spinUpTimer.get()),
+                        Commands.waitSeconds(Constants.Launcher.spinUpTime),
                         runOnce(() -> {
-                            io.setBottomVoltage(LauncherConstants.launchingSpeed * 12);
+                            io.setBottomVoltage(Constants.Launcher.launchingSpeed * 12);
                             spinUpTimer.reset();
                         }),
                         Commands.idle(this).withTimeout(1)
@@ -44,8 +44,8 @@ public class Launcher extends SubsystemBase {
     public Command intakeCommand() {
         return startEnd(
                 () -> {
-                    io.setTopVoltage(LauncherConstants.topIntakeSpeed * 12);
-                    io.setBottomVoltage(LauncherConstants.bottomIntakeSpeed * 12);
+                    io.setTopVoltage(Constants.Launcher.topIntakeSpeed * 12);
+                    io.setBottomVoltage(Constants.Launcher.bottomIntakeSpeed * 12);
                 },
                 io::stop
         ).withName("Launcher$intake");
@@ -53,7 +53,7 @@ public class Launcher extends SubsystemBase {
 
     public Command startSpinUpCommand() {
         return runOnce(() -> {
-//            io.setTopVoltage(LauncherConstants.launchingSpeed * 12);
+//            io.setTopVoltage(Launcher.launchingSpeed * 12);
             spinUpTimer.restart();
         }).withName("Launcher$startSpinUp");
     }

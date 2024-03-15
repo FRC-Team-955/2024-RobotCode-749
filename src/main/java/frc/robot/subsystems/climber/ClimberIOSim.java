@@ -2,10 +2,10 @@ package frc.robot.subsystems.climber;
 
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.wpilibj.simulation.DCMotorSim;
-import frc.robot.constants.ClimberConstants;
+import frc.robot.Constants;
 
 public class ClimberIOSim extends ClimberIO {
-    private final DCMotorSim motor = new DCMotorSim(DCMotor.getNEO(1), ClimberConstants.gearRatio, 0.0001);
+    private final DCMotorSim motor = new DCMotorSim(DCMotor.getNEO(1), Constants.Climber.gearRatio, 0.0001);
     private double appliedVolts = 0.0;
 
     @Override

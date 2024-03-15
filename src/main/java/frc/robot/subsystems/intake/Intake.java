@@ -11,8 +11,8 @@ import edu.wpi.first.wpilibj.util.Color8Bit;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants;
 import frc.robot.Util;
-import frc.robot.constants.IntakeConstants;
 import frc.robot.util.TunablePIDController;
 import org.littletonrobotics.junction.Logger;
 
@@ -23,11 +23,11 @@ public class Intake extends SubsystemBase {
     private final IntakeIOInputsAutoLogged inputs = new IntakeIOInputsAutoLogged();
 
     private final TunablePIDController pivotPID = Util.make(() -> {
-        var p = new TunablePIDController("Intake: Pivot", IntakeConstants.pivotP, 0, IntakeConstants.pivotD);
+        var p = new TunablePIDController("Intake: Pivot", Constants.Intake.pivotP, 0, Constants.Intake.pivotD);
         p.setTolerance(Units.degreesToRadians(15));
         return p;
     });
-    private final ArmFeedforward pivotFF = new ArmFeedforward(0, IntakeConstants.pivotFFg, 0, 0);
+    private final ArmFeedforward pivotFF = new ArmFeedforward(0, Constants.Intake.pivotFFg, 0, 0);
     private final MechanismLigament2d pivotMechanism = Util.make(() -> {
         var mechanism = new Mechanism2d(6, 6, new Color8Bit(Color.kGray));
         SmartDashboard.putData("Intake", mechanism);
@@ -41,10 +41,10 @@ public class Intake extends SubsystemBase {
         io.updateInputs(inputs);
         Logger.processInputs("Inputs/Intake", inputs);
 
-        pivotMechanism.setAngle(Units.radiansToDegrees(inputs.pivotPositionRad + IntakeConstants.pivotRadDown));
+        pivotMechanism.setAngle(Units.radiansToDegrees(inputs.pivotPositionRad + Constants.Intake.pivotRadDown));
 
         var pid = pivotPID.calculate(inputs.pivotPositionRad);
-        var ff = pivotFF.calculate(inputs.pivotPositionRad - IntakeConstants.pivotRadDown, inputs.pivotVelocityRadPerSec);
+        var ff = pivotFF.calculate(inputs.pivotPositionRad - Constants.Intake.pivotRadDown, inputs.pivotVelocityRadPerSec);
         Logger.recordOutput("Intake/PivotControlSignalPID", pid);
         Logger.recordOutput("Intake/PivotControlSignalFF", ff);
         if (RobotState.isEnabled() && usePivotPID) io.setPivotVoltage(pid + ff);
@@ -56,9 +56,9 @@ public class Intake extends SubsystemBase {
     }
 
     public Command intakeCommand() {
-        return pivotPIDToCommand(-IntakeConstants.pivotRadDown).andThen(
+        return pivotPIDToCommand(-Constants.Intake.pivotRadDown).andThen(
                 startEnd(
-                        () -> io.setDriverVoltage(IntakeConstants.intakeSpeed * 12),
+                        () -> io.setDriverVoltage(Constants.Intake.intakeSpeed * 12),
                         io::stopDriver
                 )
         ).withName("Intake$intake");
@@ -71,23 +71,23 @@ public class Intake extends SubsystemBase {
     public Command handoffCommand() {
         return tuckCommand().andThen(
                 startEnd(
-                        () -> io.setDriverVoltage(IntakeConstants.handoffSpeed * 12),
+                        () -> io.setDriverVoltage(Constants.Intake.handoffSpeed * 12),
                         io::stopDriver
-                ).withTimeout(IntakeConstants.handoffTimeout)
+                ).withTimeout(Constants.Intake.handoffTimeout)
         ).withName("Intake$handoff");
     }
 
     public Command ejectCommand() {
         return Commands.sequence(
                 startEnd(
-                        () -> io.setDriverVoltage(IntakeConstants.intakeSpeed * 12),
+                        () -> io.setDriverVoltage(Constants.Intake.intakeSpeed * 12),
                         io::stopDriver
-                ).withTimeout(IntakeConstants.ejectIntakeTimeout),
-                pivotPIDToCommand(-IntakeConstants.pivotRadEject),
+                ).withTimeout(Constants.Intake.ejectIntakeTimeout),
+                pivotPIDToCommand(-Constants.Intake.pivotRadEject),
                 startEnd(
-                        () -> io.setDriverVoltage(IntakeConstants.ejectSpeed * 12),
+                        () -> io.setDriverVoltage(Constants.Intake.ejectSpeed * 12),
                         io::stopDriver
-                ).withTimeout(IntakeConstants.ejectTimeout),
+                ).withTimeout(Constants.Intake.ejectTimeout),
                 tuckCommand()
         ).withName("Intake$eject");
     }

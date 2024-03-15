@@ -3,9 +3,8 @@ package frc.robot.subsystems.drivebase.commands;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import frc.robot.Constants;
 import frc.robot.Util;
-import frc.robot.constants.DrivebaseConstants;
-import frc.robot.constants.GeneralConstants;
 import frc.robot.subsystems.drivebase.Drivebase;
 import frc.robot.util.TunablePIDController;
 import org.littletonrobotics.junction.Logger;
@@ -22,7 +21,7 @@ public class SwerveMode {
     }
 
     private final TunablePIDController swerveModePID = Util.make(() -> {
-        var pid = new TunablePIDController("Swerve Mode", DrivebaseConstants.swerveModeP, 0, DrivebaseConstants.swerveModeD);
+        var pid = new TunablePIDController("Swerve Mode", Constants.Drivebase.swerveModeP, 0, Constants.Drivebase.swerveModeD);
         pid.enableContinuousInput(-180, 180);
         pid.setTolerance(3);
         return pid;
@@ -59,7 +58,7 @@ public class SwerveMode {
             var x = reverse * driverController.getLeftX();
             var y = reverse * -driverController.getLeftY();
 
-            if (Math.abs(x) > DrivebaseConstants.swerveModeDeadzone || Math.abs(y) > DrivebaseConstants.swerveModeDeadzone) {
+            if (Math.abs(x) > Constants.Drivebase.swerveModeDeadzone || Math.abs(y) > Constants.Drivebase.swerveModeDeadzone) {
                 swerveModeSetpoint = -Math.toDegrees(Math.atan2(x, y));
             }
 
@@ -72,8 +71,8 @@ public class SwerveMode {
             var speed = reverse * Util.speed(driverController);
             var rotation = swerveModePID.calculate(robotAngle);
 
-            if (GeneralConstants.useControllerDeadzone) {
-                if (Math.abs(speed) < GeneralConstants.controllerDeadzone) speed = 0;
+            if (Constants.useControllerDeadzone) {
+                if (Math.abs(speed) < Constants.controllerDeadzone) speed = 0;
             }
 
             drivebase.arcadeDrive(speed, rotation);

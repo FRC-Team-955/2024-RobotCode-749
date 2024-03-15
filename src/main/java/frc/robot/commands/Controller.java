@@ -4,7 +4,7 @@ import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
-import frc.robot.constants.GeneralConstants;
+import frc.robot.Constants;
 
 public class Controller {
     public static Command setRumble(CommandXboxController controller, double rumble, double seconds) {
@@ -17,6 +17,6 @@ public class Controller {
     }
 
     public static Command setRumbleError(CommandXboxController controller) {
-        return setRumble(controller, GeneralConstants.errorRumbleAmount, GeneralConstants.errorRumbleDuration);
+        return setRumble(controller, Constants.errorRumbleAmount, Constants.errorRumbleDuration);
     }
 }

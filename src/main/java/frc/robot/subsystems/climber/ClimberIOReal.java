@@ -4,7 +4,7 @@ import com.revrobotics.CANSparkBase;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
 import edu.wpi.first.math.util.Units;
-import frc.robot.constants.ClimberConstants;
+import frc.robot.Constants;
 
 public abstract class ClimberIOReal extends ClimberIO {
     private final CANSparkMax motor = getMotor();
@@ -26,7 +26,7 @@ public abstract class ClimberIOReal extends ClimberIO {
     public void updateInputs(ClimberIOInputs inputs) {
         inputs.appliedVolts = motor.getAppliedOutput() * motor.getBusVoltage();
         inputs.currentAmps = motor.getOutputCurrent();
-        inputs.positionRad = Units.rotationsToRadians(encoder.getPosition() / ClimberConstants.gearRatio);
+        inputs.positionRad = Units.rotationsToRadians(encoder.getPosition() / Constants.Climber.gearRatio);
     }
 
     @Override

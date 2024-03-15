@@ -4,13 +4,13 @@ import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.simulation.DifferentialDrivetrainSim;
-import frc.robot.constants.DrivebaseConstants;
+import frc.robot.Constants;
 
 public class DrivebaseIOSim extends DrivebaseIO {
     private static final DifferentialDrivetrainSim sim = DifferentialDrivetrainSim.createKitbotSim(
-            DrivebaseConstants.motor,
-            DrivebaseConstants.gearRatio,
-            DrivebaseConstants.wheelSize,
+            Constants.Drivebase.motor,
+            Constants.Drivebase.gearRatio,
+            Constants.Drivebase.wheelSize,
             null
     );
 
@@ -20,14 +20,14 @@ public class DrivebaseIOSim extends DrivebaseIO {
     @Override
     public void updateInputs(DrivebaseIOInputs inputs) {
         sim.update(0.02);
-        inputs.leftPositionRad = sim.getLeftPositionMeters() / DrivebaseConstants.wheelRadius;
-        inputs.leftVelocityRadPerSec = sim.getLeftVelocityMetersPerSecond() / DrivebaseConstants.wheelRadius;
+        inputs.leftPositionRad = sim.getLeftPositionMeters() / Constants.Drivebase.wheelRadius;
+        inputs.leftVelocityRadPerSec = sim.getLeftVelocityMetersPerSecond() / Constants.Drivebase.wheelRadius;
         inputs.leftAppliedVolts = leftAppliedVolts;
         inputs.leftLeaderCurrentAmps = sim.getLeftCurrentDrawAmps();
         inputs.leftFollowerCurrentAmps = sim.getLeftCurrentDrawAmps();
 
-        inputs.rightPositionRad = sim.getRightPositionMeters() / DrivebaseConstants.wheelRadius;
-        inputs.rightVelocityRadPerSec = sim.getRightVelocityMetersPerSecond() / DrivebaseConstants.wheelRadius;
+        inputs.rightPositionRad = sim.getRightPositionMeters() / Constants.Drivebase.wheelRadius;
+        inputs.rightVelocityRadPerSec = sim.getRightVelocityMetersPerSecond() / Constants.Drivebase.wheelRadius;
         inputs.rightAppliedVolts = rightAppliedVolts;
         inputs.rightLeaderCurrentAmps = sim.getRightCurrentDrawAmps();
         inputs.rightFollowerCurrentAmps = sim.getRightCurrentDrawAmps();

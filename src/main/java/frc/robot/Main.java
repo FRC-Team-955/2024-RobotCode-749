@@ -5,14 +5,14 @@ import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
-import frc.robot.constants.BuildConstants;
-import frc.robot.constants.GeneralConstants;
 import org.littletonrobotics.junction.LogFileUtil;
 import org.littletonrobotics.junction.LoggedRobot;
 import org.littletonrobotics.junction.Logger;
 import org.littletonrobotics.junction.networktables.NT4Publisher;
 import org.littletonrobotics.junction.wpilog.WPILOGReader;
 import org.littletonrobotics.junction.wpilog.WPILOGWriter;
+
+import java.lang.reflect.Array;
 
 public final class Main {
     public static void main(String... args) {
@@ -25,6 +25,28 @@ public final class Main {
         private Command teleopInitCommand;
 
         public CommandRobot() {
+        }
+
+        private void logConstantClass(Class<?> clazz, String parentName) {
+            var parent = (parentName != null ? parentName + "." : "");
+            for (var field : clazz.getFields()) {
+                var key = parent + clazz.getSimpleName() + "." + field.getName();
+                try {
+                    var value = field.get(null);
+                    if (value.getClass().isArray()) {
+                        for (int i = 0; i < Array.getLength(value); i++) {
+                            Logger.recordMetadata(key + "[" + i + "]", Array.get(value, i).toString());
+                        }
+                    } else {
+                        Logger.recordMetadata(key, value.toString());
+                    }
+                } catch (IllegalAccessException | IllegalArgumentException e) {
+                    Logger.recordMetadata(key, "Unknown");
+                }
+            }
+            for (var subclass : clazz.getClasses()) {
+                logConstantClass(subclass, parent + clazz.getSimpleName());
+            }
         }
 
         @Override
@@ -47,22 +69,13 @@ public final class Main {
             }
 
             // By doing this, we also initialize file constants and any other variable constants
-            for (var clazz : Robot.constantClasses) {
-                for (var field : clazz.getFields()) {
-                    var key = clazz.getSimpleName() + "." + field.getName();
-                    try {
-                        Logger.recordMetadata(key, field.get(null).toString());
-                    } catch (IllegalAccessException | IllegalArgumentException e) {
-                        Logger.recordMetadata(key, "Unknown");
-                    }
-                }
-            }
+            logConstantClass(Constants.class, null);
 
-            switch (GeneralConstants.mode) {
+            switch (Constants.mode) {
                 case REAL -> {
                     Logger.addDataReceiver(new WPILOGWriter()); // Log to a USB stick ("/U/logs")
                     Logger.addDataReceiver(new NT4Publisher()); // Log to NetworkTables
-                    SmartDashboard.putData("PowerDistribution", new PowerDistribution(GeneralConstants.pdhId, PowerDistribution.ModuleType.kRev)); // Enables power distribution logging
+                    SmartDashboard.putData("PowerDistribution", new PowerDistribution(Constants.pdhId, PowerDistribution.ModuleType.kRev)); // Enables power distribution logging
                 }
                 case SIM -> {
                     Logger.addDataReceiver(new NT4Publisher());

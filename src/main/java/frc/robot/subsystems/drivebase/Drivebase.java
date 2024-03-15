@@ -24,10 +24,9 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import frc.robot.Constants;
 import frc.robot.Util;
 import frc.robot.commands.FeedforwardCharacterization;
-import frc.robot.constants.DrivebaseConstants;
-import frc.robot.constants.GeneralConstants;
 import frc.robot.subsystems.drivebase.commands.AutoAlign;
 import frc.robot.subsystems.drivebase.commands.SwerveMode;
 import frc.robot.util.LocalADStarAK;
@@ -54,12 +53,12 @@ public class Drivebase extends SubsystemBase {
     private final LimelightIO limelightIO = ifRealElse(LimelightIOReal::new, LimelightIO::new);
     private final LimelightIOInputsAutoLogged limelightInputs = new LimelightIOInputsAutoLogged();
 
-    private final DifferentialDriveKinematics kinematics = new DifferentialDriveKinematics(DrivebaseConstants.trackWidth);
+    private final DifferentialDriveKinematics kinematics = new DifferentialDriveKinematics(Constants.Drivebase.trackWidth);
     private final DifferentialDrivePoseEstimator odometry = new DifferentialDrivePoseEstimator(kinematics, new Rotation2d(), 0.0, 0.0, new Pose2d());
     private final Field2d field = new Field2d();
-    private final SimpleMotorFeedforward leftFeedforward = new SimpleMotorFeedforward(DrivebaseConstants.feedforwardLeftS, DrivebaseConstants.feedforwardLeftV);
-    private final SimpleMotorFeedforward rightFeedforward = new SimpleMotorFeedforward(DrivebaseConstants.feedforwardRightS, DrivebaseConstants.feedforwardRightV);
-    private final TunablePIDController driveVelocityPID = new TunablePIDController("Drivebase driveVelocity", DrivebaseConstants.velocityP, 0, DrivebaseConstants.velocityD);
+    private final SimpleMotorFeedforward leftFeedforward = new SimpleMotorFeedforward(Constants.Drivebase.feedforwardLeftS, Constants.Drivebase.feedforwardLeftV);
+    private final SimpleMotorFeedforward rightFeedforward = new SimpleMotorFeedforward(Constants.Drivebase.feedforwardRightS, Constants.Drivebase.feedforwardRightV);
+    private final TunablePIDController driveVelocityPID = new TunablePIDController("Drivebase driveVelocity", Constants.Drivebase.velocityP, 0, Constants.Drivebase.velocityD);
     private double lastLeftPositionMeters = 0.0;
     private double lastRightPositionMeters = 0.0;
     private Rotation2d yaw = new Rotation2d();
@@ -238,9 +237,9 @@ public class Drivebase extends SubsystemBase {
             var speed = reverse * Util.speed(driverController);
             var rotation = -driverController.getLeftX();
 
-            if (GeneralConstants.useControllerDeadzone) {
-                if (Math.abs(speed) < GeneralConstants.controllerDeadzone) speed = 0;
-                if (Math.abs(rotation) < GeneralConstants.controllerDeadzone) rotation = 0;
+            if (Constants.useControllerDeadzone) {
+                if (Math.abs(speed) < Constants.controllerDeadzone) speed = 0;
+                if (Math.abs(rotation) < Constants.controllerDeadzone) rotation = 0;
             }
 
             arcadeDrive(speed, rotation);
@@ -269,8 +268,8 @@ public class Drivebase extends SubsystemBase {
 
             PathPlannerPath path = new PathPlannerPath(
                     bezierPoints,
-                    new PathConstraints(DrivebaseConstants.pathfindMaxSpeed, DrivebaseConstants.pathfindMaxAccel, 2 * Math.PI, 4 * Math.PI), // The constraints for this path. If using a differential drivetrain, the angular constraints have no effect.
-                    new GoalEndState(DrivebaseConstants.pathfindEndSpeed, targetPose.getRotation()) // Goal end state. You can set a holonomic rotation here. If using a differential drivetrain, the rotation will have no effect.
+                    new PathConstraints(Constants.Drivebase.pathfindMaxSpeed, Constants.Drivebase.pathfindMaxAccel, 2 * Math.PI, 4 * Math.PI), // The constraints for this path. If using a differential drivetrain, the angular constraints have no effect.
+                    new GoalEndState(Constants.Drivebase.pathfindEndSpeed, targetPose.getRotation()) // Goal end state. You can set a holonomic rotation here. If using a differential drivetrain, the rotation will have no effect.
             );
 
             path.preventFlipping = true;
@@ -342,21 +341,21 @@ public class Drivebase extends SubsystemBase {
 
     @AutoLogOutput
     public double getLeftPositionMeters() {
-        return inputs.leftPositionRad * DrivebaseConstants.wheelRadius;
+        return inputs.leftPositionRad * Constants.Drivebase.wheelRadius;
     }
 
     @AutoLogOutput
     public double getRightPositionMeters() {
-        return inputs.rightPositionRad * DrivebaseConstants.wheelRadius;
+        return inputs.rightPositionRad * Constants.Drivebase.wheelRadius;
     }
 
     @AutoLogOutput
     public double getLeftVelocityMetersPerSec() {
-        return inputs.leftVelocityRadPerSec * DrivebaseConstants.wheelRadius;
+        return inputs.leftVelocityRadPerSec * Constants.Drivebase.wheelRadius;
     }
 
     @AutoLogOutput
     public double getRightVelocityMetersPerSec() {
-        return inputs.rightVelocityRadPerSec * DrivebaseConstants.wheelRadius;
+        return inputs.rightVelocityRadPerSec * Constants.Drivebase.wheelRadius;
     }
 }

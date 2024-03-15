@@ -10,7 +10,6 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.auto.LaunchAndMove;
 import frc.robot.commands.Actions;
-import frc.robot.constants.*;
 import frc.robot.subsystems.climber.Climber;
 import frc.robot.subsystems.climber.ClimberIORealLeft;
 import frc.robot.subsystems.climber.ClimberIORealRight;
@@ -21,21 +20,12 @@ import frc.robot.util.CommandNintendoSwitchProController;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
 public class Robot {
-    private final CommandXboxController driverController = SimulationConstants.useNintendoSwitchProController ?
-            new CommandNintendoSwitchProController(GeneralConstants.driverControllerPort) :
-            new CommandXboxController(GeneralConstants.driverControllerPort);
-    private final CommandXboxController operatorController = SimulationConstants.useNintendoSwitchProController ?
-            new CommandNintendoSwitchProController(GeneralConstants.operatorControllerPort) :
-            new CommandXboxController(GeneralConstants.operatorControllerPort);
-
-    protected static final Class<?>[] constantClasses = new Class[]{
-            ClimberConstants.class,
-            DrivebaseConstants.class,
-            GeneralConstants.class,
-            LauncherConstants.class,
-            SimulationConstants.class,
-            IntakeConstants.class
-    };
+    private final CommandXboxController driverController = Constants.Simulation.useNintendoSwitchProController ?
+            new CommandNintendoSwitchProController(Constants.driverControllerPort) :
+            new CommandXboxController(Constants.driverControllerPort);
+    private final CommandXboxController operatorController = Constants.Simulation.useNintendoSwitchProController ?
+            new CommandNintendoSwitchProController(Constants.operatorControllerPort) :
+            new CommandXboxController(Constants.operatorControllerPort);
 
     /* Subsystems */
     private final Drivebase drivebase = new Drivebase(driverController);
@@ -96,10 +86,10 @@ public class Robot {
         operatorController.povUp().onTrue(intake.resetPivotCommand());
 
         // note: right and left are switched here to make it easier for the operator to control
-        operatorController.rightBumper().whileTrue(leftClimber.moveCommand(Climber.Direction.Up));
-        operatorController.rightTrigger().whileTrue(leftClimber.moveCommand(Climber.Direction.Down));
-        operatorController.leftBumper().whileTrue(rightClimber.moveCommand(Climber.Direction.Up));
-        operatorController.leftTrigger().whileTrue(rightClimber.moveCommand(Climber.Direction.Down));
+        operatorController.rightBumper().whileTrue(leftClimber.moveCommand(frc.robot.subsystems.climber.Climber.Direction.Up));
+        operatorController.rightTrigger().whileTrue(leftClimber.moveCommand(frc.robot.subsystems.climber.Climber.Direction.Down));
+        operatorController.leftBumper().whileTrue(rightClimber.moveCommand(frc.robot.subsystems.climber.Climber.Direction.Up));
+        operatorController.leftTrigger().whileTrue(rightClimber.moveCommand(frc.robot.subsystems.climber.Climber.Direction.Down));
         operatorController.povLeft().onTrue(rightClimber.resetCommand());
         operatorController.povRight().onTrue(leftClimber.resetCommand());
     }

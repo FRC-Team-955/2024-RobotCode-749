@@ -3,10 +3,10 @@ package frc.robot.subsystems.intake;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.wpilibj.simulation.DCMotorSim;
 import edu.wpi.first.wpilibj.simulation.SingleJointedArmSim;
-import frc.robot.constants.IntakeConstants;
+import frc.robot.Constants;
 
 public class IntakeIOSim extends IntakeIO {
-    private final SingleJointedArmSim pivot = new SingleJointedArmSim(DCMotor.getNEO(1), IntakeConstants.pivotGearRatio, 0.0001, 0.3, -IntakeConstants.pivotRadDown, 0, true, 0);
+    private final SingleJointedArmSim pivot = new SingleJointedArmSim(DCMotor.getNEO(1), Constants.Intake.pivotGearRatio, 0.0001, 0.3, -Constants.Intake.pivotRadDown, 0, true, 0);
     private final DCMotorSim driver = new DCMotorSim(DCMotor.getNEO(1), 1, 0.0001);
 
     private double pivotAppliedVolts = 0.0;
