@@ -17,8 +17,8 @@
     "S1",
     "S2"
   ],
-  "defaultMaxVel": 1.5,
-  "defaultMaxAccel": 1.5,
+  "defaultMaxVel": 2.5,
+  "defaultMaxAccel": 2.5,
   "defaultMaxAngVel": 540.0,
   "defaultMaxAngAccel": 720.0,
   "maxModuleSpeed": 4.5
