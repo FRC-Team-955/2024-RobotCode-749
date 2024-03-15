@@ -1,0 +1,36 @@
+{
+  "NTProvider": {
+    "types": {
+      "/FMSInfo": "FMSInfo",
+      "/Shuffleboard/Buttons/Zero pose to front of subwoofer": "Command",
+      "/Shuffleboard/Debug/Command Scheduler": "Scheduler",
+      "/Shuffleboard/Debug/Drivebase": "Subsystem",
+      "/Shuffleboard/Debug/Intake": "Subsystem",
+      "/Shuffleboard/Debug/Launcher": "Subsystem",
+      "/Shuffleboard/Debug/Left Climber": "Subsystem",
+      "/Shuffleboard/Debug/Right Climber": "Subsystem",
+      "/Shuffleboard/Tunable PID Controllers/Drivebase driveVelocity": "PIDController",
+      "/Shuffleboard/Tunable PID Controllers/Intake: Pivot": "PIDController",
+      "/Shuffleboard/Tunable PID Controllers/Swerve Mode": "PIDController",
+      "/SmartDashboard/Auto": "String Chooser",
+      "/SmartDashboard/Field": "Field2d",
+      "/SmartDashboard/Intake": "Mechanism2d"
+    },
+    "windows": {
+      "/SmartDashboard/Field": {
+        "bottom": 1476,
+        "height": 8.210550308227539,
+        "left": 150,
+        "right": 2961,
+        "top": 79,
+        "width": 16.541748046875,
+        "window": {
+          "visible": true
+        }
+      }
+    }
+  },
+  "NetworkTables Info": {
+    "visible": true
+  }
+}

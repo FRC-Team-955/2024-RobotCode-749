@@ -3,10 +3,16 @@ package frc.robot.subsystems.drivebase;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import org.littletonrobotics.junction.AutoLog;
+import org.littletonrobotics.junction.inputs.LoggableInputs;
 
 public class LimelightIO {
-    @AutoLog
-    public static class LimelightIOInputs {
+    public static LimelightIOInputs inputs() {
+        // Kotlin compiles before Java, so the generated class doesn't always exist. To make this work we also have to make the inputs class abstract and implement LoggableInputs, otherwise kotlin will complain when we try to call Logger.processInputs()
+        return new LimelightIOInputsAutoLogged();
+    }
+
+    @AutoLog // @AutoLog doesn't work with Kotlin classes, so this file has to be Java
+    public static abstract class LimelightIOInputs implements LoggableInputs {
         public long leftTv = -1;
         public Pose2d leftBotpose = noBotpose();
         public double leftBotposeTimestamp = 0.0;

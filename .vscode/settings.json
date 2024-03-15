@@ -1,3 +1,4 @@
+
 {
   "java.configuration.updateBuildConfiguration": "automatic",
   "java.server.launchMode": "Standard",
@@ -25,7 +26,5 @@
       }
     },
   ],
-  "java.test.defaultConfig": "WPIlibUnitTests",
-  "java.debug.settings.onBuildFailureProceed": true,
-  "files.autoSave": "afterDelay"
+  "java.test.defaultConfig": "WPIlibUnitTests"
 }
