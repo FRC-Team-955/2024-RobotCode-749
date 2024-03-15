@@ -19,7 +19,7 @@ object OperatorController : Controller(
     else CommandXboxController(Constants.operatorControllerPort)
 )
 
-open class Controller(private val controller: CommandXboxController) : SubsystemBase() {
+abstract class Controller(private val controller: CommandXboxController) : SubsystemBase() {
     fun setRumble(rumble: Double, seconds: Double): Command {
         return startEnd(
             {
