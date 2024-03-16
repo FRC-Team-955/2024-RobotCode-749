@@ -43,8 +43,7 @@ class DrivebaseIOSim : DrivebaseIO() {
             get() = sim.heading
 
         fun resetHeading() {
-            val pose = sim.pose
-            sim.pose = Pose2d(pose.x, pose.y, Rotation2d())
+            sim.pose = Pose2d(sim.pose.x, sim.pose.y, Rotation2d())
         }
     }
 }
