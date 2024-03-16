@@ -18,6 +18,8 @@ public class IntakeIO {
 
         public double driverAppliedVolts = 0.0;
         public double driverCurrentAmps = 0.0;
+
+        public boolean hasNote = false;
     }
 
     public void updateInputs(IntakeIOInputs inputs) {

@@ -15,6 +15,7 @@ import frc.robot.Constants
 import frc.robot.switchMode
 import frc.robot.util.TunablePIDController
 import org.littletonrobotics.junction.Logger
+import org.littletonrobotics.junction.networktables.LoggedDashboardBoolean
 
 object Intake : SubsystemBase() {
     private val io = switchMode(::IntakeIOReal, ::IntakeIOSim, ::IntakeIO)
@@ -33,6 +34,8 @@ object Intake : SubsystemBase() {
         root.append(MechanismLigament2d("Pivot", 3.0, 0.0, 4.0, Color8Bit(Color.kOrange)))
     }
     private var usePivotPID = true
+
+    private val manualIntaking = LoggedDashboardBoolean("Manual intaking", false)
 
     override fun periodic() {
         io.updateInputs(inputs)
@@ -60,8 +63,8 @@ object Intake : SubsystemBase() {
             startEnd(
                 { io.setDriverVoltage(Constants.Intake.intakeSpeed * 12) },
                 { io.stopDriver() }
-            )
         ).withName("Intake\$intake")
+            ).raceWith(Commands.waitUntil { inputs.hasNote && !manualIntaking.get() })
     }
 
     fun tuckCommand(): Command {
