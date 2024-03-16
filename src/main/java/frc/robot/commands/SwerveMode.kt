@@ -1,4 +1,4 @@
-package frc.robot.subsystems.drivebase.commands
+package frc.robot.commands
 
 import edu.wpi.first.wpilibj2.command.Command
 import edu.wpi.first.wpilibj2.command.Commands
@@ -22,14 +22,13 @@ object SwerveMode {
         pid.setTolerance(3.0)
         pid
     }
-    private var swerveModeSetpoint = 0.0
 
     fun swerveDriveCommand(): Command {
         return SwerveDriveCommand()
     }
 
     fun swerveAngleCommand(angle: Double): Command {
-        return Commands.runOnce({ swerveModeSetpoint = angle })
+        return Commands.runOnce({ swerveModePID.setpoint = angle })
     }
 
     fun swerveToAngleCommand(angle: Double): Command {
@@ -43,7 +42,7 @@ object SwerveMode {
         }
 
         override fun initialize() {
-            swerveModeSetpoint = Drivebase.gyro.degrees
+            swerveModePID.setpoint = Drivebase.gyro.degrees
         }
 
         override fun execute() {
@@ -53,11 +52,10 @@ object SwerveMode {
             val y = reverse * -DriverController.leftY
 
             if (abs(x) > Constants.Drivebase.swerveModeDeadzone || abs(y) > Constants.Drivebase.swerveModeDeadzone) {
-                swerveModeSetpoint = -Math.toDegrees(atan2(x, y))
+                swerveModePID.setpoint = -Math.toDegrees(atan2(x, y))
             }
 
-            swerveModePID.setpoint = swerveModeSetpoint
-            Logger.recordOutput("Drivebase/SwerveMode/Setpoint", swerveModeSetpoint)
+            Logger.recordOutput("Drivebase/SwerveMode/Setpoint", swerveModePID.setpoint)
 
             val robotAngle = Drivebase.gyro.degrees
             Logger.recordOutput("Drivebase/SwerveMode/Measurement", robotAngle)

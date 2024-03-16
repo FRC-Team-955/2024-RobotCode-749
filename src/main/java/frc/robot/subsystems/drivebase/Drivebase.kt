@@ -25,8 +25,8 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase
 import frc.robot.*
 import frc.robot.commands.FeedforwardCharacterization
 import frc.robot.subsystems.controller.DriverController
-import frc.robot.subsystems.drivebase.commands.AutoAlign
-import frc.robot.subsystems.drivebase.commands.SwerveMode
+import frc.robot.commands.AutoAlign
+import frc.robot.commands.SwerveMode
 import frc.robot.util.LocalADStarAK
 import frc.robot.util.TunablePIDController
 import org.littletonrobotics.junction.AutoLogOutput
@@ -74,9 +74,6 @@ object Drivebase : SubsystemBase() {
         private set
 
     init {
-        registerFieldsForAutoLogOutput(AutoAlign)
-        registerFieldsForAutoLogOutput(SwerveMode)
-
         SmartDashboard.putData("Field", field)
 
         AutoBuilder.configureLTV(
