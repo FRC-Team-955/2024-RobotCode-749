@@ -12,7 +12,6 @@ import edu.wpi.first.wpilibj2.command.Command
 import edu.wpi.first.wpilibj2.command.Commands
 import edu.wpi.first.wpilibj2.command.SubsystemBase
 import frc.robot.Constants
-import frc.robot.make
 import frc.robot.switchMode
 import frc.robot.util.TunablePIDController
 import org.littletonrobotics.junction.Logger
@@ -21,13 +20,13 @@ object Intake : SubsystemBase() {
     private val io = switchMode(::IntakeIOReal, ::IntakeIOSim, ::IntakeIO)
     private val inputs = IntakeIO.inputs()
 
-    private val pivotPID = make {
+    private val pivotPID = kotlin.run {
         val p = TunablePIDController("Intake: Pivot", Constants.Intake.pivotP, 0.0, Constants.Intake.pivotD)
         p.setTolerance(Units.degreesToRadians(15.0))
         p
     }
     private val pivotFF = ArmFeedforward(0.0, Constants.Intake.pivotFFg, 0.0, 0.0)
-    private val pivotMechanism = make {
+    private val pivotMechanism = kotlin.run {
         val mechanism = Mechanism2d(6.0, 6.0, Color8Bit(Color.kGray))
         SmartDashboard.putData("Intake", mechanism)
         val root = mechanism.getRoot("Root", 3.0, 3.0)

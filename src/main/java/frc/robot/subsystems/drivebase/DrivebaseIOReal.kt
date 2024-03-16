@@ -7,7 +7,6 @@ import edu.wpi.first.math.util.Units
 import edu.wpi.first.wpilibj.Encoder
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard
 import frc.robot.Constants
-import frc.robot.make
 
 class DrivebaseIOReal : DrivebaseIO() {
     private val leftLeader = CANSparkMax(Constants.Drivebase.leftLeaderMotorId, CANSparkLowLevel.MotorType.kBrushed)
@@ -18,12 +17,12 @@ class DrivebaseIOReal : DrivebaseIO() {
     private val rightFollower =
         CANSparkMax(Constants.Drivebase.rightFollowerMotorId, CANSparkLowLevel.MotorType.kBrushed)
 
-    private val leftEncoder = make {
+    private val leftEncoder = run {
         val encoder = Encoder(Constants.Drivebase.leftEncoderChannelA, Constants.Drivebase.leftEncoderChannelB)
         encoder.distancePerPulse = Constants.Drivebase.encoderDistancePerPulse
         encoder
     }
-    private val rightEncoder = make {
+    private val rightEncoder = run {
         val encoder =
             Encoder(Constants.Drivebase.rightEncoderChannelA, Constants.Drivebase.rightEncoderChannelB)
         encoder.distancePerPulse = Constants.Drivebase.encoderDistancePerPulse

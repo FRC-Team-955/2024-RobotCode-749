@@ -37,10 +37,6 @@ fun <T> ifRealElse(real: Supplier<T>, simAndReplay: Supplier<T>): T {
     else simAndReplay.get()
 }
 
-fun <T> make(maker: Supplier<T>): T {
-    return maker.get()
-}
-
 fun shouldFlip(): Boolean {
     return DriverStation.getAlliance().isPresent && DriverStation.getAlliance().get() == DriverStation.Alliance.Red
 }

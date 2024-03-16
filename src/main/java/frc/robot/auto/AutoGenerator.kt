@@ -10,7 +10,6 @@ import edu.wpi.first.wpilibj2.command.Command
 import edu.wpi.first.wpilibj2.command.Commands
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup
 import frc.robot.flipIfNeededNow
-import frc.robot.make
 import frc.robot.subsystems.drivebase.Drivebase
 import frc.robot.subsystems.launcher.Launcher
 import org.littletonrobotics.junction.networktables.LoggedDashboardBoolean
@@ -23,7 +22,7 @@ object AutoGenerator {
     private val messUpMidfieldLowerMiddleNote = LoggedDashboardBoolean("Auto Generator: Mess with Lower Middle", true)
     private val messUpMidfieldBottomNote = LoggedDashboardBoolean("Auto Generator: Mess with Bottom", true)
 
-    private val startingPath = make {
+    private val startingPath = run {
         val startingPoints = LoggedDashboardChooser<PathPlannerPath>("Auto Generator: Starting Point")
         startingPoints.addDefaultOption("Top", PathPlannerPath.fromPathFile("Left starting point to subwoofer"))
         startingPoints.addOption("Middle", PathPlannerPath.fromPathFile("Middle starting point to subwoofer"))

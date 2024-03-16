@@ -31,14 +31,13 @@ import org.littletonrobotics.junction.networktables.LoggedDashboardChooser
  */
 object Robot {
     init {
-        initalizeSubsystems()
-        setDefaultCommands()
+        initializeSubsystems()
         configureBindings()
         makeDebugTab()
         makeButtonsTab()
     }
 
-    private fun initalizeSubsystems() {
+    private fun initializeSubsystems() {
         registerFieldsForAutoLogOutput(
             DriverController,
             OperatorController,
@@ -48,10 +47,6 @@ object Robot {
             RightClimber,
             Intake
         )
-    }
-
-    private fun setDefaultCommands() {
-        Drivebase.defaultCommand = SwerveMode.swerveDriveCommand()
     }
 
     private fun configureBindings() {
@@ -123,7 +118,7 @@ object Robot {
         NamedCommands.registerCommand("Handoff", Intake.handoffCommand())
     }
 
-    private val autoChooser = make<LoggedDashboardChooser<Command?>> {
+    private val autoChooser = run {
         registerNamedCommands()
         val auto =
             LoggedDashboardChooser<Command?>("Auto")

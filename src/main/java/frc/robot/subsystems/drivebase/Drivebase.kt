@@ -119,6 +119,8 @@ object Drivebase : SubsystemBase() {
                 targetPose
             )
         }
+
+        defaultCommand = SwerveMode.swerveDriveCommand()
     }
 
     override fun periodic() {

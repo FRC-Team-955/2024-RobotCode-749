@@ -3,7 +3,6 @@ package frc.robot.subsystems.drivebase.commands
 import edu.wpi.first.wpilibj2.command.Command
 import edu.wpi.first.wpilibj2.command.Commands
 import frc.robot.Constants
-import frc.robot.make
 import frc.robot.subsystems.controller.DriverController
 import frc.robot.subsystems.drivebase.Drivebase
 import frc.robot.util.TunablePIDController
@@ -12,7 +11,7 @@ import kotlin.math.abs
 import kotlin.math.atan2
 
 object SwerveMode {
-    private val swerveModePID = make {
+    private val swerveModePID = run {
         val pid = TunablePIDController(
             "Swerve Mode",
             Constants.Drivebase.swerveModeP,
