@@ -85,7 +85,9 @@ object Intake : SubsystemBase() {
                 { io.setDriverVoltage(Constants.Intake.handoffSpeed * 12) },
                 { io.stopDriver() }
             ).withTimeout(Constants.Intake.handoffTimeout)
+                .alongWith(LEDs.blinkCommand(Color.kMaroon, Constants.LEDs.blinkDurationInProgress))
         ).withName("Intake\$handoff")
+            .andThen(LEDs.blinkCommand(Color.kGreen, Constants.LEDs.blinkDurationCompleted))
     }
 
     fun ejectCommand(): Command {
