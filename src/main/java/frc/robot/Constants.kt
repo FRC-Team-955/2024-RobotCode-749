@@ -89,6 +89,7 @@ object Constants {
     object Intake {
         const val pivotMotorId = 9
         const val driverMotorId = 10
+        const val limitSwitchPort = 8
 
         const val pivotGearRatio = 25.0
         val pivotRadDown = Units.degreesToRadians(195.0)

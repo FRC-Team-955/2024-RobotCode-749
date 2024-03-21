@@ -4,14 +4,19 @@ import com.revrobotics.CANSparkBase
 import com.revrobotics.CANSparkLowLevel
 import com.revrobotics.CANSparkMax
 import com.revrobotics.RelativeEncoder
+import edu.wpi.first.math.filter.Debouncer
 import edu.wpi.first.math.util.Units
+import edu.wpi.first.wpilibj.DigitalInput
 import frc.robot.Constants
+
 
 class IntakeIOReal : IntakeIO() {
     private val pivot = CANSparkMax(Constants.Intake.pivotMotorId, CANSparkLowLevel.MotorType.kBrushless)
     private val driver = CANSparkMax(Constants.Intake.driverMotorId, CANSparkLowLevel.MotorType.kBrushless)
 
-    private val pivotEncoder: RelativeEncoder = pivot.encoder
+    private val pivotEncoder = pivot.encoder
+    private val limitSwitch = DigitalInput(Constants.Intake.limitSwitchPort)
+    private var limitSwitchDebouncer = Debouncer(0.1, Debouncer.DebounceType.kBoth)
 
     init {
         pivot.restoreFactoryDefaults()
@@ -42,6 +47,8 @@ class IntakeIOReal : IntakeIO() {
 
         inputs.driverAppliedVolts = driver.appliedOutput * driver.busVoltage
         inputs.driverCurrentAmps = driver.outputCurrent
+
+        inputs.hasNote = limitSwitchDebouncer.calculate(limitSwitch.get())
     }
 
     override fun setPivotVoltage(volts: Double) {
