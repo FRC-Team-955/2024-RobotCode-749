@@ -69,7 +69,7 @@ object CommandRobot : LoggedRobot() {
 
         when (Constants.mode) {
             Constants.Mode.REAL -> {
-                Logger.addDataReceiver(WPILOGWriter()) // Log to a USB stick ("/U/logs")
+//                Logger.addDataReceiver(WPILOGWriter()) // Log to a USB stick ("/U/logs")
                 Logger.addDataReceiver(NT4Publisher()) // Log to NetworkTables
                 // Enables power distribution logging
                 SmartDashboard.putData(
