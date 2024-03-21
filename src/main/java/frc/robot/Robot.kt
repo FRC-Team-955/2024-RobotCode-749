@@ -7,15 +7,17 @@ import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard
 import edu.wpi.first.wpilibj2.command.Command
 import edu.wpi.first.wpilibj2.command.CommandScheduler
 import edu.wpi.first.wpilibj2.command.button.Trigger
+import frc.robot.commands.Actions
+import frc.robot.commands.SwerveMode
 import frc.robot.subsystems.climber.Climber
 import frc.robot.subsystems.climber.LeftClimber
 import frc.robot.subsystems.climber.RightClimber
 import frc.robot.subsystems.controller.DriverController
 import frc.robot.subsystems.controller.OperatorController
 import frc.robot.subsystems.drivebase.Drivebase
-import frc.robot.subsystems.drivebase.commands.SwerveMode
 import frc.robot.subsystems.intake.Intake
 import frc.robot.subsystems.launcher.Launcher
+import frc.robot.subsystems.leds.LEDs
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser
 
 /**
@@ -31,13 +33,6 @@ import org.littletonrobotics.junction.networktables.LoggedDashboardChooser
  */
 object Robot {
     init {
-        initializeSubsystems()
-        configureBindings()
-        makeDebugTab()
-        makeButtonsTab()
-    }
-
-    private fun initializeSubsystems() {
         registerFieldsForAutoLogOutput(
             DriverController,
             OperatorController,
@@ -45,8 +40,14 @@ object Robot {
             Launcher,
             LeftClimber,
             RightClimber,
-            Intake
+            Intake,
+            LEDs,
+            Actions
         )
+
+        configureBindings()
+        makeDebugTab()
+        makeButtonsTab()
     }
 
     private fun configureBindings() {
@@ -59,7 +60,7 @@ object Robot {
         DriverController.povDown().onTrue(SwerveMode.swerveAngleCommand(180.0))
         DriverController.povRight().onTrue(SwerveMode.swerveAngleCommand(-90.0))
 
-//        DriverController.b().toggleOnTrue(actions.doSelectedActionWithoutAutoAlignCommand())
+        DriverController.b().toggleOnTrue(Actions.doSelectedActionWithoutAutoAlignCommand())
 
         //        DriverController.b().toggleOnTrue(actions.doSelectedActionCommand());
 //        DriverController.x().toggleOnTrue(actions.doSelectedActionWithoutAutoAlignCommand());
@@ -67,8 +68,8 @@ object Robot {
 //        DriverController.a().toggleOnTrue(intake.handoffCommand());
 //        DriverController.x().onTrue(Drivebase.setPoseCommand(new Pose2d(1.41, 5.58, new Rotation2d()))); // subwoofer
 //        DriverController.x().onTrue(Drivebase.setPoseCommand(new Pose2d(15.38, 0.958, Rotation2d.fromRadians(-0.9)))); // source
-//        OperatorController.y().toggleOnTrue(actions.selectActionCommand(Actions.Action.Source))
-//        OperatorController.a().toggleOnTrue(actions.selectActionCommand(Actions.Action.FrontSubwoofer))
+        OperatorController.y().toggleOnTrue(Actions.selectActionCommand(Actions.Action.Source))
+        OperatorController.a().toggleOnTrue(Actions.selectActionCommand(Actions.Action.FrontSubwoofer))
 
         //        OperatorController.x().toggleOnTrue(actions.selectActionCommand(Actions.Action.LeftSubwoofer));
 //        OperatorController.b().toggleOnTrue(actions.selectActionCommand(Actions.Action.RightSubwoofer));

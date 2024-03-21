@@ -1,4 +1,11 @@
 {
+  "HALProvider": {
+    "Other Devices": {
+      "window": {
+        "visible": false
+      }
+    }
+  },
   "NTProvider": {
     "types": {
       "/FMSInfo": "FMSInfo",
@@ -17,6 +24,16 @@
       "/SmartDashboard/Intake": "Mechanism2d"
     },
     "windows": {
+      "/Shuffleboard/Debug/Command Scheduler": {
+        "window": {
+          "visible": true
+        }
+      },
+      "/SmartDashboard/Auto": {
+        "window": {
+          "visible": true
+        }
+      },
       "/SmartDashboard/Field": {
         "bottom": 1476,
         "height": 8.210550308227539,
@@ -27,10 +44,18 @@
         "window": {
           "visible": true
         }
+      },
+      "/SmartDashboard/Intake": {
+        "window": {
+          "visible": true
+        }
       }
     }
   },
   "NetworkTables Info": {
     "visible": true
+  },
+  "NetworkTables View": {
+    "visible": false
   }
 }

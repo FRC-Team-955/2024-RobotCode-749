@@ -12,6 +12,7 @@ import edu.wpi.first.wpilibj2.command.Command
 import edu.wpi.first.wpilibj2.command.Commands
 import edu.wpi.first.wpilibj2.command.SubsystemBase
 import frc.robot.Constants
+import frc.robot.subsystems.leds.LEDs
 import frc.robot.switchMode
 import frc.robot.util.TunablePIDController
 import org.littletonrobotics.junction.Logger
@@ -63,8 +64,15 @@ object Intake : SubsystemBase() {
             startEnd(
                 { io.setDriverVoltage(Constants.Intake.intakeSpeed * 12) },
                 { io.stopDriver() }
-        ).withName("Intake\$intake")
             ).raceWith(Commands.waitUntil { inputs.hasNote && !manualIntaking.get() })
+        )
+            .raceWith(LEDs.blinkCommand(Color.kYellow, 0.2))
+            .andThen(
+                tuckCommand().alongWith(
+                    LEDs.blinkCommand(Color.kGreen, 0.2).withTimeout(1.0)
+                )
+            ) // TODO rumble driver here
+            .withName("Intake\$intake")
     }
 
     fun tuckCommand(): Command {
@@ -82,16 +90,18 @@ object Intake : SubsystemBase() {
 
     fun ejectCommand(): Command {
         return Commands.sequence(
-            startEnd(
-                { io.setDriverVoltage(Constants.Intake.intakeSpeed * 12) },
-                { io.stopDriver() }
-            ).withTimeout(Constants.Intake.ejectIntakeTimeout),
-            pivotPIDToCommand(-Constants.Intake.pivotRadEject),
-            startEnd(
-                { io.setDriverVoltage(Constants.Intake.ejectSpeed * 12) },
-                { io.stopDriver() }
-            ).withTimeout(Constants.Intake.ejectTimeout),
-            tuckCommand()
+            Commands.sequence(
+                startEnd(
+                    { io.setDriverVoltage(Constants.Intake.intakeSpeed * 12) },
+                    { io.stopDriver() }
+                ).withTimeout(Constants.Intake.ejectIntakeTimeout),
+                pivotPIDToCommand(-Constants.Intake.pivotRadEject),
+                startEnd(
+                    { io.setDriverVoltage(Constants.Intake.ejectSpeed * 12) },
+                    { io.stopDriver() }
+                ).withTimeout(Constants.Intake.ejectTimeout),
+            ).raceWith(LEDs.blinkCommand(Color.kOrange, 0.2)),
+            tuckCommand().alongWith(LEDs.blinkCommand(Color.kGreen, 0.5).withTimeout(1.0))
         ).withName("Intake\$eject")
     }
 

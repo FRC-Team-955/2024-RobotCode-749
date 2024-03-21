@@ -10,8 +10,6 @@ object Constants {
      */
     val mode = if (RobotBase.isReal()) Mode.REAL else (if (Simulation.shouldReplay) Mode.REPLAY else Mode.SIM)
 
-    val useFileConstants = mode == Mode.SIM
-
     const val driverControllerPort = 0
     const val operatorControllerPort = 1
 
@@ -116,6 +114,14 @@ object Constants {
         const val bottomIntakeSpeed = -0.2
 
         const val spinUpTime = 0.3
+    }
+
+    object LEDs {
+        const val id = 1
+        const val length = 24
+        const val lowBatteryVoltsThreshold = 11.8
+        const val endgameThreshold = 22.5
+        val debugPrint = RobotBase.isSimulation()
     }
 
     object Simulation {

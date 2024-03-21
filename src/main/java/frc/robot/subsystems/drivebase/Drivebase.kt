@@ -24,9 +24,8 @@ import edu.wpi.first.wpilibj2.command.Commands
 import edu.wpi.first.wpilibj2.command.SubsystemBase
 import frc.robot.*
 import frc.robot.commands.FeedforwardCharacterization
-import frc.robot.subsystems.controller.DriverController
-import frc.robot.commands.AutoAlign
 import frc.robot.commands.SwerveMode
+import frc.robot.subsystems.controller.DriverController
 import frc.robot.util.LocalADStarAK
 import frc.robot.util.TunablePIDController
 import org.littletonrobotics.junction.AutoLogOutput

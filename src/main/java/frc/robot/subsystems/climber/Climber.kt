@@ -1,10 +1,12 @@
 package frc.robot.subsystems.climber
 
+import edu.wpi.first.wpilibj.util.Color
 import edu.wpi.first.wpilibj2.command.Command
 import edu.wpi.first.wpilibj2.command.SubsystemBase
 import frc.robot.Constants
 import frc.robot.subsystems.climber.ClimberIO.ClimberIOInputs
 import frc.robot.subsystems.controller.OperatorController
+import frc.robot.subsystems.leds.LEDs
 import frc.robot.switchMode
 import org.littletonrobotics.junction.Logger
 import java.util.function.Supplier
@@ -68,6 +70,7 @@ open class Climber(
 
         private fun error() {
             OperatorController.setRumbleError().schedule()
+            LEDs.blinkCommand(Color.kRed, 0.2).withTimeout(1.0).schedule()
             cancel()
         }
     }

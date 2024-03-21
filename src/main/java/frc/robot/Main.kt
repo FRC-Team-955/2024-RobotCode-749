@@ -3,12 +3,14 @@ package frc.robot
 
 import edu.wpi.first.hal.FRCNetComm
 import edu.wpi.first.hal.HAL
+import edu.wpi.first.wpilibj.DriverStation
 import edu.wpi.first.wpilibj.PowerDistribution
 import edu.wpi.first.wpilibj.RobotBase
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard
 import edu.wpi.first.wpilibj.util.WPILibVersion
 import edu.wpi.first.wpilibj2.command.Command
 import edu.wpi.first.wpilibj2.command.CommandScheduler
+import frc.robot.subsystems.leds.LEDs
 import org.littletonrobotics.junction.LogFileUtil
 import org.littletonrobotics.junction.LoggedRobot
 import org.littletonrobotics.junction.Logger
@@ -95,6 +97,8 @@ object CommandRobot : LoggedRobot() {
 
         Logger.start()
 
+        DriverStation.silenceJoystickConnectionWarning(true)
+
         // Report the use of the Kotlin Language for "FRC Usage Report" statistics
         HAL.report(
             FRCNetComm.tResourceType.kResourceType_Language,
@@ -116,6 +120,13 @@ object CommandRobot : LoggedRobot() {
     override fun autonomousInit() {
         autonomousCommand = Robot.getAutonomousCommand()
         autonomousCommand?.schedule()
+        LEDs.autoFinished = false
+    }
+
+    override fun autonomousPeriodic() {
+        if (autonomousCommand?.isScheduled == false) {
+            LEDs.autoFinished = true
+        }
     }
 
     override fun autonomousExit() {

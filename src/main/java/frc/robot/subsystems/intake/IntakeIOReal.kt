@@ -48,7 +48,7 @@ class IntakeIOReal : IntakeIO() {
         inputs.driverAppliedVolts = driver.appliedOutput * driver.busVoltage
         inputs.driverCurrentAmps = driver.outputCurrent
 
-        inputs.hasNote = limitSwitchDebouncer.calculate(limitSwitch.get())
+//        inputs.hasNote = limitSwitchDebouncer.calculate(limitSwitch.get())
     }
 
     override fun setPivotVoltage(volts: Double) {
