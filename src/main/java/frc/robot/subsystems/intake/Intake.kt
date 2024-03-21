@@ -64,7 +64,7 @@ object Intake : SubsystemBase() {
             startEnd(
                 { io.setDriverVoltage(Constants.Intake.intakeSpeed * 12) },
                 { io.stopDriver() }
-            ).raceWith(Commands.waitUntil { inputs.hasNote && !manualIntaking.get() })
+            ).until { inputs.hasNote && !manualIntaking.get() }
         )
             .raceWith(LEDs.blinkCommand(Color.kYellow, Constants.LEDs.blinkDurationInProgress))
             .andThen(
