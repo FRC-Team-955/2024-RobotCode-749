@@ -1,10 +1,12 @@
 package frc.robot.subsystems.launcher
 
 import edu.wpi.first.wpilibj.Timer
+import edu.wpi.first.wpilibj.util.Color
 import edu.wpi.first.wpilibj2.command.Command
 import edu.wpi.first.wpilibj2.command.Commands
 import edu.wpi.first.wpilibj2.command.SubsystemBase
 import frc.robot.Constants
+import frc.robot.subsystems.leds.LEDs
 import frc.robot.switchMode
 import org.littletonrobotics.junction.Logger
 
@@ -35,6 +37,8 @@ object Launcher : SubsystemBase() {
             },
             Commands.idle(this).withTimeout(1.0)
         )
+            .alongWith(LEDs.blinkCommand(Color.kAqua, Constants.LEDs.blinkDurationInProgress))
+            .andThen(LEDs.blinkCommand(Color.kGreen, Constants.LEDs.blinkDurationCompleted))
             .finallyDo(Runnable { io.stop() })
             .withName("Launcher\$launch")
     }
