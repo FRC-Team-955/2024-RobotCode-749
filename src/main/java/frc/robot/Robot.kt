@@ -127,6 +127,10 @@ object Robot {
         // BROKEN
 //        auto.addOption("Generate", Commands.deferredProxy(() -> AutoGenerator.generateAuto(Drivebase, launcher)));
         auto.addOption("Launch", Launcher.launchCommand())
+        auto.addOption(
+            "Intake and Launch",
+            Intake.intakeCommand().andThen(Intake.handoffCommand(), Launcher.launchCommand())
+        )
 //        auto.addDefaultOption("Launch and move", LaunchAndMove.get(Drivebase, launcher))
 //        auto.addOption("S2-W2-W1-W3", buildAllianceAuto("S2-W2-W1-W3"))
 //        auto.addOption("S3-M5-M4", buildAllianceAuto("S3-M5-M4"))

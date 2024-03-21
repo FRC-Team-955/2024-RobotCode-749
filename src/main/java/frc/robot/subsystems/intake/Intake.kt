@@ -66,10 +66,10 @@ object Intake : SubsystemBase() {
                 { io.stopDriver() }
             ).raceWith(Commands.waitUntil { inputs.hasNote && !manualIntaking.get() })
         )
-            .raceWith(LEDs.blinkCommand(Color.kYellow, 0.2))
+            .raceWith(LEDs.blinkCommand(Color.kYellow, Constants.LEDs.blinkDurationInProgress))
             .andThen(
                 tuckCommand().alongWith(
-                    LEDs.blinkCommand(Color.kGreen, 0.2).withTimeout(1.0)
+                    LEDs.blinkCommand(Color.kGreen, Constants.LEDs.blinkDurationCompleted).withTimeout(1.0)
                 )
             ) // TODO rumble driver here
             .withName("Intake\$intake")
@@ -100,8 +100,8 @@ object Intake : SubsystemBase() {
                     { io.setDriverVoltage(Constants.Intake.ejectSpeed * 12) },
                     { io.stopDriver() }
                 ).withTimeout(Constants.Intake.ejectTimeout),
-            ).raceWith(LEDs.blinkCommand(Color.kOrange, 0.2)),
-            tuckCommand().alongWith(LEDs.blinkCommand(Color.kGreen, 0.5).withTimeout(1.0))
+            ).raceWith(LEDs.blinkCommand(Color.kOrange, Constants.LEDs.blinkDurationInProgress)),
+            tuckCommand().alongWith(LEDs.blinkCommand(Color.kGreen, Constants.LEDs.blinkDurationCompleted).withTimeout(1.0))
         ).withName("Intake\$eject")
     }
 

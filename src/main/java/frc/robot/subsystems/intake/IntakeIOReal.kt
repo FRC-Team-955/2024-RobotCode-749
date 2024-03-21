@@ -3,7 +3,6 @@ package frc.robot.subsystems.intake
 import com.revrobotics.CANSparkBase
 import com.revrobotics.CANSparkLowLevel
 import com.revrobotics.CANSparkMax
-import com.revrobotics.RelativeEncoder
 import edu.wpi.first.math.filter.Debouncer
 import edu.wpi.first.math.util.Units
 import edu.wpi.first.wpilibj.DigitalInput

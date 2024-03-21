@@ -4,7 +4,6 @@ import edu.wpi.first.wpilibj2.command.Command
 import edu.wpi.first.wpilibj2.command.Commands
 import frc.robot.subsystems.controller.DriverController
 import frc.robot.subsystems.controller.OperatorController
-import frc.robot.subsystems.drivebase.Drivebase
 import frc.robot.subsystems.intake.Intake
 import frc.robot.subsystems.launcher.Launcher
 import org.littletonrobotics.junction.AutoLogOutput
@@ -12,15 +11,19 @@ import java.util.*
 
 object Actions {
     @AutoLogOutput(key = "SelectedAction")
-    private var selectedAction = Action.None
+    var selectedAction = Action.None
+        private set
 
     @AutoLogOutput(key = "PrevSelectedAction")
-    private var prevSelectedAction = Action.None
+    var prevSelectedAction = Action.None
+        private set
 
     private fun commandForAction(): Command {
         return when (selectedAction) {
             Action.Source -> Launcher.intakeCommand()
-            Action.FrontSubwoofer, Action.LeftSubwoofer, Action.RightSubwoofer -> Intake.handoffCommand().andThen(Launcher.launchCommand())
+            Action.FrontSubwoofer, Action.LeftSubwoofer, Action.RightSubwoofer ->
+                Intake.handoffCommand().andThen(Launcher.launchCommand())
+
             else -> Commands.none()
         }
     }

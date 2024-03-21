@@ -8,6 +8,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase
 import edu.wpi.first.wpilibj2.command.button.Trigger
 import frc.robot.Constants
 import frc.robot.Constants.LEDs.length
+import frc.robot.commands.Actions
 import frc.robot.subsystems.drivebase.Drivebase
 import org.littletonrobotics.junction.networktables.LoggedDashboardBoolean
 
@@ -114,9 +115,21 @@ object LEDs : SubsystemBase() {
 
     private fun teleop() {
         var reverseColor = if (Drivebase.reverseMode) Color.kRed else Color.kGreen
+        var actionColor = when (Actions.selectedAction) {
+            Actions.Action.None -> Color.kBlack
+            Actions.Action.Source -> Color.kOrange
+            Actions.Action.FrontSubwoofer, Actions.Action.LeftSubwoofer, Actions.Action.RightSubwoofer -> Color.kBlue
+        }
         if (endgameAlert)
-            stripes(Stripe(reverseColor), Stripe(Color.kYellow, 0.5))
-        else solid(reverseColor)
+            stripes(
+                Stripe(reverseColor),
+                Stripe(actionColor),
+                Stripe(Color.kYellow, 0.5)
+            )
+        else stripes(
+            Stripe(reverseColor),
+            Stripe(actionColor)
+        )
     }
 
     // LED control functions //
@@ -128,7 +141,7 @@ object LEDs : SubsystemBase() {
     }
 
     private fun blink(color: Color, duration: Double) {
-        blink(color, Color.kBlack, duration)
+        blink(color, Color.kBlack, duration / 2)
     }
 
     fun blinkCommand(color: Color, duration: Double): Command {
@@ -157,7 +170,8 @@ object LEDs : SubsystemBase() {
             val end = stripeSize * (i + 1)
             for (j in start..<end) {
                 val color =
-                    if (stripe.blinkDuration != null && Timer.getFPGATimestamp() % (stripe.blinkDuration * 2) > stripe.blinkDuration) Color.kBlack
+                    // blinkDuration is divided by 2 so it doesn't need to be multiplied by 2
+                    if (stripe.blinkDuration != null && Timer.getFPGATimestamp() % (stripe.blinkDuration) > stripe.blinkDuration / 2) Color.kBlack
                     else stripe.color
                 buffer.setLED((j + offset) % length, color)
             }

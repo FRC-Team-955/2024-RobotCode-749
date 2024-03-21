@@ -122,6 +122,9 @@ object Constants {
         const val lowBatteryVoltsThreshold = 11.8
         const val endgameThreshold = 22.5
         val debugPrint = RobotBase.isSimulation()
+
+        const val blinkDurationInProgress = 0.2
+        const val blinkDurationCompleted = 0.1
     }
 
     object Simulation {

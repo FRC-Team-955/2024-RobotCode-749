@@ -70,7 +70,7 @@ open class Climber(
 
         private fun error() {
             OperatorController.setRumbleError().schedule()
-            LEDs.blinkCommand(Color.kRed, 0.2).withTimeout(1.0).schedule()
+            LEDs.blinkCommand(Color.kRed, Constants.LEDs.blinkDurationInProgress).withTimeout(1.0).schedule()
             cancel()
         }
     }
