@@ -119,9 +119,9 @@ object Constants {
     object LEDs {
         const val id = 1
         const val length = 24
-        const val lowBatteryVoltsThreshold = 11.8
-        const val endgameThreshold = 22.5
-        val debugPrint = RobotBase.isSimulation()
+        const val lowBatteryVoltsThreshold = 12.4
+        const val endgameThreshold = 25
+        val debugMechanism = RobotBase.isSimulation()
 
         const val blinkDurationInProgress = 0.2
         const val blinkDurationCompleted = 0.1

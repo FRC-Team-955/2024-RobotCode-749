@@ -13,36 +13,33 @@ import java.util.*
 import java.util.function.Supplier
 
 object AutoAlign {
-    fun rightSubwooferCommand(boundsCheck: Boolean): Optional<Command> {
+    fun rightSubwooferCommand(): Optional<Command> {
         // Need to swap right and left on red
         val targetPose = Supplier { if (shouldFlip()) GeometryUtil.flipFieldPose(leftSubwoofer) else rightSubwoofer }
         return getAutoAlignCommand(
             targetPose,
-            boundsCheck,
             *subwooferBounds
         ).map { c: Command -> c.withName("AutoAlign\$rightSubwoofer") }
     }
 
-    fun leftSubwooferCommand(boundsCheck: Boolean): Optional<Command> {
+    fun leftSubwooferCommand(): Optional<Command> {
         // Need to swap right and left on red
         val targetPose = Supplier { if (shouldFlip()) GeometryUtil.flipFieldPose(rightSubwoofer) else leftSubwoofer }
         return getAutoAlignCommand(
             targetPose,
-            boundsCheck,
             *subwooferBounds
         ).map { c: Command -> c.withName("AutoAlign\$leftSubwoofer") }
     }
 
-    fun frontSubwooferCommand(boundsCheck: Boolean): Optional<Command> {
+    fun frontSubwooferCommand(): Optional<Command> {
         val targetPose = flipIfNeeded(frontSubwoofer)
         return getAutoAlignCommand(
             targetPose,
-            boundsCheck,
             *subwooferBounds
         ).map { c: Command -> c.withName("AutoAlign\$frontSubwoofer") }
     }
 
-    fun sourceCommand(boundsCheck: Boolean): Optional<Command> {
+    fun sourceCommand(): Optional<Command> {
         val targetPose = flipIfNeeded(source)
         val bounds = Rect2d(
             Pose2d(10.9, 0.2, Rotation2d()),
@@ -50,17 +47,14 @@ object AutoAlign {
         )
         return getAutoAlignCommand(
             targetPose,
-            boundsCheck,
             bounds
         ).map { c: Command -> c.withName("AutoAlign\$source") }
     }
 
     private fun getAutoAlignCommand(
         targetPose: Supplier<Pose2d>,
-        boundsCheck: Boolean,
         vararg bounds: Rect2d
     ): Optional<Command> {
-        if (!boundsCheck) return Optional.of(Drivebase.pathfindCommand(targetPose))
         for (bound in bounds) {
             if (flipIfNeededNow(bound).contains(Drivebase.pose)) return Optional.of(
                 Drivebase.pathfindCommand(targetPose)

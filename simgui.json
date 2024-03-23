@@ -8,6 +8,8 @@
   },
   "NTProvider": {
     "types": {
+      "/AdvantageKit/RealOutputs/Intake/Mechanism": "Mechanism2d",
+      "/AdvantageKit/RealOutputs/LEDs/Mechanism": "Mechanism2d",
       "/FMSInfo": "FMSInfo",
       "/Shuffleboard/Buttons/Zero pose to front of subwoofer": "Command",
       "/Shuffleboard/Debug/Command Scheduler": "Scheduler",
@@ -21,7 +23,8 @@
       "/Shuffleboard/Tunable PID Controllers/Swerve Mode": "PIDController",
       "/SmartDashboard/Auto": "String Chooser",
       "/SmartDashboard/Field": "Field2d",
-      "/SmartDashboard/Intake": "Mechanism2d"
+      "/SmartDashboard/Intake": "Mechanism2d",
+      "/SmartDashboard/LEDs": "Mechanism2d"
     },
     "windows": {
       "/Shuffleboard/Debug/Command Scheduler": {
@@ -46,6 +49,11 @@
         }
       },
       "/SmartDashboard/Intake": {
+        "window": {
+          "visible": true
+        }
+      },
+      "/SmartDashboard/LEDs": {
         "window": {
           "visible": true
         }

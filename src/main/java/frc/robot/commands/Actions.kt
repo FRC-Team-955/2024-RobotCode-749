@@ -28,13 +28,13 @@ object Actions {
         }
     }
 
-    private fun autoAlignForAction(boundsCheck: Boolean): Optional<Command> {
+    private fun autoAlignForAction(): Optional<Command> {
         return when (selectedAction) {
-            Action.Source -> AutoAlign.sourceCommand(boundsCheck)
-            Action.FrontSubwoofer -> AutoAlign.frontSubwooferCommand(boundsCheck)
-            Action.LeftSubwoofer -> AutoAlign.leftSubwooferCommand(boundsCheck)
-            Action.RightSubwoofer -> AutoAlign.rightSubwooferCommand(boundsCheck)
-            else -> Optional.empty<Command>()
+            Action.Source -> AutoAlign.sourceCommand()
+            Action.FrontSubwoofer -> AutoAlign.frontSubwooferCommand()
+            Action.LeftSubwoofer -> AutoAlign.leftSubwooferCommand()
+            Action.RightSubwoofer -> AutoAlign.rightSubwooferCommand()
+            else -> Optional.empty()
         }
     }
 
@@ -80,18 +80,9 @@ object Actions {
     fun doSelectedActionCommand(): Command {
         return Commands.deferredProxy {
             checkForNone().orElse(
-                autoAlignForAction(true)
-                    .map<Command> { command: Command -> command.andThen(commandForAction()) as Command }
+                autoAlignForAction()
+                    .map { command: Command -> command.andThen(commandForAction()) as Command }
                     .orElse(DriverController.setRumbleError())
-            )
-        }
-    }
-
-    fun doSelectedActionWithoutBoundsCheckCommand(): Command {
-        return Commands.deferredProxy {
-            checkForNone().orElse(
-                autoAlignForAction(false).orElse(Commands.print("No command even with bounds check disabled!"))
-                    .andThen(commandForAction())
             )
         }
     }

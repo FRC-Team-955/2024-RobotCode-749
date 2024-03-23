@@ -7,17 +7,23 @@ import frc.robot.Constants
 import frc.robot.subsystems.climber.ClimberIO.ClimberIOInputs
 import frc.robot.subsystems.controller.OperatorController
 import frc.robot.subsystems.leds.LEDs
+import frc.robot.subsystems.leds.patterns.Blink
+import frc.robot.subsystems.leds.patterns.Solid
+import frc.robot.subsystems.leds.patterns.Split
+import frc.robot.subsystems.leds.rainbowBothSides
+import frc.robot.subsystems.leds.withLEDs
 import frc.robot.switchMode
 import org.littletonrobotics.junction.Logger
 import java.util.function.Supplier
 import kotlin.math.abs
 
-object LeftClimber : Climber("ClimberLeft", ::ClimberIORealLeft)
-object RightClimber : Climber("ClimberRight", ::ClimberIORealRight)
+object LeftClimber : Climber("ClimberLeft", ::ClimberIORealLeft, true)
+object RightClimber : Climber("ClimberRight", ::ClimberIORealRight, false)
 
 open class Climber(
     private val name: String,
-    realIO: Supplier<ClimberIO>
+    realIO: Supplier<ClimberIO>,
+    private val isLeft: Boolean
 ) : SubsystemBase() {
     private val io =
         switchMode(realIO, ::ClimberIOSim, ::ClimberIO)
@@ -34,11 +40,21 @@ open class Climber(
     }
 
     fun moveCommand(direction: Direction): Command {
-        return MoveClimberCommand(direction)
+        return MoveClimberCommand(direction).let {
+            if (direction == Direction.Down)
+                it.withLEDs(rainbowBothSides(0.25, true), null)
+            else
+                it
+        }
     }
 
     fun resetCommand(): Command {
+        val patterns = listOf(
+            Blink(Solid(Color.kRed), Constants.LEDs.blinkDurationCompleted),
+            Solid(Color.kBlack)
+        )
         return runOnce { io.resetPosition() }
+            .withLEDs(null, Split(if (isLeft) patterns else patterns.reversed()))
     }
 
     enum class Direction(val speed: Double) {
@@ -70,7 +86,9 @@ open class Climber(
 
         private fun error() {
             OperatorController.setRumbleError().schedule()
-            LEDs.blinkCommand(Color.kRed, Constants.LEDs.blinkDurationInProgress).withTimeout(1.0).schedule()
+            LEDs.setPatternCommand(Blink(Solid(Color.kRed), Constants.LEDs.blinkDurationInProgress))
+                .withTimeout(0.5)
+                .schedule()
             cancel()
         }
     }

@@ -11,8 +11,10 @@ import edu.wpi.first.wpilibj.util.Color8Bit
 import edu.wpi.first.wpilibj2.command.Command
 import edu.wpi.first.wpilibj2.command.Commands
 import edu.wpi.first.wpilibj2.command.SubsystemBase
+import edu.wpi.first.wpilibj2.command.button.Trigger
 import frc.robot.Constants
-import frc.robot.subsystems.leds.LEDs
+import frc.robot.subsystems.controller.DriverController
+import frc.robot.subsystems.leds.withLEDs
 import frc.robot.switchMode
 import frc.robot.util.TunablePIDController
 import org.littletonrobotics.junction.Logger
@@ -28,9 +30,12 @@ object Intake : SubsystemBase() {
         p
     }
     private val pivotFF = ArmFeedforward(0.0, Constants.Intake.pivotFFg, 0.0, 0.0)
-    private val pivotMechanism = kotlin.run {
+    private val mechanism = kotlin.run {
         val mechanism = Mechanism2d(6.0, 6.0, Color8Bit(Color.kGray))
         SmartDashboard.putData("Intake", mechanism)
+        mechanism
+    }
+    private val mechanismLigament = kotlin.run {
         val root = mechanism.getRoot("Root", 3.0, 3.0)
         root.append(MechanismLigament2d("Pivot", 3.0, 0.0, 4.0, Color8Bit(Color.kOrange)))
     }
@@ -38,12 +43,17 @@ object Intake : SubsystemBase() {
 
     private val manualIntaking = LoggedDashboardBoolean("Manual intaking", false)
 
+    init {
+        Trigger { inputs.hasNote }
+            .onTrue(DriverController.setRumble(0.5, 0.5))
+    }
+
     override fun periodic() {
         io.updateInputs(inputs)
         Logger.processInputs("Inputs/Intake", inputs)
 
-        pivotMechanism.angle =
-            Units.radiansToDegrees(inputs.pivotPositionRad + Constants.Intake.pivotRadDown)
+        mechanismLigament.angle = Units.radiansToDegrees(inputs.pivotPositionRad + Constants.Intake.pivotRadDown)
+        Logger.recordOutput("Intake/Mechanism", mechanism)
 
         val pid = pivotPID.calculate(inputs.pivotPositionRad)
         val ff = pivotFF.calculate(
@@ -60,18 +70,15 @@ object Intake : SubsystemBase() {
     }
 
     fun intakeCommand(): Command {
-        return pivotPIDToCommand(-Constants.Intake.pivotRadDown).andThen(
+        return Commands.sequence(
+            pivotPIDToCommand(-Constants.Intake.pivotRadDown),
             startEnd(
                 { io.setDriverVoltage(Constants.Intake.intakeSpeed * 12) },
                 { io.stopDriver() }
-            ).until { inputs.hasNote && !manualIntaking.get() }
+            ).until { inputs.hasNote && !manualIntaking.get() },
         )
-            .raceWith(LEDs.blinkCommand(Color.kYellow, Constants.LEDs.blinkDurationInProgress))
-            .andThen(
-                tuckCommand().alongWith(
-                    LEDs.blinkCommand(Color.kGreen, Constants.LEDs.blinkDurationCompleted).withTimeout(1.0)
-                )
-            ) // TODO rumble driver here
+            .withLEDs(Color.kYellow, Color.kGreen)
+            .andThen(tuckCommand())
             .withName("Intake\$intake")
     }
 
@@ -80,31 +87,32 @@ object Intake : SubsystemBase() {
     }
 
     fun handoffCommand(): Command {
-        return tuckCommand().andThen(
+        return Commands.sequence(
+            tuckCommand(),
             startEnd(
                 { io.setDriverVoltage(Constants.Intake.handoffSpeed * 12) },
                 { io.stopDriver() }
             ).withTimeout(Constants.Intake.handoffTimeout)
-                .alongWith(LEDs.blinkCommand(Color.kMaroon, Constants.LEDs.blinkDurationInProgress))
-        ).withName("Intake\$handoff")
-            .andThen(LEDs.blinkCommand(Color.kGreen, Constants.LEDs.blinkDurationCompleted))
+        )
+            .withLEDs(Color.kBlue, Color.kBlueViolet)
+            .withName("Intake\$handoff")
     }
 
     fun ejectCommand(): Command {
         return Commands.sequence(
-            Commands.sequence(
-                startEnd(
-                    { io.setDriverVoltage(Constants.Intake.intakeSpeed * 12) },
-                    { io.stopDriver() }
-                ).withTimeout(Constants.Intake.ejectIntakeTimeout),
-                pivotPIDToCommand(-Constants.Intake.pivotRadEject),
-                startEnd(
-                    { io.setDriverVoltage(Constants.Intake.ejectSpeed * 12) },
-                    { io.stopDriver() }
-                ).withTimeout(Constants.Intake.ejectTimeout),
-            ).raceWith(LEDs.blinkCommand(Color.kOrange, Constants.LEDs.blinkDurationInProgress)),
-            tuckCommand().alongWith(LEDs.blinkCommand(Color.kGreen, Constants.LEDs.blinkDurationCompleted).withTimeout(1.0))
-        ).withName("Intake\$eject")
+            startEnd(
+                { io.setDriverVoltage(Constants.Intake.intakeSpeed * 12) },
+                { io.stopDriver() }
+            ).withTimeout(Constants.Intake.ejectIntakeTimeout),
+            pivotPIDToCommand(-Constants.Intake.pivotRadEject),
+            startEnd(
+                { io.setDriverVoltage(Constants.Intake.ejectSpeed * 12) },
+                { io.stopDriver() }
+            ).withTimeout(Constants.Intake.ejectTimeout),
+        )
+            .withLEDs(Color.kOrange, Color.kGreen)
+            .andThen(tuckCommand())
+            .withName("Intake\$eject")
     }
 
     fun pivotSlightlyDownCommand(): Command {
@@ -116,10 +124,13 @@ object Intake : SubsystemBase() {
             {
                 usePivotPID = true
             }
-        ).withName("Intake\$pivotSlightlyDown")
+        )
+            .withLEDs(Color.kDarkRed, null)
+            .withName("Intake\$pivotSlightlyDown")
     }
 
     fun resetPivotCommand(): Command {
         return runOnce { io.resetPivotPosition() }
+            .withLEDs(null, Color.kDarkRed)
     }
 }

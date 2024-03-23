@@ -6,7 +6,7 @@ import edu.wpi.first.wpilibj2.command.Command
 import edu.wpi.first.wpilibj2.command.Commands
 import edu.wpi.first.wpilibj2.command.SubsystemBase
 import frc.robot.Constants
-import frc.robot.subsystems.leds.LEDs
+import frc.robot.subsystems.leds.withLEDs
 import frc.robot.switchMode
 import org.littletonrobotics.junction.Logger
 
@@ -37,8 +37,7 @@ object Launcher : SubsystemBase() {
             },
             Commands.idle(this).withTimeout(1.0)
         )
-            .alongWith(LEDs.blinkCommand(Color.kAqua, Constants.LEDs.blinkDurationInProgress))
-            .andThen(LEDs.blinkCommand(Color.kGreen, Constants.LEDs.blinkDurationCompleted))
+            .withLEDs(Color.kAqua, Color.kGreen)
             .finallyDo(Runnable { io.stop() })
             .withName("Launcher\$launch")
     }
@@ -50,7 +49,9 @@ object Launcher : SubsystemBase() {
                 io.setBottomVoltage(Constants.Launcher.bottomIntakeSpeed * 12)
             },
             { io.stop() }
-        ).withName("Launcher\$intake")
+        )
+            .withLEDs(Color.kOrange, null)
+            .withName("Launcher\$intake")
     }
 
     fun startSpinUpCommand(): Command {

@@ -55,6 +55,8 @@ object CommandRobot : LoggedRobot() {
     }
 
     override fun robotInit() {
+        val ledLoadingNotifier = LEDs.startLoadingNotifier()
+
         Logger.recordMetadata("* ProjectName", BuildConstants.MAVEN_NAME)
         Logger.recordMetadata("* BuildDate", BuildConstants.BUILD_DATE)
         Logger.recordMetadata("* GitSHA", BuildConstants.GIT_SHA)
@@ -110,6 +112,8 @@ object CommandRobot : LoggedRobot() {
         // Access the Robot object so that it is initialized. This will perform all our
         // button bindings, and put our autonomous chooser on the dashboard.
         registerFieldsForAutoLogOutput(Robot)
+
+        ledLoadingNotifier.stop()
     }
 
 

@@ -86,3 +86,8 @@ fun registerFieldsForAutoLogOutput(vararg roots: Any) {
         method.invoke(null, roots)
     }
 }
+
+fun IntProgression.size(): Int {
+    return if (last > first) last - first + 1
+    else first - last + 1
+}
