@@ -119,7 +119,7 @@ object Constants {
     object LEDs {
         const val id = 1
         const val length = 24
-        const val lowBatteryVoltsThreshold = 12.4
+        const val lowBatteryVoltsThreshold = 12.0
         const val endgameThreshold = 25
         val debugMechanism = RobotBase.isSimulation()
 
