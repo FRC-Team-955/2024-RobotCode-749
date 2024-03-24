@@ -210,19 +210,16 @@ object LEDs : SubsystemBase() {
 fun Command.withLEDs(
     colorInProgress: Color?,
     colorComplete: Color?,
-    showCompletedIfInterrupted: Boolean = false
 ): Command {
     return withLEDs(
         colorInProgress?.let { Blink(Solid(it), Constants.LEDs.blinkDurationInProgress) },
         colorComplete?.let { Blink(Solid(it), Constants.LEDs.blinkDurationCompleted) },
-        false
     )
 }
 
 fun Command.withLEDs(
     patternInProgress: LEDPattern?,
     patternComplete: LEDPattern?,
-    showCompletedIfInterrupted: Boolean = false
 ): Command {
     return object : WrapperCommand(this) {
         private val inProgressCommand =
@@ -247,9 +244,8 @@ fun Command.withLEDs(
         override fun end(interrupted: Boolean) {
             super.end(interrupted)
 
-            if (!DriverStation.isAutonomousEnabled())
-                if (showCompletedIfInterrupted || !interrupted)
-                    completeCommand?.schedule()
+            if (!DriverStation.isAutonomousEnabled() && !interrupted)
+                completeCommand?.schedule()
             if (inProgressCommand?.isScheduled == true)
                 inProgressCommand.cancel()
         }
