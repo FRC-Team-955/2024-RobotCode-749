@@ -117,7 +117,7 @@ object Constants {
     }
 
     object LEDs {
-        const val id = 1
+        const val id = 0
         const val length = 24
         const val lowBatteryVoltsThreshold = 12.0
         const val endgameThreshold = 25

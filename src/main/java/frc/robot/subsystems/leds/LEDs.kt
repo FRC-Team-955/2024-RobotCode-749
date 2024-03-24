@@ -98,6 +98,7 @@ object LEDs : SubsystemBase() {
     var lowBattery = false
     var endgameAlert = false
     val prideWhileDisabled = LoggedDashboardBoolean("Pride LEDs while disabled", false)
+    val ignoreLowBattery = LoggedDashboardBoolean("Ignore Low Battery Alert", false)
 
     private val lowBatteryPattern = Blink(Solid(kRed), 0.5)
     private val endgameAlertPattern = Blink(Solid(kYellow), 0.25)
@@ -107,7 +108,7 @@ object LEDs : SubsystemBase() {
     }
 
     private fun disabled() {
-        if (lowBattery) {
+        if (lowBattery && !ignoreLowBattery.get()) {
             currentPattern = lowBatteryPattern
             return
         }
@@ -153,7 +154,7 @@ object LEDs : SubsystemBase() {
                             else kBlue
                         }
                         .orElse(kGold),
-                    0.5
+                    0.4
                 )
                 Split(listOf(pattern.backwards(), pattern))
             }
@@ -189,7 +190,7 @@ object LEDs : SubsystemBase() {
 
     fun startLoadingNotifier(): Notifier {
         val notifier = Notifier {
-            Fade(kLightPink, kBlack, 1.0).periodic(
+            Fade(kPink, kBlack, 1.0).periodic(
                 0..<length,
                 BufferWrapper(buffer),
                 length,
@@ -239,14 +240,16 @@ fun Command.withLEDs(
         override fun initialize() {
             super.initialize()
 
-            inProgressCommand?.schedule()
+            if (!DriverStation.isAutonomousEnabled())
+                inProgressCommand?.schedule()
         }
 
         override fun end(interrupted: Boolean) {
             super.end(interrupted)
 
-            if (showCompletedIfInterrupted || !interrupted)
-                completeCommand?.schedule()
+            if (!DriverStation.isAutonomousEnabled())
+                if (showCompletedIfInterrupted || !interrupted)
+                    completeCommand?.schedule()
             if (inProgressCommand?.isScheduled == true)
                 inProgressCommand.cancel()
         }

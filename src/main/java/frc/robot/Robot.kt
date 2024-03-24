@@ -111,6 +111,7 @@ object Robot {
             "Zero pose to front of subwoofer",
             Drivebase.setPoseCommand(flipIfNeeded(Pose2d(1.33, 5.5, Rotation2d.fromDegrees(180.0))))
         )
+        tab.add("Zero intake", Intake.resetPivotCommand())
     }
 
     private fun registerNamedCommands() {

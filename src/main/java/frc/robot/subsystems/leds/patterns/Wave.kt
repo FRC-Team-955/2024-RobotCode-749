@@ -6,7 +6,7 @@ import frc.robot.subsystems.leds.LEDPattern
 import kotlin.math.PI
 import kotlin.math.sin
 
-private const val lengthMultiplier = 8
+private const val lengthMultiplier = 4
 private const val sinMultiplier = 2.0 / lengthMultiplier
 
 /** totalDuration is the amount of time for one cycle */
