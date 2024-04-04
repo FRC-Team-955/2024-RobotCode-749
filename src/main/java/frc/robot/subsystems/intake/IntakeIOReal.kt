@@ -7,6 +7,7 @@ import edu.wpi.first.math.filter.Debouncer
 import edu.wpi.first.math.util.Units
 import edu.wpi.first.wpilibj.DigitalInput
 import frc.robot.Constants
+import frc.robot.Robot
 
 
 class IntakeIOReal : IntakeIO() {
@@ -51,7 +52,11 @@ class IntakeIOReal : IntakeIO() {
     }
 
     override fun setPivotVoltage(volts: Double) {
-        pivot.setVoltage(volts)
+        if (!Robot.lowPowerMode.get()) {
+            pivot.setVoltage(volts)
+        } else {
+            pivot.stopMotor()
+        }
     }
 
     override fun resetPivotPosition() {
@@ -59,7 +64,11 @@ class IntakeIOReal : IntakeIO() {
     }
 
     override fun setDriverVoltage(volts: Double) {
-        driver.setVoltage(volts)
+        if (!Robot.lowPowerMode.get()) {
+            driver.setVoltage(volts)
+        }else {
+            driver.stopMotor()
+        }
     }
 
     override fun stopDriver() {

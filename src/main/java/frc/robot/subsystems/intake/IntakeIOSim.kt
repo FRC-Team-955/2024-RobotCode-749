@@ -4,6 +4,7 @@ import edu.wpi.first.math.system.plant.DCMotor
 import edu.wpi.first.wpilibj.simulation.DCMotorSim
 import edu.wpi.first.wpilibj.simulation.SingleJointedArmSim
 import frc.robot.Constants
+import frc.robot.Robot
 
 class IntakeIOSim : IntakeIO() {
     private val pivot = SingleJointedArmSim(
@@ -35,8 +36,13 @@ class IntakeIOSim : IntakeIO() {
     }
 
     override fun setPivotVoltage(volts: Double) {
-        pivotAppliedVolts = volts
-        pivot.setInputVoltage(volts)
+        if (!Robot.lowPowerMode.get()) {
+            pivotAppliedVolts = volts
+            pivot.setInputVoltage(volts)
+        } else {
+            pivotAppliedVolts = 0.0
+            pivot.setInputVoltage(0.0)
+        }
     }
 
     override fun resetPivotPosition() {
@@ -44,8 +50,13 @@ class IntakeIOSim : IntakeIO() {
     }
 
     override fun setDriverVoltage(volts: Double) {
-        driverAppliedVolts = volts
-        driver.setInputVoltage(volts)
+        if (!Robot.lowPowerMode.get()) {
+            driverAppliedVolts = volts
+            driver.setInputVoltage(volts)
+        } else {
+            driverAppliedVolts = 0.0
+            driver.setInputVoltage(0.0)
+        }
     }
 
     override fun stopDriver() {

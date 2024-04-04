@@ -4,6 +4,7 @@ import com.ctre.phoenix.motorcontrol.NeutralMode
 import com.ctre.phoenix.motorcontrol.can.TalonSRXConfiguration
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX
 import frc.robot.Constants
+import frc.robot.Robot
 
 class LauncherIOReal : LauncherIO() {
     private val top = WPI_TalonSRX(Constants.Launcher.topMotorId)
@@ -30,11 +31,19 @@ class LauncherIOReal : LauncherIO() {
     }
 
     override fun setTopVoltage(volts: Double) {
-        top.setVoltage(volts)
+        if (!Robot.lowPowerMode.get()) {
+            top.setVoltage(volts)
+        } else {
+            top.stopMotor()
+        }
     }
 
     override fun setBottomVoltage(volts: Double) {
-        bottom.setVoltage(volts)
+        if (!Robot.lowPowerMode.get()) {
+            bottom.setVoltage(volts)
+        } else {
+            bottom.stopMotor()
+        }
     }
 
     override fun stop() {
