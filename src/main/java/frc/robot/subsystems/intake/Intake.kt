@@ -37,7 +37,9 @@ object Intake : SubsystemBase() {
     }
     private val mechanismLigament = kotlin.run {
         val root = mechanism.getRoot("Root", 3.0, 3.0)
-        root.append(MechanismLigament2d("Pivot", 3.0, 0.0, 4.0, Color8Bit(Color.kOrange)))
+        val ligament = root.append(MechanismLigament2d("Pivot", 2.5, 0.0, 4.0, Color8Bit(Color.kOrange)))
+        ligament.append(MechanismLigament2d("Pivot End", 1.5, -90.0, 4.0, Color8Bit(Color.kOrange)))
+        ligament
     }
     private var usePivotPID = true
 
