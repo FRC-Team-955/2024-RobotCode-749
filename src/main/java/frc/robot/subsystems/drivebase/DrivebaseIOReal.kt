@@ -84,7 +84,7 @@ class DrivebaseIOReal : DrivebaseIO() {
     }
 
     override fun setVoltage(leftVolts: Double, rightVolts: Double) {
-        leftLeader.setVoltage(leftVolts)
-        rightLeader.setVoltage(rightVolts)
+        leftLeader.setVoltage(leftVolts / 3)
+        rightLeader.setVoltage(rightVolts / 3)
     }
 }

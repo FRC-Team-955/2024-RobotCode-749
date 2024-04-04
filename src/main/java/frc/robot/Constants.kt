@@ -92,7 +92,7 @@ object Constants {
         const val pivotGearRatio = 25.0
         val pivotRadDown = Units.degreesToRadians(195.0)
         val pivotRadEject = pivotRadDown - Units.degreesToRadians(80.0)
-        const val pivotP = 2.5
+        const val pivotP = 1.8
         const val pivotD = 0.0
         val pivotFFg = ifSimElse(0.01, 0.35)
 

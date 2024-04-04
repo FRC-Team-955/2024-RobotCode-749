@@ -52,19 +52,20 @@ object Robot {
 
     private fun configureBindings() {
         DriverController.leftBumper().onTrue(Drivebase.resetGyroCommand())
-        DriverController.rightBumper().onTrue(Drivebase.toggleReverseModeCommand())
-        DriverController.start().onTrue(Drivebase.toggleArcadeDrive())
+//        DriverController.rightBumper().onTrue(Drivebase.toggleReverseModeCommand())
+//        DriverController.start().onTrue(Drivebase.toggleArcadeDrive())
 
-        DriverController.povUp().onTrue(SwerveMode.swerveAngleCommand(0.0))
-        DriverController.povLeft().onTrue(SwerveMode.swerveAngleCommand(90.0))
-        DriverController.povDown().onTrue(SwerveMode.swerveAngleCommand(180.0))
-        DriverController.povRight().onTrue(SwerveMode.swerveAngleCommand(-90.0))
+//        DriverController.povUp().onTrue(SwerveMode.swerveAngleCommand(0.0))
+//        DriverController.povLeft().onTrue(SwerveMode.swerveAngleCommand(90.0))
+//        DriverController.povDown().onTrue(SwerveMode.swerveAngleCommand(180.0))
+//        DriverController.povRight().onTrue(SwerveMode.swerveAngleCommand(-90.0))
 
-        DriverController.b().toggleOnTrue(Actions.doSelectedActionWithoutAutoAlignCommand())
+//        DriverController.b().toggleOnTrue(Actions.doSelectedActionWithoutAutoAlignCommand())
 
         //        DriverController.b().toggleOnTrue(actions.doSelectedActionCommand());
 //        DriverController.x().toggleOnTrue(actions.doSelectedActionWithoutAutoAlignCommand());
-//        DriverController.b().toggleOnTrue(launcher.launchCommand());
+        DriverController.b().toggleOnTrue(Intake.handoffCommand().andThen(Launcher.launchCommand()));
+        DriverController.a().toggleOnTrue(Launcher.intakeCommand());
 //        DriverController.a().toggleOnTrue(intake.handoffCommand());
 //        DriverController.x().onTrue(Drivebase.setPoseCommand(new Pose2d(1.41, 5.58, new Rotation2d()))); // subwoofer
 //        DriverController.x().onTrue(Drivebase.setPoseCommand(new Pose2d(15.38, 0.958, Rotation2d.fromRadians(-0.9)))); // source
@@ -139,7 +140,8 @@ object Robot {
     }
 
     fun getAutonomousCommand(): Command? {
-        return autoChooser.get()
+        return null
+//        return autoChooser.get()
     }
 
     fun teleopInit() {
