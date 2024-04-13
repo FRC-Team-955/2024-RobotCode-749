@@ -23,6 +23,14 @@ class LauncherIOReal : LauncherIO() {
     }
 
     override fun updateInputs(inputs: LauncherIOInputs) {
+        if (Robot.lowPowerMode.get()) {
+            top.setNeutralMode(NeutralMode.Coast)
+            bottom.setNeutralMode(NeutralMode.Coast)
+        } else {
+            top.setNeutralMode(NeutralMode.Brake)
+            bottom.setNeutralMode(NeutralMode.Brake)
+        }
+
         inputs.topAppliedVolts = top.motorOutputVoltage
         inputs.topCurrentAmps = top.statorCurrent
 
