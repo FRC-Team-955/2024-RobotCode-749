@@ -74,7 +74,7 @@ class IntakeIOReal : IntakeIO() {
     override fun setDriverVoltage(volts: Double) {
         if (!Robot.lowPowerMode.get() && Intake.enableIntake.get()) {
             driver.setVoltage(volts)
-        }else {
+        } else {
             driver.stopMotor()
         }
     }

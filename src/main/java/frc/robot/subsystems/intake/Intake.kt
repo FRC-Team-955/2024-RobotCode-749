@@ -44,7 +44,7 @@ object Intake : SubsystemBase() {
     private var usePivotPID = true
 
     private val manualIntaking = LoggedDashboardBoolean("Manual intaking", false)
-    public val enableIntake = LoggedDashboardBoolean("Enable intake", false)
+    val enableIntake = LoggedDashboardBoolean("Enable intake", false)
 
     init {
         Trigger { inputs.hasNote }

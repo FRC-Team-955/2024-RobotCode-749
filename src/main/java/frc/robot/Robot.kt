@@ -8,8 +8,6 @@ import edu.wpi.first.wpilibj2.command.Command
 import edu.wpi.first.wpilibj2.command.CommandScheduler
 import edu.wpi.first.wpilibj2.command.button.Trigger
 import frc.robot.commands.Actions
-import frc.robot.commands.SwerveMode
-import frc.robot.subsystems.climber.Climber
 import frc.robot.subsystems.climber.LeftClimber
 import frc.robot.subsystems.climber.RightClimber
 import frc.robot.subsystems.controller.DriverController
@@ -67,8 +65,8 @@ object Robot {
 
         //        DriverController.b().toggleOnTrue(actions.doSelectedActionCommand());
 //        DriverController.x().toggleOnTrue(actions.doSelectedActionWithoutAutoAlignCommand());
-        DriverController.b().toggleOnTrue(Intake.handoffCommand().andThen(Launcher.launchCommand()));
-        DriverController.a().whileTrue(Launcher.intakeCommand());
+        DriverController.b().toggleOnTrue(Intake.handoffCommand().andThen(Launcher.launchCommand()))
+        DriverController.a().whileTrue(Launcher.intakeCommand())
 //        DriverController.a().toggleOnTrue(intake.handoffCommand());
 //        DriverController.x().onTrue(Drivebase.setPoseCommand(new Pose2d(1.41, 5.58, new Rotation2d()))); // subwoofer
 //        DriverController.x().onTrue(Drivebase.setPoseCommand(new Pose2d(15.38, 0.958, Rotation2d.fromRadians(-0.9)))); // source
@@ -78,7 +76,7 @@ object Robot {
         //        OperatorController.x().toggleOnTrue(actions.selectActionCommand(Actions.Action.LeftSubwoofer));
 //        OperatorController.b().toggleOnTrue(actions.selectActionCommand(Actions.Action.RightSubwoofer));
         OperatorController.b().toggleOnTrue(Intake.ejectCommand())
-        Trigger { OperatorController.rightTriggerAxis < -0.6 }
+        Trigger { OperatorController.leftTriggerAxis > 0.6 }
             .onTrue(Intake.intakeCommand())
             .onFalse(Intake.tuckCommand())
         Trigger { OperatorController.rightTriggerAxis > 0.6 }
