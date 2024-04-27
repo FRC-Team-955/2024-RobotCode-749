@@ -50,7 +50,7 @@ class IntakeIOSim : IntakeIO() {
     }
 
     override fun setDriverVoltage(volts: Double) {
-        if (!Robot.lowPowerMode.get()) {
+        if (!Robot.lowPowerMode.get() && Intake.enableIntake.get()) {
             driverAppliedVolts = volts
             driver.setInputVoltage(volts)
         } else {

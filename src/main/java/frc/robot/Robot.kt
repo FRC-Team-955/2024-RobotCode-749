@@ -68,35 +68,35 @@ object Robot {
         //        DriverController.b().toggleOnTrue(actions.doSelectedActionCommand());
 //        DriverController.x().toggleOnTrue(actions.doSelectedActionWithoutAutoAlignCommand());
         DriverController.b().toggleOnTrue(Intake.handoffCommand().andThen(Launcher.launchCommand()));
-        DriverController.a().toggleOnTrue(Launcher.intakeCommand());
+        DriverController.a().whileTrue(Launcher.intakeCommand());
 //        DriverController.a().toggleOnTrue(intake.handoffCommand());
 //        DriverController.x().onTrue(Drivebase.setPoseCommand(new Pose2d(1.41, 5.58, new Rotation2d()))); // subwoofer
 //        DriverController.x().onTrue(Drivebase.setPoseCommand(new Pose2d(15.38, 0.958, Rotation2d.fromRadians(-0.9)))); // source
-        OperatorController.y().toggleOnTrue(Actions.selectActionCommand(Actions.Action.Source))
-        OperatorController.a().toggleOnTrue(Actions.selectActionCommand(Actions.Action.FrontSubwoofer))
+//        OperatorController.y().toggleOnTrue(Actions.selectActionCommand(Actions.Action.Source))
+//        OperatorController.a().toggleOnTrue(Actions.selectActionCommand(Actions.Action.FrontSubwoofer))
 
         //        OperatorController.x().toggleOnTrue(actions.selectActionCommand(Actions.Action.LeftSubwoofer));
 //        OperatorController.b().toggleOnTrue(actions.selectActionCommand(Actions.Action.RightSubwoofer));
         OperatorController.b().toggleOnTrue(Intake.ejectCommand())
-        Trigger { OperatorController.leftY < -0.6 }
+        Trigger { OperatorController.rightTriggerAxis < -0.6 }
             .onTrue(Intake.intakeCommand())
             .onFalse(Intake.tuckCommand())
-        Trigger { OperatorController.leftY > 0.6 }
+        Trigger { OperatorController.rightTriggerAxis > 0.6 }
             .onTrue(Intake.pivotSlightlyDownCommand())
             .onFalse(Intake.tuckCommand())
         OperatorController.povUp().onTrue(Intake.resetPivotCommand())
 
         // note: right and left are switched here to make it easier for the operator to control
-        OperatorController.rightBumper()
-            .whileTrue(LeftClimber.moveCommand(Climber.Direction.Up))
-        OperatorController.rightTrigger()
-            .whileTrue(LeftClimber.moveCommand(Climber.Direction.Down))
-        OperatorController.leftBumper()
-            .whileTrue(RightClimber.moveCommand(Climber.Direction.Up))
-        OperatorController.leftTrigger()
-            .whileTrue(RightClimber.moveCommand(Climber.Direction.Down))
-        OperatorController.povLeft().onTrue(RightClimber.resetCommand())
-        OperatorController.povRight().onTrue(LeftClimber.resetCommand())
+//        OperatorController.rightBumper()
+//            .whileTrue(LeftClimber.moveCommand(Climber.Direction.Up))
+//        OperatorController.rightTrigger()
+//            .whileTrue(LeftClimber.moveCommand(Climber.Direction.Down))
+//        OperatorController.leftBumper()
+//            .whileTrue(RightClimber.moveCommand(Climber.Direction.Up))
+//        OperatorController.leftTrigger()
+//            .whileTrue(RightClimber.moveCommand(Climber.Direction.Down))
+//        OperatorController.povLeft().onTrue(RightClimber.resetCommand())
+//        OperatorController.povRight().onTrue(LeftClimber.resetCommand())
     }
 
     private fun makeDebugTab() {

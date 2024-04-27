@@ -7,6 +7,7 @@ import edu.wpi.first.math.util.Units
 import edu.wpi.first.wpilibj.Encoder
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard
 import frc.robot.Constants
+import org.littletonrobotics.junction.networktables.LoggedDashboardNumber
 
 class DrivebaseIOReal : DrivebaseIO() {
     private val leftLeader = CANSparkMax(Constants.Drivebase.leftLeaderMotorId, CANSparkLowLevel.MotorType.kBrushed)
@@ -29,6 +30,8 @@ class DrivebaseIOReal : DrivebaseIO() {
         encoder.setReverseDirection(true)
         encoder
     }
+
+    private val voltageDivider = LoggedDashboardNumber("Drivebase Voltage Divider", 3.0)
 
     init {
         leftLeader.restoreFactoryDefaults()
@@ -84,7 +87,7 @@ class DrivebaseIOReal : DrivebaseIO() {
     }
 
     override fun setVoltage(leftVolts: Double, rightVolts: Double) {
-        leftLeader.setVoltage(leftVolts / 3)
-        rightLeader.setVoltage(rightVolts / 3)
+        leftLeader.setVoltage(leftVolts / voltageDivider.get())
+        rightLeader.setVoltage(rightVolts / voltageDivider.get())
     }
 }

@@ -26,6 +26,7 @@ import frc.robot.*
 import frc.robot.commands.FeedforwardCharacterization
 import frc.robot.commands.SwerveMode
 import frc.robot.subsystems.controller.DriverController
+import frc.robot.subsystems.controller.OperatorController
 import frc.robot.util.LocalADStarAK
 import frc.robot.util.TunablePIDController
 import org.littletonrobotics.junction.AutoLogOutput
@@ -33,6 +34,7 @@ import org.littletonrobotics.junction.Logger
 import org.littletonrobotics.junction.networktables.LoggedDashboardBoolean
 import java.util.function.Supplier
 import kotlin.math.abs
+import kotlin.math.absoluteValue
 
 object Drivebase : SubsystemBase() {
     private val io = switchMode(::DrivebaseIOReal, ::DrivebaseIOSim, ::DrivebaseIO)
@@ -116,7 +118,7 @@ object Drivebase : SubsystemBase() {
             )
         }
 
-        defaultCommand = SwerveMode.swerveDriveCommand()
+        defaultCommand = arcadeDriveCommand()
     }
 
     override fun periodic() {
@@ -256,8 +258,12 @@ object Drivebase : SubsystemBase() {
     private fun arcadeDriveCommand(): Command {
         return run {
             val reverse = if (reverseMode) -1 else 1
-            var speed = reverse * DriverController.speed()
-            var rotation = -DriverController.leftX
+            var speed =
+                if (OperatorController.leftY.absoluteValue > 0.1) reverse * OperatorController.leftY
+                else reverse * DriverController.leftY
+            var rotation =
+                if (OperatorController.rightX.absoluteValue > 0.1) -OperatorController.rightX
+                else -DriverController.rightX
 
             if (Constants.useControllerDeadzone) {
                 if (abs(speed) < Constants.controllerDeadzone) speed = 0.0
