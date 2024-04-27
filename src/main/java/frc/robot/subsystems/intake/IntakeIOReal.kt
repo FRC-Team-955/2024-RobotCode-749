@@ -7,6 +7,7 @@ import edu.wpi.first.math.filter.Debouncer
 import edu.wpi.first.math.util.Units
 import edu.wpi.first.wpilibj.DigitalInput
 import frc.robot.Constants
+import frc.robot.Robot
 
 
 class IntakeIOReal : IntakeIO() {
@@ -39,6 +40,14 @@ class IntakeIOReal : IntakeIO() {
     }
 
     override fun updateInputs(inputs: IntakeIOInputs) {
+        if (Robot.lowPowerMode.get()) {
+            pivot.setIdleMode(CANSparkBase.IdleMode.kCoast)
+            pivot.burnFlash()
+        } else {
+            pivot.setIdleMode(CANSparkBase.IdleMode.kBrake)
+            pivot.burnFlash()
+        }
+
         inputs.pivotPositionRad = Units.rotationsToRadians(pivotEncoder.position / Constants.Intake.pivotGearRatio)
         inputs.pivotVelocityRadPerSec = Units.rotationsPerMinuteToRadiansPerSecond(pivotEncoder.velocity)
         inputs.pivotAppliedVolts = pivot.appliedOutput * pivot.busVoltage
@@ -51,7 +60,11 @@ class IntakeIOReal : IntakeIO() {
     }
 
     override fun setPivotVoltage(volts: Double) {
-        pivot.setVoltage(volts)
+        if (!Robot.lowPowerMode.get()) {
+            pivot.setVoltage(volts)
+        } else {
+            pivot.stopMotor()
+        }
     }
 
     override fun resetPivotPosition() {
@@ -59,7 +72,11 @@ class IntakeIOReal : IntakeIO() {
     }
 
     override fun setDriverVoltage(volts: Double) {
-        driver.setVoltage(volts)
+        if (!Robot.lowPowerMode.get()) {
+            driver.setVoltage(volts)
+        }else {
+            driver.stopMotor()
+        }
     }
 
     override fun stopDriver() {

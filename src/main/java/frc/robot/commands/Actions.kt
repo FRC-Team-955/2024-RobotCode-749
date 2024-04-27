@@ -31,9 +31,10 @@ object Actions {
     private fun autoAlignForAction(): Optional<Command> {
         return when (selectedAction) {
             Action.Source -> AutoAlign.sourceCommand()
-            Action.FrontSubwoofer -> AutoAlign.frontSubwooferCommand()
-            Action.LeftSubwoofer -> AutoAlign.leftSubwooferCommand()
-            Action.RightSubwoofer -> AutoAlign.rightSubwooferCommand()
+            Action.FrontSubwoofer, Action.LeftSubwoofer, Action.RightSubwoofer -> Optional.of(AutoAlign.speakerAimCommand())
+//            Action.FrontSubwoofer -> AutoAlign.frontSubwooferCommand()
+//            Action.LeftSubwoofer -> AutoAlign.leftSubwooferCommand()
+//            Action.RightSubwoofer -> AutoAlign.rightSubwooferCommand()
             else -> Optional.empty()
         }
     }

@@ -18,6 +18,7 @@ import frc.robot.subsystems.drivebase.Drivebase
 import frc.robot.subsystems.intake.Intake
 import frc.robot.subsystems.launcher.Launcher
 import frc.robot.subsystems.leds.LEDs
+import org.littletonrobotics.junction.networktables.LoggedDashboardBoolean
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser
 
 /**
@@ -32,6 +33,8 @@ import org.littletonrobotics.junction.networktables.LoggedDashboardChooser
  * directly reference the (single instance of the) object.
  */
 object Robot {
+    val lowPowerMode = LoggedDashboardBoolean("Low Power Mode")
+
     init {
         registerFieldsForAutoLogOutput(
             DriverController,
@@ -60,7 +63,7 @@ object Robot {
 //        DriverController.povDown().onTrue(SwerveMode.swerveAngleCommand(180.0))
 //        DriverController.povRight().onTrue(SwerveMode.swerveAngleCommand(-90.0))
 
-//        DriverController.b().toggleOnTrue(Actions.doSelectedActionWithoutAutoAlignCommand())
+//        DriverController.b().toggleOnTrue(Actions.doSelectedActionCommand())
 
         //        DriverController.b().toggleOnTrue(actions.doSelectedActionCommand());
 //        DriverController.x().toggleOnTrue(actions.doSelectedActionWithoutAutoAlignCommand());

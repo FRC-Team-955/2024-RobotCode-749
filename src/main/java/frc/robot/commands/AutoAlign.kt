@@ -3,7 +3,9 @@ package frc.robot.commands
 import com.pathplanner.lib.util.GeometryUtil
 import edu.wpi.first.math.geometry.Pose2d
 import edu.wpi.first.math.geometry.Rotation2d
+import edu.wpi.first.math.util.Units
 import edu.wpi.first.wpilibj2.command.Command
+import edu.wpi.first.wpilibj2.command.Commands
 import frc.robot.flipIfNeeded
 import frc.robot.flipIfNeededNow
 import frc.robot.shouldFlip
@@ -11,6 +13,7 @@ import frc.robot.subsystems.drivebase.Drivebase
 import frc.robot.util.Rect2d
 import java.util.*
 import java.util.function.Supplier
+import kotlin.math.atan2
 
 object AutoAlign {
     fun rightSubwooferCommand(): Optional<Command> {
@@ -80,4 +83,15 @@ object AutoAlign {
             Pose2d(2.8, 4.6, Rotation2d())
         )
     )
+
+    private val speakerAim = Pose2d(0.0, 5.5, Rotation2d())
+    private const val speakerAimOffset = 20
+    fun speakerAimCommand(): Command {
+        return Commands.deferredProxy {
+            val robotPose = Drivebase.pose
+            val aimPose = flipIfNeededNow(speakerAim)
+            val angle = atan2(aimPose.y - robotPose.y, aimPose.x - robotPose.x)
+            SwerveMode.swerveAngleCommand(Units.radiansToDegrees(angle) + (if (shouldFlip()) -speakerAimOffset else speakerAimOffset))
+        }
+    }
 }

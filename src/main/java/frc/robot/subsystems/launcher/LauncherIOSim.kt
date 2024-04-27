@@ -2,6 +2,7 @@ package frc.robot.subsystems.launcher
 
 import edu.wpi.first.math.system.plant.DCMotor
 import edu.wpi.first.wpilibj.simulation.DCMotorSim
+import frc.robot.Robot
 
 class LauncherIOSim : LauncherIO() {
     private val top = DCMotorSim(DCMotor.getCIM(1), 1.0, 0.0001)
@@ -22,13 +23,23 @@ class LauncherIOSim : LauncherIO() {
     }
 
     override fun setTopVoltage(volts: Double) {
-        topAppliedVolts = volts
-        top.setInputVoltage(volts)
+        if (!Robot.lowPowerMode.get()) {
+            topAppliedVolts = volts
+            top.setInputVoltage(volts)
+        } else {
+            topAppliedVolts = 0.0
+            top.setInputVoltage(0.0)
+        }
     }
 
     override fun setBottomVoltage(volts: Double) {
-        bottomAppliedVolts = volts
-        bottom.setInputVoltage(volts)
+        if (!Robot.lowPowerMode.get()) {
+            bottomAppliedVolts = volts
+            bottom.setInputVoltage(volts)
+        } else {
+            bottomAppliedVolts = 0.0
+            bottom.setInputVoltage(0.0)
+        }
     }
 
     override fun stop() {
