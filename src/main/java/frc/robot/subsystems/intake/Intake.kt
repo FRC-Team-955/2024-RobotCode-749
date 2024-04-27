@@ -124,7 +124,7 @@ object Intake : SubsystemBase() {
         return startEnd(
             {
                 usePivotPID = false
-                io.setPivotVoltage(1.0)
+                if (enableIntake.get()) io.setPivotVoltage(1.0)
             },
             {
                 usePivotPID = true
