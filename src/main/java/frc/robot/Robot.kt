@@ -82,7 +82,7 @@ object Robot {
         Trigger { OperatorController.rightTriggerAxis > 0.6 }
             .onTrue(Intake.pivotSlightlyDownCommand())
             .onFalse(Intake.tuckCommand())
-        OperatorController.povUp().onTrue(Intake.resetPivotCommand())
+        OperatorController.povUp().onTrue(Intake.resetPivotCommand().ignoringDisable(true))
 
         // note: right and left are switched here to make it easier for the operator to control
 //        OperatorController.rightBumper()
