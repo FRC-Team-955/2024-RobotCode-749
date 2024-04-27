@@ -40,13 +40,13 @@ class IntakeIOReal : IntakeIO() {
     }
 
     override fun updateInputs(inputs: IntakeIOInputs) {
-        if (Robot.lowPowerMode.get()) {
-            pivot.setIdleMode(CANSparkBase.IdleMode.kCoast)
-            pivot.burnFlash()
-        } else {
-            pivot.setIdleMode(CANSparkBase.IdleMode.kBrake)
-            pivot.burnFlash()
-        }
+//        if (Robot.lowPowerMode.get()) {
+//            pivot.setIdleMode(CANSparkBase.IdleMode.kCoast)
+//            pivot.burnFlash()
+//        } else {
+//            pivot.setIdleMode(CANSparkBase.IdleMode.kBrake)
+//            pivot.burnFlash()
+//        }
 
         inputs.pivotPositionRad = Units.rotationsToRadians(pivotEncoder.position / Constants.Intake.pivotGearRatio)
         inputs.pivotVelocityRadPerSec = Units.rotationsPerMinuteToRadiansPerSecond(pivotEncoder.velocity)
