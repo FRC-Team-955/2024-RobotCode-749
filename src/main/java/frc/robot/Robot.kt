@@ -63,7 +63,7 @@ object Robot {
         DriverController.povDown().onTrue(SwerveMode.swerveAngleCommand(180.0))
         DriverController.povRight().onTrue(SwerveMode.swerveAngleCommand(-90.0))
 
-        DriverController.b().toggleOnTrue(Actions.doSelectedActionWithoutAutoAlignCommand())
+        DriverController.b().toggleOnTrue(Actions.doSelectedActionCommand())
 
         //        DriverController.b().toggleOnTrue(actions.doSelectedActionCommand());
 //        DriverController.x().toggleOnTrue(actions.doSelectedActionWithoutAutoAlignCommand());
