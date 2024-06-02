@@ -66,13 +66,11 @@ object Drivebase : SubsystemBase() {
     private val usePoseEstimation = LoggedDashboardBoolean("Use Pose Estimation", true)
     private val fallbackRotationRevert = LoggedDashboardBoolean("Fallback to rotation reverting", false)
     private val disableDriving = LoggedDashboardBoolean("Disable Driving", false)
-    private val arcadeDriveToggle = LoggedDashboardBoolean("Arcade Drive", false)
+    private val arcadeDriveToggle = LoggedDashboardBoolean("Arcade Drive", true)
+    private val reverseModeRotation = LoggedDashboardBoolean("Reverse Mode Rotation", true)
+    val reverseMode = LoggedDashboardBoolean("Reverse Mode", false)
 
     private var arcadeDrive = arcadeDriveToggle.get()
-
-    @AutoLogOutput
-    var reverseMode = false
-        private set
 
     init {
         SmartDashboard.putData("Field", field)
@@ -257,11 +255,11 @@ object Drivebase : SubsystemBase() {
 
     private fun arcadeDriveCommand(): Command {
         return run {
-            val reverse = if (reverseMode) -1 else 1
+            val reverse = if (reverseMode.get()) -1 else 1
             val override = OperatorController.rightX.absoluteValue > 0.1 || OperatorController.leftY.absoluteValue > 0.1
             var speed =
-                if (override) reverse * -OperatorController.leftY
-                else reverse * -DriverController.leftY
+                if (override) -OperatorController.leftY
+                else -DriverController.leftY
             var rotation =
                 if (override) -OperatorController.rightX
                 else -DriverController.rightX
@@ -270,7 +268,7 @@ object Drivebase : SubsystemBase() {
                 if (abs(speed) < Constants.controllerDeadzone) speed = 0.0
                 if (abs(rotation) < Constants.controllerDeadzone) rotation = 0.0
             }
-            arcadeDrive(speed, rotation)
+            arcadeDrive(reverse * speed, if (reverseModeRotation.get()) reverse * rotation else rotation)
         }.withName("Drivebase\$arcadeDrive")
     }
 
@@ -317,10 +315,10 @@ object Drivebase : SubsystemBase() {
     }
 
     fun toggleReverseModeCommand(): Command {
-        return Commands.runOnce({ reverseMode = !reverseMode })
+        return Commands.runOnce({ reverseMode.set(!reverseMode.get()) })
     }
 
-    fun toggleArcadeDrive(): Command {
+    fun toggleArcadeDriveCommand(): Command {
         return Commands.runOnce({
             val newVal = !arcadeDriveToggle.get()
             arcadeDriveToggle.set(newVal)

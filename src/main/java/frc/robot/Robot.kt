@@ -83,6 +83,7 @@ object Robot {
             .onTrue(Intake.pivotSlightlyDownCommand())
             .onFalse(Intake.tuckCommand())
         OperatorController.povUp().onTrue(Intake.resetPivotCommand().ignoringDisable(true))
+        OperatorController.start().onTrue(Drivebase.toggleReverseModeCommand())
 
         // note: right and left are switched here to make it easier for the operator to control
 //        OperatorController.rightBumper()

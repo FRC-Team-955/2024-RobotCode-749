@@ -4,10 +4,12 @@ import edu.wpi.first.wpilibj2.command.Command
 import edu.wpi.first.wpilibj2.command.Commands
 import frc.robot.Constants
 import frc.robot.subsystems.controller.DriverController
+import frc.robot.subsystems.controller.OperatorController
 import frc.robot.subsystems.drivebase.Drivebase
 import frc.robot.util.TunablePIDController
 import org.littletonrobotics.junction.Logger
 import kotlin.math.abs
+import kotlin.math.absoluteValue
 import kotlin.math.atan2
 
 object SwerveMode {
@@ -46,10 +48,14 @@ object SwerveMode {
         }
 
         override fun execute() {
-            val reverse = if (Drivebase.reverseMode) -1 else 1
-
-            val x = reverse * DriverController.leftX
-            val y = reverse * -DriverController.leftY
+            val reverse = if (Drivebase.reverseMode.get()) -1 else 1
+            val override = OperatorController.leftX.absoluteValue > 0.1 || OperatorController.leftY.absoluteValue > 0.1
+            val x =
+                if (override) OperatorController.leftX
+                else DriverController.leftX
+            val y =
+                if (override) -OperatorController.leftY
+                else -DriverController.leftY
 
             if (abs(x) > Constants.Drivebase.swerveModeDeadzone || abs(y) > Constants.Drivebase.swerveModeDeadzone) {
                 swerveModePID.setpoint = -Math.toDegrees(atan2(x, y))

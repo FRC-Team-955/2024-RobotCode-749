@@ -163,7 +163,7 @@ object LEDs : SubsystemBase() {
     }
 
     private fun teleop() {
-        val reversePattern = Solid(if (Drivebase.reverseMode) kRed else kGreen)
+        val reversePattern = Solid(if (Drivebase.reverseMode.get()) kRed else kGreen)
         val actionPattern = Solid(
             when (Actions.selectedAction) {
                 Actions.Action.None -> kBlack
