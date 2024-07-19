@@ -49,6 +49,8 @@ object Intake : SubsystemBase() {
     init {
         Trigger { inputs.hasNote }
             .onTrue(DriverController.setRumble(0.5, 0.5))
+
+        defaultCommand = tuckCommand()
     }
 
     override fun periodic() {
@@ -137,5 +139,6 @@ object Intake : SubsystemBase() {
     fun resetPivotCommand(): Command {
         return runOnce { io.resetPivotPosition() }
             .withLEDs(null, Color.kDarkRed)
+            .ignoringDisable(true)
     }
 }
