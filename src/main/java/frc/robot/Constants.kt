@@ -10,6 +10,8 @@ object Constants {
      */
     val mode = if (RobotBase.isReal()) Mode.REAL else (if (Simulation.shouldReplay) Mode.REPLAY else Mode.SIM)
 
+    const val limitDriverControls = true
+
     const val driverControllerPort = 0
     const val operatorControllerPort = 1
 
