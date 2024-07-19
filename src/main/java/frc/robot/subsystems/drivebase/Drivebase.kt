@@ -313,7 +313,7 @@ object Drivebase : SubsystemBase() {
         return Commands.runOnce({ reverseMode = !reverseMode })
     }
 
-    fun toggleArcadeDrive(): Command {
+    fun toggleArcadeDriveCommand(): Command {
         return Commands.runOnce({
             val newVal = !arcadeDriveToggle.get()
             arcadeDriveToggle.set(newVal)

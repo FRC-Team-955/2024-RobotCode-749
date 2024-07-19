@@ -55,7 +55,7 @@ object Robot {
     private fun configureBindings() {
         DriverController.leftBumper().onTrue(Drivebase.resetGyroCommand())
         DriverController.rightBumper().onTrue(Drivebase.toggleReverseModeCommand())
-        DriverController.start().onTrue(Drivebase.toggleArcadeDrive())
+        DriverController.start().onTrue(Drivebase.toggleArcadeDriveCommand())
 
         DriverController.povUp().onTrue(SwerveMode.swerveAngleCommand(0.0))
         DriverController.povLeft().onTrue(SwerveMode.swerveAngleCommand(90.0))
@@ -137,7 +137,8 @@ object Robot {
     }
 
     fun getAutonomousCommand(): Command? {
-        return autoChooser.get()
+//        return autoChooser.get()
+        return null
     }
 
     fun teleopInit() {
