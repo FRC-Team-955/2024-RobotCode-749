@@ -14,7 +14,6 @@ import edu.wpi.first.wpilibj2.command.WrapperCommand
 import edu.wpi.first.wpilibj2.command.button.Trigger
 import frc.robot.Constants
 import frc.robot.Constants.LEDs.length
-import frc.robot.Robot
 import frc.robot.commands.Actions
 import frc.robot.subsystems.drivebase.Drivebase
 import frc.robot.subsystems.leds.patterns.*
@@ -81,9 +80,9 @@ object LEDs : SubsystemBase() {
     }
 
     override fun periodic() {
-        if (!Robot.lowPowerMode.get())
-            currentPattern.periodic(0..<length, BufferWrapper(buffer), Timer.getFPGATimestamp())
-        else Solid(kBlack).periodic(0..<length, BufferWrapper(buffer), 0.0)
+//        if (!Robot.lowPowerMode.get())
+        currentPattern.periodic(0..<length, BufferWrapper(buffer), Timer.getFPGATimestamp())
+//        else Solid(kBlack).periodic(0..<length, BufferWrapper(buffer), 0.0)
         if (Constants.LEDs.debugMechanism) {
 //            for (i in 0..<length)
 //                print("\u001b[38;2;${buffer.getRed(i)};${buffer.getGreen(i)};${buffer.getBlue(i)}m■\u001b[0m")
