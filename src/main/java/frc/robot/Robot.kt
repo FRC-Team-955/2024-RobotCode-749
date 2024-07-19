@@ -77,12 +77,8 @@ object Robot {
         //        OperatorController.x().toggleOnTrue(actions.selectActionCommand(Actions.Action.LeftSubwoofer));
 //        OperatorController.b().toggleOnTrue(actions.selectActionCommand(Actions.Action.RightSubwoofer));
         OperatorController.b().toggleOnTrue(Intake.ejectCommand())
-        Trigger { OperatorController.leftY < -0.6 }
-            .onTrue(Intake.intakeCommand())
-            .onFalse(Intake.tuckCommand())
-        Trigger { OperatorController.leftY > 0.6 }
-            .onTrue(Intake.pivotSlightlyDownCommand())
-            .onFalse(Intake.tuckCommand())
+        Trigger { OperatorController.leftY < -0.6 }.onTrue(Intake.intakeCommand())
+        Trigger { OperatorController.leftY > 0.6 }.onTrue(Intake.pivotSlightlyDownCommand())
         OperatorController.povUp().onTrue(Intake.resetPivotCommand())
 
         // note: right and left are switched here to make it easier for the operator to control
