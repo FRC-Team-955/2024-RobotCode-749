@@ -368,7 +368,9 @@ object Drivebase : SubsystemBase() {
         return runOnce {
             gyroIO.setYaw(Rotation2d())
             yaw = Rotation2d()
-        }.andThen(SwerveMode.swerveAngleCommand(0.0))
+        }
+            .andThen(SwerveMode.swerveAngleCommand(0.0))
+            .ignoringDisable(true)
     }
 
     @get:AutoLogOutput
