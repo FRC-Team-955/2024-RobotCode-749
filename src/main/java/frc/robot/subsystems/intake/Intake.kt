@@ -44,6 +44,7 @@ object Intake : SubsystemBase() {
     private var usePivotPID = true
 
     private val manualIntaking = LoggedDashboardBoolean("Manual intaking", false)
+    private val enableIntake = LoggedDashboardBoolean("Enable intake", false)
 
     init {
         Trigger { inputs.hasNote }
@@ -66,7 +67,7 @@ object Intake : SubsystemBase() {
         )
         Logger.recordOutput("Intake/PivotControlSignalPID", pid)
         Logger.recordOutput("Intake/PivotControlSignalFF", ff)
-        if (RobotState.isEnabled() && usePivotPID) io.setPivotVoltage(pid + ff)
+        if (RobotState.isEnabled() && usePivotPID && enableIntake.get()) io.setPivotVoltage(pid + ff)
     }
 
     private fun pivotPIDToCommand(setpoint: Double): Command {

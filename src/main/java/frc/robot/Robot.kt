@@ -68,7 +68,8 @@ object Robot {
 //        DriverController.x().toggleOnTrue(actions.doSelectedActionWithoutAutoAlignCommand());
         DriverController.b().toggleOnTrue(Intake.handoffCommand().andThen(Launcher.launchCommand()))
         DriverController.x().toggleOnTrue(Intake.ejectCommand())
-        DriverController.a().whileTrue(Intake.intakeCommand().alongWith(Launcher.intakeCommand()))
+        DriverController.a().whileTrue(Launcher.intakeCommand())
+        DriverController.y().whileTrue(Intake.intakeCommand())
         DriverController.povUp().onTrue(Intake.resetPivotCommand())
         DriverController.povDown().onTrue(Intake.pivotSlightlyDownCommand())
 //        DriverController.x().onTrue(Drivebase.setPoseCommand(new Pose2d(1.41, 5.58, new Rotation2d()))); // subwoofer
