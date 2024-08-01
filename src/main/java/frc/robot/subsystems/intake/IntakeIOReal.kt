@@ -60,7 +60,7 @@ class IntakeIOReal : IntakeIO() {
 
     override fun setPivotVoltage(volts: Double) {
 //        if (!Robot.lowPowerMode.get()) {
-        pivot.setVoltage(volts)
+//        pivot.setVoltage(volts)
 //        } else {
 //            pivot.stopMotor()
 //        }
@@ -72,7 +72,7 @@ class IntakeIOReal : IntakeIO() {
 
     override fun setDriverVoltage(volts: Double) {
 //        if (!Robot.lowPowerMode.get()) {
-        driver.setVoltage(volts)
+//        driver.setVoltage(volts)
 //        } else {
 //            driver.stopMotor()
 //        }
