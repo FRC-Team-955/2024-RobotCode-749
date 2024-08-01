@@ -81,16 +81,16 @@ object Robot {
 
 
         // note: right and left are switched here to make it easier for the operator to control
-        DriverController.rightBumper()
-            .whileTrue(LeftClimber.moveCommand(Climber.Direction.Up))
-        DriverController.rightTrigger()
-            .whileTrue(LeftClimber.moveCommand(Climber.Direction.Down))
-        DriverController.leftBumper()
-            .whileTrue(RightClimber.moveCommand(Climber.Direction.Up))
-        DriverController.leftTrigger()
-            .whileTrue(RightClimber.moveCommand(Climber.Direction.Down))
-        DriverController.povLeft().onTrue(RightClimber.resetCommand())
-        DriverController.povRight().onTrue(LeftClimber.resetCommand())
+//        DriverController.rightBumper()
+//            .whileTrue(LeftClimber.moveCommand(Climber.Direction.Up))
+//        DriverController.rightTrigger()
+//            .whileTrue(LeftClimber.moveCommand(Climber.Direction.Down))
+//        DriverController.leftBumper()
+//            .whileTrue(RightClimber.moveCommand(Climber.Direction.Up))
+//        DriverController.leftTrigger()
+//            .whileTrue(RightClimber.moveCommand(Climber.Direction.Down))
+//        DriverController.povLeft().onTrue(RightClimber.resetCommand())
+//        DriverController.povRight().onTrue(LeftClimber.resetCommand())
     }
 
     private fun makeDebugTab() {
