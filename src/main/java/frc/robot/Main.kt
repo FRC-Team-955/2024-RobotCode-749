@@ -76,10 +76,10 @@ object CommandRobot : LoggedRobot() {
 //                Logger.addDataReceiver(WPILOGWriter()) // Log to a USB stick ("/U/logs")
                 Logger.addDataReceiver(NT4Publisher()) // Log to NetworkTables
                 // Enables power distribution logging
-                SmartDashboard.putData(
-                    "PowerDistribution",
-                    PowerDistribution(Constants.pdhId, PowerDistribution.ModuleType.kRev)
-                )
+//                SmartDashboard.putData(
+//                    "PowerDistribution",
+//                    PowerDistribution(Constants.pdhId, PowerDistribution.ModuleType.kRev)
+//                )
             }
 
             Constants.Mode.SIM -> {
