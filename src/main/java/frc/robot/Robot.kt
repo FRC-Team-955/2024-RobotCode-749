@@ -54,7 +54,7 @@ object Robot {
 
     private fun configureBindings() {
         DriverController.leftBumper().onTrue(Drivebase.resetGyroCommand())
-        DriverController.rightBumper().onTrue(Drivebase.toggleReverseModeCommand())
+        DriverController.back().onTrue(Drivebase.toggleReverseModeCommand())
         DriverController.start().onTrue(Drivebase.toggleArcadeDriveCommand())
 
 //        DriverController.povUp().onTrue(SwerveMode.swerveAngleCommand(0.0))
@@ -66,12 +66,12 @@ object Robot {
 
         //        DriverController.b().toggleOnTrue(actions.doSelectedActionCommand());
 //        DriverController.x().toggleOnTrue(actions.doSelectedActionWithoutAutoAlignCommand());
-        DriverController.b().toggleOnTrue(Intake.handoffCommand().andThen(Launcher.launchCommand()))
+        DriverController.leftTrigger(0.25).toggleOnTrue(Intake.handoffCommand().andThen(Launcher.launchCommand()))
         DriverController.x().toggleOnTrue(Intake.ejectCommand())
         DriverController.a().whileTrue(Launcher.intakeCommand())
-        DriverController.y().whileTrue(Intake.intakeCommand())
-        DriverController.povUp().onTrue(Intake.resetPivotCommand())
-        DriverController.povDown().onTrue(Intake.pivotSlightlyDownCommand())
+        DriverController.rightTrigger(0.25).whileTrue(Intake.intakeCommand())
+//        DriverController.povUp().onTrue(Intake.resetPivotCommand())
+//        DriverController.povDown().onTrue(Intake.pivotSlightlyDownCommand())
 //        DriverController.x().onTrue(Drivebase.setPoseCommand(new Pose2d(1.41, 5.58, new Rotation2d()))); // subwoofer
 //        DriverController.x().onTrue(Drivebase.setPoseCommand(new Pose2d(15.38, 0.958, Rotation2d.fromRadians(-0.9)))); // source
 //        OperatorController.y().toggleOnTrue(Actions.selectActionCommand(Actions.Action.Source))
@@ -81,17 +81,24 @@ object Robot {
 //        OperatorController.b().toggleOnTrue(actions.selectActionCommand(Actions.Action.RightSubwoofer));
 
 
-        // note: right and left are switched here to make it easier for the operator to control
-//        DriverController.rightBumper()
-//            .whileTrue(LeftClimber.moveCommand(Climber.Direction.Up))
-//        DriverController.rightTrigger()
-//            .whileTrue(LeftClimber.moveCommand(Climber.Direction.Down))
-//        DriverController.leftBumper()
-//            .whileTrue(RightClimber.moveCommand(Climber.Direction.Up))
-//        DriverController.leftTrigger()
-//            .whileTrue(RightClimber.moveCommand(Climber.Direction.Down))
-//        DriverController.povLeft().onTrue(RightClimber.resetCommand())
-//        DriverController.povRight().onTrue(LeftClimber.resetCommand())
+        DriverController.povUp()
+            .whileTrue(
+                RightClimber.moveCommand(Climber.Direction.Up)
+//                LeftClimber.moveCommand(Climber.Direction.Up)
+//                    .alongWith(RightClimber.moveCommand(Climber.Direction.Up))
+            )
+        DriverController.povDown()
+            .whileTrue(
+                RightClimber.moveCommand(Climber.Direction.Down)
+//                LeftClimber.moveCommand(Climber.Direction.Down)
+//                    .alongWith(RightClimber.moveCommand(Climber.Direction.Down))
+            )
+
+//        DriverController.povUpLeft().whileTrue(RightClimber.moveCommand(Climber.Direction.Up))
+//        DriverController.povUpRight().whileTrue(LeftClimber.moveCommand(Climber.Direction.Up))
+//
+//        DriverController.povDownLeft().whileTrue(RightClimber.moveCommand(Climber.Direction.Down))
+//        DriverController.povDownRight().whileTrue(LeftClimber.moveCommand(Climber.Direction.Down))
     }
 
     private fun makeDebugTab() {
@@ -111,6 +118,9 @@ object Robot {
             Drivebase.setPoseCommand(flipIfNeeded(Pose2d(1.33, 5.5, Rotation2d.fromDegrees(180.0))))
         )
         tab.add("Zero intake", Intake.resetPivotCommand())
+        tab.add("Pivot intake down", Intake.pivotSlightlyDownCommand())
+        tab.add("Reset right climber (from shooter side)", LeftClimber.resetCommand())
+        tab.add("Reset left climber (from shooter side)", RightClimber.resetCommand())
     }
 
     private fun registerNamedCommands() {

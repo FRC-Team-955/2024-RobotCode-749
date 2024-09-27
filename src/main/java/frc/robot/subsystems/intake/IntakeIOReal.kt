@@ -7,6 +7,7 @@ import edu.wpi.first.math.filter.Debouncer
 import edu.wpi.first.math.util.Units
 import edu.wpi.first.wpilibj.DigitalInput
 import frc.robot.Constants
+import org.littletonrobotics.junction.Logger
 
 
 class IntakeIOReal : IntakeIO() {

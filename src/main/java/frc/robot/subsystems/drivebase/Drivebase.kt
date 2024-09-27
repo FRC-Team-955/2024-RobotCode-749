@@ -64,7 +64,7 @@ object Drivebase : SubsystemBase() {
     private val usePoseEstimation = LoggedDashboardBoolean("Use Pose Estimation", true)
     private val fallbackRotationRevert = LoggedDashboardBoolean("Fallback to rotation reverting", false)
     private val disableDriving = LoggedDashboardBoolean("Disable Driving", false)
-    private val arcadeDriveToggle = LoggedDashboardBoolean("Arcade Drive", false)
+    private val arcadeDriveToggle = LoggedDashboardBoolean("Arcade Drive", true)
 
     private var arcadeDrive = arcadeDriveToggle.get()
 
@@ -116,7 +116,9 @@ object Drivebase : SubsystemBase() {
             )
         }
 
-        defaultCommand = SwerveMode.swerveDriveCommand()
+        defaultCommand =
+            if (!arcadeDrive) SwerveMode.swerveDriveCommand()
+            else arcadeDriveCommand()
     }
 
     override fun periodic() {
@@ -256,8 +258,8 @@ object Drivebase : SubsystemBase() {
     private fun arcadeDriveCommand(): Command {
         return run {
             val reverse = if (reverseMode) -1 else 1
-            var speed = reverse * DriverController.speed()
-            var rotation = -DriverController.leftX
+            var speed = reverse * -DriverController.leftY
+            var rotation = -DriverController.rightX
 
             if (Constants.useControllerDeadzone) {
                 if (abs(speed) < Constants.controllerDeadzone) speed = 0.0

@@ -3,6 +3,7 @@ package frc.robot.subsystems.controller
 import edu.wpi.first.wpilibj.GenericHID
 import edu.wpi.first.wpilibj.XboxController
 import edu.wpi.first.wpilibj2.command.Command
+import edu.wpi.first.wpilibj2.command.CommandScheduler
 import edu.wpi.first.wpilibj2.command.SubsystemBase
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController
 import edu.wpi.first.wpilibj2.command.button.Trigger
@@ -36,10 +37,6 @@ abstract class Controller(private val controller: CommandXboxController) : Subsy
         return setRumble(Constants.errorRumbleAmount, Constants.errorRumbleDuration)
     }
 
-    fun speed(): Double {
-        return -leftTriggerAxis + rightTriggerAxis
-    }
-
     // CommandXboxController methods //
 
     val hid: XboxController
@@ -67,7 +64,15 @@ abstract class Controller(private val controller: CommandXboxController) : Subsy
 
     fun povUp(): Trigger = controller.povUp()
 
+    fun povUpLeft(): Trigger = controller.povUpLeft()
+
+    fun povUpRight(): Trigger = controller.povUpRight()
+
     fun povDown(): Trigger = controller.povDown()
+
+    fun povDownLeft(): Trigger = controller.povDownLeft()
+
+    fun povDownRight(): Trigger = controller.povDownRight()
 
     fun povLeft(): Trigger = controller.povLeft()
 
@@ -76,6 +81,10 @@ abstract class Controller(private val controller: CommandXboxController) : Subsy
     fun leftTrigger(): Trigger = controller.leftTrigger()
 
     fun rightTrigger(): Trigger = controller.rightTrigger()
+
+    fun leftTrigger(threshold: Double): Trigger = controller.leftTrigger(threshold)
+
+    fun rightTrigger(threshold: Double): Trigger = controller.rightTrigger(threshold)
 
     val leftX: Double
         get() = controller.leftX

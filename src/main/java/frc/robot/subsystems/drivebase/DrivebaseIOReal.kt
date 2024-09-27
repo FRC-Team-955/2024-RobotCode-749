@@ -84,9 +84,8 @@ class DrivebaseIOReal : DrivebaseIO() {
         inputs.rightFollowerCurrentAmps = rightFollower.outputCurrent
     }
 
-    private val voltageDivider = LoggedDashboardNumber("Voltage Divider", 2.0)
     override fun setVoltage(leftVolts: Double, rightVolts: Double) {
-        leftLeader.setVoltage(leftVolts / voltageDivider.get())
-        rightLeader.setVoltage(rightVolts / voltageDivider.get())
+        leftLeader.setVoltage(leftVolts)
+        rightLeader.setVoltage(rightVolts)
     }
 }

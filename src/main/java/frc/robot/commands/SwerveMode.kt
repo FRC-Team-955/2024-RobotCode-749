@@ -60,7 +60,7 @@ object SwerveMode {
             val robotAngle = Drivebase.gyro.degrees
             Logger.recordOutput("Drivebase/SwerveMode/Measurement", robotAngle)
 
-            var speed = reverse * DriverController.speed()
+            var speed = reverse * -DriverController.rightY
             val rotation = swerveModePID.calculate(robotAngle)
 
             if (Constants.useControllerDeadzone) {
