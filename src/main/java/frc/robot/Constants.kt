@@ -98,7 +98,7 @@ object Constants {
 
         const val intakeSpeed = 1.0
         const val handoffSpeed = -0.75
-        const val handoffTimeout = 0.15
+        const val handoffTimeout = 0.3
         const val ejectSpeed = -1.0
         const val ejectTimeout = 0.5
         const val ejectIntakeTimeout = 0.15
