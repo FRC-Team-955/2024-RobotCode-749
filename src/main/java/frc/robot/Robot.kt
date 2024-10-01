@@ -144,12 +144,13 @@ object Robot {
 //        auto.addDefaultOption("Launch and move", LaunchAndMove.get(Drivebase, launcher))
 //        auto.addOption("S2-W2-W1-W3", buildAllianceAuto("S2-W2-W1-W3"))
 //        auto.addOption("S3-M5-M4", buildAllianceAuto("S3-M5-M4"))
+        auto.addOption("S2-W2", buildAllianceAuto("S2-W2"))
         auto
     }
 
     fun getAutonomousCommand(): Command? {
-//        return autoChooser.get()
-        return null
+        return autoChooser.get()
+//        return null
     }
 
     fun teleopInit() {

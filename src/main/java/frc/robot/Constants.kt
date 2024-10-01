@@ -96,7 +96,7 @@ object Constants {
         const val pivotD = 0.0
         val pivotFFg = ifSimElse(0.01, 0.35)
 
-        const val intakeSpeed = 1.0
+        const val intakeSpeed = 0.75
         const val handoffSpeed = -0.75
         const val handoffTimeout = 0.3
         const val ejectSpeed = -1.0
