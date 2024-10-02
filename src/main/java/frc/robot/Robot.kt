@@ -53,9 +53,9 @@ object Robot {
     }
 
     private fun configureBindings() {
-        DriverController.leftBumper().onTrue(Drivebase.resetGyroCommand())
-        DriverController.back().onTrue(Drivebase.toggleReverseModeCommand())
-        DriverController.start().onTrue(Drivebase.toggleArcadeDriveCommand())
+//        DriverController.leftBumper().onTrue(Drivebase.resetGyroCommand())
+//        DriverController.back().onTrue(Drivebase.toggleReverseModeCommand())
+//        DriverController.start().onTrue(Drivebase.toggleArcadeDriveCommand())
 
 //        DriverController.povUp().onTrue(SwerveMode.swerveAngleCommand(0.0))
 //        DriverController.povLeft().onTrue(SwerveMode.swerveAngleCommand(90.0))
@@ -81,18 +81,18 @@ object Robot {
 //        OperatorController.b().toggleOnTrue(actions.selectActionCommand(Actions.Action.RightSubwoofer));
 
 
-        DriverController.povUp()
-            .whileTrue(
-                RightClimber.moveCommand(Climber.Direction.Up)
-//                LeftClimber.moveCommand(Climber.Direction.Up)
-//                    .alongWith(RightClimber.moveCommand(Climber.Direction.Up))
-            )
-        DriverController.povDown()
-            .whileTrue(
-                RightClimber.moveCommand(Climber.Direction.Down)
-//                LeftClimber.moveCommand(Climber.Direction.Down)
-//                    .alongWith(RightClimber.moveCommand(Climber.Direction.Down))
-            )
+//        DriverController.povUp()
+//            .whileTrue(
+//                RightClimber.moveCommand(Climber.Direction.Up)
+////                LeftClimber.moveCommand(Climber.Direction.Up)
+////                    .alongWith(RightClimber.moveCommand(Climber.Direction.Up))
+//            )
+//        DriverController.povDown()
+//            .whileTrue(
+//                RightClimber.moveCommand(Climber.Direction.Down)
+////                LeftClimber.moveCommand(Climber.Direction.Down)
+////                    .alongWith(RightClimber.moveCommand(Climber.Direction.Down))
+//            )
 
 //        DriverController.povUpLeft().whileTrue(RightClimber.moveCommand(Climber.Direction.Up))
 //        DriverController.povUpRight().whileTrue(LeftClimber.moveCommand(Climber.Direction.Up))
