@@ -53,9 +53,9 @@ object Robot {
     }
 
     private fun configureBindings() {
-        DriverController.leftBumper().onTrue(Drivebase.resetGyroCommand())
-        DriverController.back().onTrue(Drivebase.toggleReverseModeCommand())
-        DriverController.start().onTrue(Drivebase.toggleArcadeDriveCommand())
+        DriverController.y().onTrue(Drivebase.resetGyroCommand())
+//        DriverController.back().onTrue(Drivebase.toggleReverseModeCommand())
+//        DriverController.start().onTrue(Drivebase.toggleArcadeDriveCommand())
 
 //        DriverController.povUp().onTrue(SwerveMode.swerveAngleCommand(0.0))
 //        DriverController.povLeft().onTrue(SwerveMode.swerveAngleCommand(90.0))
@@ -66,10 +66,10 @@ object Robot {
 
         //        DriverController.b().toggleOnTrue(actions.doSelectedActionCommand());
 //        DriverController.x().toggleOnTrue(actions.doSelectedActionWithoutAutoAlignCommand());
-        DriverController.leftTrigger(0.25).toggleOnTrue(Intake.handoffCommand().andThen(Launcher.launchCommand()))
-        DriverController.x().toggleOnTrue(Intake.ejectCommand())
-        DriverController.a().whileTrue(Launcher.intakeCommand())
-        DriverController.rightTrigger(0.25).whileTrue(Intake.intakeCommand())
+        OperatorController.leftTrigger(0.25).toggleOnTrue(Intake.handoffCommand().andThen(Launcher.launchCommand()))
+        OperatorController.x().toggleOnTrue(Intake.ejectCommand())
+        OperatorController.a().whileTrue(Launcher.intakeCommand())
+        OperatorController.rightTrigger(0.25).whileTrue(Intake.intakeCommand())
 //        DriverController.povUp().onTrue(Intake.resetPivotCommand())
 //        DriverController.povDown().onTrue(Intake.pivotSlightlyDownCommand())
 //        DriverController.x().onTrue(Drivebase.setPoseCommand(new Pose2d(1.41, 5.58, new Rotation2d()))); // subwoofer
@@ -81,18 +81,18 @@ object Robot {
 //        OperatorController.b().toggleOnTrue(actions.selectActionCommand(Actions.Action.RightSubwoofer));
 
 
-        DriverController.povUp()
-            .whileTrue(
-                RightClimber.moveCommand(Climber.Direction.Up)
-//                LeftClimber.moveCommand(Climber.Direction.Up)
-//                    .alongWith(RightClimber.moveCommand(Climber.Direction.Up))
-            )
-        DriverController.povDown()
-            .whileTrue(
-                RightClimber.moveCommand(Climber.Direction.Down)
-//                LeftClimber.moveCommand(Climber.Direction.Down)
-//                    .alongWith(RightClimber.moveCommand(Climber.Direction.Down))
-            )
+//        DriverController.povUp()
+//            .whileTrue(
+//                RightClimber.moveCommand(Climber.Direction.Up)
+////                LeftClimber.moveCommand(Climber.Direction.Up)
+////                    .alongWith(RightClimber.moveCommand(Climber.Direction.Up))
+//            )
+//        DriverController.povDown()
+//            .whileTrue(
+//                RightClimber.moveCommand(Climber.Direction.Down)
+////                LeftClimber.moveCommand(Climber.Direction.Down)
+////                    .alongWith(RightClimber.moveCommand(Climber.Direction.Down))
+//            )
 
 //        DriverController.povUpLeft().whileTrue(RightClimber.moveCommand(Climber.Direction.Up))
 //        DriverController.povUpRight().whileTrue(LeftClimber.moveCommand(Climber.Direction.Up))
