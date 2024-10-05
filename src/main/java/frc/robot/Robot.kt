@@ -7,6 +7,7 @@ import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard
 import edu.wpi.first.wpilibj2.command.Command
 import edu.wpi.first.wpilibj2.command.CommandScheduler
 import edu.wpi.first.wpilibj2.command.button.Trigger
+import frc.robot.auto.LaunchAndMove
 import frc.robot.commands.Actions
 import frc.robot.commands.SwerveMode
 import frc.robot.subsystems.climber.Climber
@@ -141,6 +142,7 @@ object Robot {
             "Intake and Launch",
             Intake.intakeCommand().andThen(Intake.handoffCommand(), Launcher.launchCommand())
         )
+        auto.addOption("Launch and move", LaunchAndMove.get(Drivebase, Launcher))
 //        auto.addDefaultOption("Launch and move", LaunchAndMove.get(Drivebase, launcher))
 //        auto.addOption("S2-W2-W1-W3", buildAllianceAuto("S2-W2-W1-W3"))
 //        auto.addOption("S3-M5-M4", buildAllianceAuto("S3-M5-M4"))
