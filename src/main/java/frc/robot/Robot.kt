@@ -142,8 +142,7 @@ object Robot {
             "Intake and Launch",
             Intake.intakeCommand().andThen(Intake.handoffCommand(), Launcher.launchCommand())
         )
-        auto.addOption("Launch and move", LaunchAndMove.get(Drivebase, Launcher))
-//        auto.addDefaultOption("Launch and move", LaunchAndMove.get(Drivebase, launcher))
+        auto.addDefaultOption("Launch and move", LaunchAndMove.get(Drivebase, Launcher))
 //        auto.addOption("S2-W2-W1-W3", buildAllianceAuto("S2-W2-W1-W3"))
 //        auto.addOption("S3-M5-M4", buildAllianceAuto("S3-M5-M4"))
         auto.addOption("S2-W2", buildAllianceAuto("S2-W2"))
