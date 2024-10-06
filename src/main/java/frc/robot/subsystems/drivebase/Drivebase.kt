@@ -259,7 +259,7 @@ object Drivebase : SubsystemBase() {
         return run {
             val reverse = if (reverseMode) -1 else 1
             var speed = reverse * -DriverController.leftY * 0.75
-            var rotation = -DriverController.rightX * 0.75
+            var rotation = -DriverController.rightX
 
             if (Constants.useControllerDeadzone) {
                 if (abs(speed) < Constants.controllerDeadzone) speed = 0.0
