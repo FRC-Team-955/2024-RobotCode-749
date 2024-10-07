@@ -258,7 +258,7 @@ object Drivebase : SubsystemBase() {
     private fun arcadeDriveCommand(): Command {
         return run {
             val reverse = if (reverseMode) -1 else 1
-            var speed = reverse * -DriverController.leftY * 0.75
+            var speed = reverse * -DriverController.leftY
             var rotation = -DriverController.rightX
 
             if (Constants.useControllerDeadzone) {
