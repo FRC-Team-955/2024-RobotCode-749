@@ -70,13 +70,15 @@ object Constants {
         const val velocityP = 1.2
         const val velocityD = 0.0
 
-        val feedforwardLeftS = ifSimElse(0.7, 1.0)
-        val feedforwardLeftV = ifSimElse(2.0, 2.2)
-        val feedforwardRightS = ifSimElse(feedforwardLeftS, 1.0)
-        val feedforwardRightV = ifSimElse(feedforwardLeftV, 2.2)
+        val feedforwardLeftS = ifSimElse(0.7, 1.3511)
+        val feedforwardLeftV = ifSimElse(2.0, 0.18906)
+        val feedforwardLeftA = ifSimElse(0.0,  0.059558)
+        val feedforwardRightS = ifSimElse(feedforwardLeftS, 1.115)
+        val feedforwardRightV = ifSimElse(feedforwardLeftV, 0.15253)
+        val feedforwardRightA = ifSimElse(feedforwardLeftA, 0.14105)
 
         val swerveModeDeadzone = if (Simulation.useNintendoSwitchProController) 0.5 else 0.8
-        val swerveModeP = ifSimElse(0.08, 0.05)
+        val swerveModeP = ifSimElse(0.08, 0.1)
         val swerveModeD = ifSimElse(0.001, 0.008)
 
         const val pathfindMaxSpeed = 1.0 //2.5;

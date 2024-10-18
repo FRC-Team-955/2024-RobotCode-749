@@ -15,6 +15,7 @@ import edu.wpi.first.math.geometry.Rotation2d
 import edu.wpi.first.math.kinematics.DifferentialDriveKinematics
 import edu.wpi.first.math.kinematics.DifferentialDriveWheelSpeeds
 import edu.wpi.first.math.util.Units
+import edu.wpi.first.units.Units.Volts
 import edu.wpi.first.wpilibj.Timer
 import edu.wpi.first.wpilibj.drive.DifferentialDrive
 import edu.wpi.first.wpilibj.smartdashboard.Field2d
@@ -22,9 +23,9 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard
 import edu.wpi.first.wpilibj2.command.Command
 import edu.wpi.first.wpilibj2.command.Commands
 import edu.wpi.first.wpilibj2.command.SubsystemBase
+import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine
 import frc.robot.*
 import frc.robot.commands.FeedforwardCharacterization
-import frc.robot.commands.SwerveMode
 import frc.robot.subsystems.controller.DriverController
 import frc.robot.util.LocalADStarAK
 import frc.robot.util.TunablePIDController
@@ -47,10 +48,16 @@ object Drivebase : SubsystemBase() {
     private val kinematics = DifferentialDriveKinematics(Constants.Drivebase.trackWidth)
     private val odometry = DifferentialDrivePoseEstimator(kinematics, Rotation2d(), 0.0, 0.0, Pose2d())
     private val field = Field2d()
-    private val leftFeedforward =
-        SimpleMotorFeedforward(Constants.Drivebase.feedforwardLeftS, Constants.Drivebase.feedforwardLeftV)
-    private val rightFeedforward =
-        SimpleMotorFeedforward(Constants.Drivebase.feedforwardRightS, Constants.Drivebase.feedforwardRightV)
+    private val leftFeedforward = SimpleMotorFeedforward(
+        Constants.Drivebase.feedforwardLeftS,
+        Constants.Drivebase.feedforwardLeftV,
+        Constants.Drivebase.feedforwardLeftA
+    )
+    private val rightFeedforward = SimpleMotorFeedforward(
+        Constants.Drivebase.feedforwardRightS,
+        Constants.Drivebase.feedforwardRightV,
+        Constants.Drivebase.feedforwardRightA
+    )
     private val driveVelocityPID = TunablePIDController(
         "Drivebase driveVelocity",
         Constants.Drivebase.velocityP,
@@ -65,6 +72,7 @@ object Drivebase : SubsystemBase() {
     private val fallbackRotationRevert = LoggedDashboardBoolean("Fallback to rotation reverting", false)
     private val disableDriving = LoggedDashboardBoolean("Disable Driving", false)
     private val arcadeDriveToggle = LoggedDashboardBoolean("Arcade Drive", true)
+    public val sysIdRoutine: SysIdRoutine
 
     private var arcadeDrive = arcadeDriveToggle.get()
 
@@ -74,6 +82,24 @@ object Drivebase : SubsystemBase() {
 
     init {
         SmartDashboard.putData("Field", field)
+
+        sysIdRoutine = SysIdRoutine(
+            SysIdRoutine.Config(
+                null,
+                null,
+                null,
+                { state ->
+                    Logger.recordOutput("Drive/SysIdState", state.toString())
+                }
+            ),
+            SysIdRoutine.Mechanism(
+                { voltage ->
+                    io.setVoltage(voltage.`in`(Volts), voltage.`in`(Volts))
+                },
+                null,
+                this
+            )
+        )
 
         AutoBuilder.configureLTV(
             this::pose,
@@ -117,8 +143,8 @@ object Drivebase : SubsystemBase() {
         }
 
         defaultCommand =
-            if (!arcadeDrive) SwerveMode.swerveDriveCommand()
-            else arcadeDriveCommand()
+                /*if (!arcadeDrive) SwerveMode.swerveDriveCommand()
+                else */arcadeDriveCommand()
     }
 
     override fun periodic() {
@@ -178,7 +204,7 @@ object Drivebase : SubsystemBase() {
     }
 
     fun teleopInit() {
-        usePoseEstimation.set(false)
+//        usePoseEstimation.set(false)
         gyroIO.setYaw(pose.rotation)
         odometry.addVisionMeasurement( // Rotation must be zero because gyro will take over
             // if we use the real rotation it will be doubled due to setting gyro to it
@@ -307,7 +333,7 @@ object Drivebase : SubsystemBase() {
             path.preventFlipping = true
             AutoBuilder
                 .followPath(path)
-                .andThen(SwerveMode.swerveAngleCommand(targetPose.rotation.degrees))
+//                .andThen(SwerveMode.swerveAngleCommand(targetPose.rotation.degrees))
         }.withName("Drivebase\$pathfind")
     }
 
@@ -330,7 +356,7 @@ object Drivebase : SubsystemBase() {
         if (arcadeDrive) {
             this.defaultCommand = arcadeDriveCommand()
         } else {
-            this.defaultCommand = SwerveMode.swerveDriveCommand()
+//            this.defaultCommand = SwerveMode.swerveDriveCommand()
         }
     }
 
@@ -366,7 +392,7 @@ object Drivebase : SubsystemBase() {
             gyroIO.setYaw(Rotation2d())
             yaw = Rotation2d()
         }
-            .andThen(SwerveMode.swerveAngleCommand(0.0))
+//            .andThen(SwerveMode.swerveAngleCommand(0.0))
             .ignoringDisable(true)
     }
 

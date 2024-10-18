@@ -1,5 +1,6 @@
 package frc.robot
 
+import com.pathplanner.lib.auto.AutoBuilder
 import com.pathplanner.lib.auto.NamedCommands
 import edu.wpi.first.math.geometry.Pose2d
 import edu.wpi.first.math.geometry.Rotation2d
@@ -7,8 +8,10 @@ import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard
 import edu.wpi.first.wpilibj2.command.Command
 import edu.wpi.first.wpilibj2.command.CommandScheduler
 import edu.wpi.first.wpilibj2.command.button.Trigger
+import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine
 import frc.robot.auto.LaunchAndMove
 import frc.robot.commands.Actions
+import frc.robot.commands.AutoAlign
 import frc.robot.commands.SwerveMode
 import frc.robot.subsystems.climber.Climber
 import frc.robot.subsystems.climber.LeftClimber
@@ -55,6 +58,15 @@ object Robot {
 
     private fun configureBindings() {
         DriverController.y().onTrue(Drivebase.resetGyroCommand())
+        DriverController.leftTrigger(0.25).toggleOnTrue(Intake.handoffCommand().andThen(Launcher.launchCommand()))
+        DriverController.leftBumper().toggleOnTrue(AutoAlign.speakerAimCommand())
+        DriverController.x().toggleOnTrue(Intake.ejectCommand())
+        DriverController.a().whileTrue(Launcher.intakeCommand())
+        DriverController.rightTrigger(0.25).whileTrue(Intake.intakeCommand())
+        OperatorController.leftTrigger(0.25).toggleOnTrue(Intake.handoffCommand().andThen(Launcher.launchCommand()))
+        OperatorController.x().toggleOnTrue(Intake.ejectCommand())
+        OperatorController.a().whileTrue(Launcher.intakeCommand())
+        OperatorController.rightTrigger(0.25).whileTrue(Intake.intakeCommand())
 //        DriverController.back().onTrue(Drivebase.toggleReverseModeCommand())
 //        DriverController.start().onTrue(Drivebase.toggleArcadeDriveCommand())
 
@@ -67,10 +79,6 @@ object Robot {
 
         //        DriverController.b().toggleOnTrue(actions.doSelectedActionCommand());
 //        DriverController.x().toggleOnTrue(actions.doSelectedActionWithoutAutoAlignCommand());
-        OperatorController.leftTrigger(0.25).toggleOnTrue(Intake.handoffCommand().andThen(Launcher.launchCommand()))
-        OperatorController.x().toggleOnTrue(Intake.ejectCommand())
-        OperatorController.a().whileTrue(Launcher.intakeCommand())
-        OperatorController.rightTrigger(0.25).whileTrue(Intake.intakeCommand())
 //        DriverController.povUp().onTrue(Intake.resetPivotCommand())
 //        DriverController.povDown().onTrue(Intake.pivotSlightlyDownCommand())
 //        DriverController.x().onTrue(Drivebase.setPoseCommand(new Pose2d(1.41, 5.58, new Rotation2d()))); // subwoofer
@@ -128,6 +136,7 @@ object Robot {
         NamedCommands.registerCommand("Launch", Launcher.launchCommand())
         NamedCommands.registerCommand("Intake", Intake.intakeCommand())
         NamedCommands.registerCommand("Handoff", Intake.handoffCommand())
+        NamedCommands.registerCommand("Aim", AutoAlign.speakerAimCommand())
     }
 
     private val autoChooser = run {
@@ -138,14 +147,19 @@ object Robot {
         // BROKEN
 //        auto.addOption("Generate", Commands.deferredProxy(() -> AutoGenerator.generateAuto(Drivebase, launcher)));
         auto.addOption("Launch", Launcher.launchCommand())
-        auto.addOption(
-            "Intake and Launch",
-            Intake.intakeCommand().andThen(Intake.handoffCommand(), Launcher.launchCommand())
-        )
-        auto.addDefaultOption("Launch and move", LaunchAndMove.get(Drivebase, Launcher))
+//        auto.addOption(
+//            "Intake and Launch",
+//            Intake.intakeCommand().andThen(Intake.handoffCommand(), Launcher.launchCommand())
+//        )
+        auto.addOption("Launch and move", LaunchAndMove.get(Drivebase, Launcher))
 //        auto.addOption("S2-W2-W1-W3", buildAllianceAuto("S2-W2-W1-W3"))
 //        auto.addOption("S3-M5-M4", buildAllianceAuto("S3-M5-M4"))
-        auto.addOption("S2-W2", buildAllianceAuto("S2-W2"))
+//        auto.addOption("S2-W2", buildAllianceAuto("S2-W2"))
+        auto.addDefaultOption("2 piece", AutoBuilder.buildAuto("2 piece"))
+        auto.addOption("Characterize drive dynamic forward", Drivebase.sysIdRoutine.dynamic(SysIdRoutine.Direction.kForward))
+        auto.addOption("Characterize drive dynamic reverse", Drivebase.sysIdRoutine.dynamic(SysIdRoutine.Direction.kReverse))
+        auto.addOption("Characterize drive quasistatic forward", Drivebase.sysIdRoutine.quasistatic(SysIdRoutine.Direction.kForward))
+        auto.addOption("Characterize drive quasistatic reverse", Drivebase.sysIdRoutine.quasistatic(SysIdRoutine.Direction.kReverse))
         auto
     }
 

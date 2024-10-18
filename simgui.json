@@ -25,6 +25,11 @@
       "/SmartDashboard/LEDs": "Mechanism2d"
     },
     "windows": {
+      "/Shuffleboard/Debug/Command Scheduler": {
+        "window": {
+          "visible": true
+        }
+      },
       "/SmartDashboard/Auto": {
         "window": {
           "visible": true

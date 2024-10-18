@@ -5,12 +5,12 @@ import edu.wpi.first.math.geometry.Pose2d
 import edu.wpi.first.math.geometry.Rotation2d
 import edu.wpi.first.math.util.Units
 import edu.wpi.first.wpilibj2.command.Command
-import edu.wpi.first.wpilibj2.command.Commands
 import frc.robot.flipIfNeeded
 import frc.robot.flipIfNeededNow
 import frc.robot.shouldFlip
 import frc.robot.subsystems.drivebase.Drivebase
 import frc.robot.util.Rect2d
+import org.littletonrobotics.junction.networktables.LoggedDashboardNumber
 import java.util.*
 import java.util.function.Supplier
 import kotlin.math.atan2
@@ -85,13 +85,13 @@ object AutoAlign {
     )
 
     private val speakerAim = Pose2d(0.0, 5.5, Rotation2d())
-    private const val speakerAimOffset = 20
+    private val speakerAimOffset = LoggedDashboardNumber("Speaker Aim Offsset", 20.0)
     fun speakerAimCommand(): Command {
-        return Commands.deferredProxy {
+        return SwerveMode.swerveToAngleCommand {
             val robotPose = Drivebase.pose
             val aimPose = flipIfNeededNow(speakerAim)
             val angle = atan2(aimPose.y - robotPose.y, aimPose.x - robotPose.x)
-            SwerveMode.swerveAngleCommand(Units.radiansToDegrees(angle) + (if (shouldFlip()) -speakerAimOffset else speakerAimOffset))
+            Units.radiansToDegrees(angle) - speakerAimOffset.get()
         }
     }
 }
