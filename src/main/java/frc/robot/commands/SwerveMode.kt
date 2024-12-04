@@ -24,19 +24,19 @@ object SwerveMode {
         pid
     }
 
-//    fun swerveDriveCommand(): Command {
-//        return SwerveDriveCommand(false)
-//    }
-
-//    fun swerveAngleCommand(angle: Double): Command {
-//        return Commands.runOnce({ swerveModePID.setpoint = angle })
-//    }
-
-    fun swerveToAngleCommand(angle: () -> Double): Command {
-        return SwerveDriveCommand(true, angle).withTimeout(1.0)
+    fun swerveDriveCommand(): Command {
+        return SwerveDriveCommand(false)
     }
 
-    private class SwerveDriveCommand(val ignoreController: Boolean, val angleSupplier: () -> Double) : Command() {
+    fun swerveAngleCommand(angle: Double): Command {
+        return Commands.runOnce({ swerveModePID.setpoint = angle })
+    }
+
+    fun swerveToAngleCommand(angle: () -> Double): Command {
+        return SwerveDriveCommand(true).withTimeout(1.0)
+    }
+
+    private class SwerveDriveCommand(val ignoreController: Boolean/*, val angleSupplier: () -> Double*/) : Command() {
 
         init {
             addRequirements(Drivebase)
@@ -44,34 +44,34 @@ object SwerveMode {
         }
 
         override fun initialize() {
-            swerveModePID.setpoint = angleSupplier()
-//            swerveModePID.setpoint = Drivebase.gyro.degrees
+//            swerveModePID.setpoint = angleSupplier()
+            swerveModePID.setpoint = Drivebase.gyro.degrees
         }
 
         override fun execute() {
-//            val reverse = if (Drivebase.reverseMode) -1 else 1
-//
-//            val x = reverse * DriverController.leftX
-//            val y = reverse * -DriverController.leftY
-//
-//            if (!ignoreController && (abs(x) > Constants.Drivebase.swerveModeDeadzone || abs(y) > Constants.Drivebase.swerveModeDeadzone)) {
-//                swerveModePID.setpoint = -Math.toDegrees(atan2(x, y))
-//            }
+            val reverse = if (Drivebase.reverseMode) -1 else 1
 
-            swerveModePID.setpoint = angleSupplier()
+            val x = reverse * DriverController.leftX
+            val y = reverse * -DriverController.leftY
+
+            if (!ignoreController && (abs(x) > Constants.Drivebase.swerveModeDeadzone || abs(y) > Constants.Drivebase.swerveModeDeadzone)) {
+                swerveModePID.setpoint = -Math.toDegrees(atan2(x, y))
+            }
+
+//            swerveModePID.setpoint = angleSupplier()
             Logger.recordOutput("Drivebase/SwerveMode/Setpoint", swerveModePID.setpoint)
 
             val robotAngle = Drivebase.gyro.degrees
             Logger.recordOutput("Drivebase/SwerveMode/Measurement", robotAngle)
 
-//            var speed = reverse * -DriverController.rightY
+            var speed = reverse * -DriverController.rightY
             val rotation = swerveModePID.calculate(robotAngle)
 
-//            if (Constants.useControllerDeadzone) {
-//                if (abs(speed) < Constants.controllerDeadzone) speed = 0.0
-//            }
+            if (Constants.useControllerDeadzone) {
+                if (abs(speed) < Constants.controllerDeadzone) speed = 0.0
+            }
 
-            Drivebase.arcadeDrive(0.0, rotation)
+            Drivebase.arcadeDrive(speed, rotation)
         }
     }
 }

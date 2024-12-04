@@ -26,6 +26,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine
 import frc.robot.*
 import frc.robot.commands.FeedforwardCharacterization
+import frc.robot.commands.SwerveMode
 import frc.robot.subsystems.controller.DriverController
 import frc.robot.util.LocalADStarAK
 import frc.robot.util.TunablePIDController
@@ -356,7 +357,7 @@ object Drivebase : SubsystemBase() {
         if (arcadeDrive) {
             this.defaultCommand = arcadeDriveCommand()
         } else {
-//            this.defaultCommand = SwerveMode.swerveDriveCommand()
+            this.defaultCommand = SwerveMode.swerveDriveCommand()
         }
     }
 
@@ -392,7 +393,7 @@ object Drivebase : SubsystemBase() {
             gyroIO.setYaw(Rotation2d())
             yaw = Rotation2d()
         }
-//            .andThen(SwerveMode.swerveAngleCommand(0.0))
+            .andThen(SwerveMode.swerveAngleCommand(0.0))
             .ignoringDisable(true)
     }
 
